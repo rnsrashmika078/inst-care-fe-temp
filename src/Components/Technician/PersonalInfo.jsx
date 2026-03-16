@@ -1,0 +1,440 @@
+  import React, { useState, useEffect } from "react";
+// import { uploadToCloudinary } from "../utils/cloudinary";
+import profileImage from "../../assets/images/profile-image.jpeg";
+
+export default function PersonalInfo() {
+  // State management
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    nic: "",
+    address: "",
+    officePhone: "",
+    mobilePhone: "",
+    email: "",
+    institute_name: "",
+    designation: "",
+    supervisor_name: "",
+    supervisor_Designation: "",
+    supervisor_Email: "",
+    supervisor_Contact_No: "",
+    profileImage: null,
+    profileImagePreview: null,
+    gender: "",
+    title: "",
+    initials: "",
+    district: "",
+  });
+
+  const userId = localStorage.getItem("user_id");
+
+  // Fetch profile data on component mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`
+        );
+        const data = await res.json();
+        console.log("Fetched profile data:", data.gender);
+        setFormData((prev) => ({
+          ...prev,
+          fullName: data.full_name || "",
+          nic: data.nic || "",
+          address: data.address || "",
+          officePhone: data.office_phone || "",
+          mobilePhone: data.personal_number || "",
+          email: data.email || "",
+          institute_name: data.institute_name || "",
+          designation: data.current_designation || "",
+          supervisor_name: data.supervisor_name || "",
+          supervisor_Designation: data.supervisor_designation || "",
+          supervisor_Email: data.supervisor_email || "",
+          supervisor_Contact_No: data.supervisor_contact_no || "",
+          // profileImagePreview: data.profile_image_url || null,
+          profileImagePreview: data.profile_image ? `http://localhost/instrument-care-back-end/public/${data.profile_image}`: null,
+          gender: data.gender || "",
+          title: data.title || "",
+          initials: data.name_with_initials || "",
+          district: data.district || "",
+        }));
+        
+      } catch (err) {
+        console.error("Failed to fetch profile", err);
+      }
+    };
+
+    fetchProfile();
+  }, [userId]);
+
+  // Handle input field changes
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handle image file selection
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      setFormData({
+        ...formData,
+        profileImage: file,
+        profileImagePreview: event.target.result,
+      });
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+
+  const handleSubmit = async () => {
+  try {
+    setLoading(true);
+
+    const form = new FormData();
+
+    form.append("fullName", formData.fullName);
+    form.append("nic", formData.nic);
+    form.append("address", formData.address);
+    form.append("officePhone", formData.officePhone);
+    form.append("personalNumber", formData.mobilePhone);
+    form.append("email", formData.email);
+    form.append("institute_name", formData.institute_name);
+    form.append("current_designation", formData.designation);
+    form.append("supervisor_name", formData.supervisor_name);
+    form.append("supervisor_Designation", formData.supervisor_Designation);
+    form.append("supervisor_Email", formData.supervisor_Email);
+    form.append("supervisor_Contract_No", formData.supervisor_Contact_No);
+    form.append("gender", formData.gender);
+    form.append("title", formData.title);
+    form.append("initials", formData.initials);
+    form.append("district", formData.district);
+
+    // Append image file
+    if (formData.profileImage) {
+      form.append("profile_image", formData.profileImage);
+    }
+
+    const res = await fetch(
+      `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+      {
+        method: "POST", // ⚠️ better for file upload
+        body: form,
+      }
+    );
+
+    const result = await res.json();
+
+    if (res.ok) {
+      alert("Profile updated successfully");
+    } else {
+      alert(result.error || "Update failed");
+      console.error("❌ API Error:", result);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Error updating profile");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  return (
+    <div className="bg-[#ffffff80] shadow-md rounded-xl p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-semibold">Personal Information</h2>
+      </div>
+
+      {/* Profile Image Section */}
+      <div className="flex items-center gap-6 mb-6">
+        <img
+          src={formData.profileImagePreview || profileImage}
+          alt="profile"
+          className="w-24 h-24 rounded-full object-cover border border-gray-300"
+        />
+        <div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="bg-orange-100 text-orange-700 px-3 py-1 rounded-md text-sm hover:bg-orange-200"
+          />
+          <p className="text-sm text-gray-500">Upload profile image</p>
+        </div>
+      </div>
+
+      {/* Form Fields Grid */}
+      <div className="grid md:grid-cols-2 gap-6">
+        
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+          <select
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className="input w-full"
+          >
+            <option value="">Select Title</option>
+            <option value="Mr">Mr</option>
+            <option value="Mrs">Mrs</option>
+            <option value="Miss">Miss</option>
+          </select>
+        </div>
+
+        {/* Initials */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Name with Initials</label>
+          <input
+            type="text"
+            name="initials"
+            value={formData.initials}
+            onChange={handleChange}
+            className="input w-full"
+            placeholder="N.M.Perera"
+          />
+        </div>
+
+        {/* Full Name - Disabled */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+          <input
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            disabled
+            className="input w-full bg-gray-100 cursor-not-allowed"
+          />
+        </div>
+
+        {/* NIC Number */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">NIC Number</label>
+          <input
+            type="text"
+            name="nic"
+            value={formData.nic}
+            onChange={handleChange}
+            className="input w-full"
+            maxLength="12"
+          />
+        </div>
+
+        {/* Gender */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className="input w-full"
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+
+
+        {/* Address */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+
+        {/* District */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">District</label>
+          <select
+            name="district"
+            value={formData.district}
+            onChange={handleChange}
+            className="input w-full"
+          >
+            <option value="">Select District</option>
+            <option value="Ampara">Ampara</option>
+            <option value="Anuradhapura">Anuradhapura</option>
+            <option value="Badulla">Badulla</option>
+            <option value="Batticaloa">Batticaloa</option>
+            <option value="Colombo">Colombo</option>
+            <option value="Galle">Galle</option>
+            <option value="Gampaha">Gampaha</option>
+            <option value="Hambantota">Hambantota</option>
+            <option value="Jaffna">Jaffna</option>
+            <option value="Kalutara">Kalutara</option>
+            <option value="Kandy">Kandy</option>
+            <option value="Kegalle">Kegalle</option>
+            <option value="Kilinochchi">Kilinochchi</option>
+            <option value="Kurunegala">Kurunegala</option>
+            <option value="Mannar">Mannar</option>
+            <option value="Matale">Matale</option>
+            <option value="Matara">Matara</option>
+            <option value="Monaragala">Monaragala</option>
+            <option value="Mullaitivu">Mullaitivu</option>
+            <option value="Nuwara Eliya">Nuwara Eliya</option>
+            <option value="Polonnaruwa">Polonnaruwa</option>
+            <option value="Puttalam">Puttalam</option>  
+            <option value="Ratnapura">Ratnapura</option>
+            <option value="Trincomalee">Trincomalee</option>
+            <option value="Vavuniya">Vavuniya</option>
+          </select>
+        </div>
+
+        {/* Mobile Phone */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Phone</label>
+          <input
+            type="text"
+            name="mobilePhone"
+            value={formData.mobilePhone}
+            onChange={handleChange}
+            className="input w-full"
+            maxLength="10"
+            placeholder="07XXXXXXXX"
+          />
+        </div>
+
+        {/* Email - Disabled */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            disabled
+            className="input w-full bg-gray-100 cursor-not-allowed"
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <h3 className="font-semibold text-lg text-gray-800 mt-6">Institute Details</h3>
+        </div>
+
+        {/* Institute Name */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Institute Name</label>
+          <input
+            type="text"
+            name="institute_name"
+            value={formData.institute_name}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+
+        {/* Designation */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Designation</label>
+          <input
+            type="text"
+            name="designation"
+            value={formData.designation}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+
+        {/* Office Phone */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Office Phone</label>
+          <input
+            type="text"
+            name="officePhone"
+            value={formData.officePhone}
+            onChange={handleChange}
+            className="input w-full"
+            maxLength="10"
+            placeholder="0XXXXXXXXX"
+          />
+        </div>
+
+        {/* Supervisor Details Header */}
+        <div className="md:col-span-2">
+          <h3 className="font-semibold text-lg text-gray-800 mt-6">Supervisor Details</h3>
+        </div>
+
+        {/* Supervisor Name */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Name</label>
+          <input
+            type="text"
+            name="supervisor_name"
+            value={formData.supervisor_name}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+
+        {/* Supervisor Designation */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Designation</label>
+          <input
+            type="text"
+            name="supervisor_Designation"
+            value={formData.supervisor_Designation}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+
+        {/* Supervisor Email */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Email</label>
+          <input
+            type="email"
+            name="supervisor_Email"
+            value={formData.supervisor_Email}
+            onChange={handleChange}
+            className="input w-full"
+          />
+        </div>
+
+        {/* Supervisor Contact Number */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Contact Number</label>
+          <input
+            type="text"
+            name="supervisor_Contact_No"
+            value={formData.supervisor_Contact_No}
+            onChange={handleChange}
+            className="input w-full"
+            maxLength={10}
+          />
+      </div>
+
+      
+      
+    </div>
+    <div className="mt-6 flex justify-end">
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-500 flex items-center gap-2"
+        >
+          {loading && (
+            <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          )}
+          {loading ? "Updating..." : "Update Personal Info"}
+        </button>
+      </div>
+    </div>
+  );
+}

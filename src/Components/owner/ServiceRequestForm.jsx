@@ -1,0 +1,297 @@
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+
+export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {} }) {
+  const { id: technicianId } = useParams();
+  const [instruments, setInstruments] = useState([]);
+
+  const [formData, setFormData] = useState({
+    full_name: "",
+    email: "",
+    physical_address: "",
+    contact_number: "",
+    institute_name: "",
+    institute_address: "",
+    instrument_name: "",
+    instrument_brand: "",
+    instrument_model: "",
+    instrument_manufacturer: "",
+    manufactured_year: "",
+    product_testing_type: "",
+    testing_parameter: "",
+    consumption_period: "",
+    issue_description: "",
+  });
+
+  const [loading, setLoading] = useState(false); // ✅ loading state
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const validateForm = () => {
+    for (const key in formData) {
+      if (!formData[key] || formData[key].trim() === "") return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      alert("Please fill out all required fields before submitting.");
+      return;
+    }
+
+    const userId = localStorage.getItem("user_id");
+    if (!userId) {
+      alert("User ID not found. Please log in again.");
+      return;
+    }
+
+    const payload = {
+      ...formData,
+      technician_id: technicianId,
+      user_id: userId,
+    };
+  console.log("🚀 Sending service request payload:", JSON.stringify(payload, null, 2));
+
+    try {
+      setLoading(true); // ✅ start loading
+
+      const response = await fetch(
+        "http://localhost/instrument-care-back-end/public/user/service-request",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(payload),
+        }
+        
+      );
+
+      const data = await response.json();
+      onSend(data); // ✅ callback with response
+    } catch (error) {
+      console.error(":", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false); // ✅ stop loading
+    }
+  };
+
+  useEffect(() => {
+  const fetchInstruments = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost/instrument-care-back-end/public/service-request/${technicianId}/instruments`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch instruments");
+
+      const data = await response.json();
+
+      setInstruments(data.instruments || []);
+    } catch (error) {
+      console.error("Error fetching instruments:", error);
+    }
+  };
+
+  fetchInstruments();
+}, [technicianId]);
+
+  return (
+    <div className="w-full mx-auto bg-[#ffffff70] p-6 rounded-md shadow">
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        {/* ----------------- Personal Details Section ----------------- */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Personal Details</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { label: "Full Name", name: "full_name", placeholder: "Avishka Shehan Jayasiri" },
+              { label: "Email Address", name: "email", placeholder: "example@example.com" },
+              { label: "Physical Address", name: "physical_address", placeholder: "Main Road, Pitipana, Homagama" },
+              { label: "Contact Number", name: "contact_number", placeholder: "+94 71 23 45 678" },
+            ].map((field) => (
+              <div key={field.name}>
+                <label className="block font-semibold mb-1">
+                  {field.label} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type={field.name === "email" ? "email" : "text"}
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  className="w-full border rounded px-3 py-1"
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <hr className="my-6 border-gray-300" />
+
+        {/* ----------------- Institute Details Section ----------------- */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Institute Details</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { label: "Name", name: "institute_name", placeholder: "National Science Foundation" },
+              { label: "Address", name: "institute_address", placeholder: "46/b De Mel Road, Colombo 07" },
+            ].map((field) => (
+              <div key={field.name}>
+                <label className="block font-semibold mb-1">
+                  {field.label} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  className="w-full border rounded px-3 py-1"
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <hr className="my-6 border-gray-300" />
+
+        {/* ----------------- Instrument Details Section ----------------- */}
+        <div>
+          <h2 className="text-lg font-semibold mb-4">Instrument Details</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { label: "Name", name: "instrument_name", placeholder: "Microscope" },
+              { label: "Brand", name: "instrument_brand", placeholder: "" },
+              { label: "Model", name: "instrument_model", placeholder: "" },
+              { label: "Manufacturer", name: "instrument_manufacturer", placeholder: "" },
+              { label: "Manufactured Year", name: "manufactured_year", placeholder: "" },
+              { label: "Type of product testing", name: "product_testing_type", placeholder: "" },
+              { label: "Testing parameter", name: "testing_parameter", placeholder: "" },
+              { label: "Consumption Period", name: "consumption_period", placeholder: "" },
+            ].map((field) => (
+              <div key={field.name}>
+                <label className="block font-semibold mb-1">
+                  {field.label} <span className="text-red-500">*</span>
+                </label>  
+                {/* <input
+                  type="text"
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  className="w-full border rounded px-3 py-1"
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  required
+                /> */}
+                {field.name === "instrument_name" ? (
+                  <select
+                    name="instrument_name"
+                    className="w-full border rounded px-3 py-2"
+                    value={formData.instrument_name}
+                    onChange={handleChange}
+                    required
+                  >
+                    {/* <option value="">Select Instrument</option> */}
+
+                    {instruments.map((instrument) => (
+                      <option key={instrument.instrument_id} value={instrument.intrument_id}>
+                        {instrument.instrument_name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    className="w-full border rounded px-3 py-1"
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                    required
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4">
+            <label className="block font-semibold mb-1">
+              Description About Issue <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              rows="4"
+              name="issue_description"
+              placeholder="Need to clean the lens"
+              className="w-full border rounded px-3 py-2"
+              value={formData.issue_description}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        </div>
+
+        {/* ----------------- Buttons ----------------- */}
+        <div className="flex flex-col md:flex-row gap-4 mt-6">
+          <button
+            type="reset"
+            onClick={onBack}
+            className="w-full md:w-1/2 border rounded py-2 font-semibold hover:bg-gray-100 hover:cursor-pointer"
+          >
+            Clear Details
+          </button>
+
+          <button
+            type="submit"
+            className="w-full md:w-1/2 bg-orange-400 text-white font-semibold py-2 rounded hover:bg-orange-500 transition flex items-center justify-center"
+            disabled={loading} // ✅ disable button when loading
+          >
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                Sending...
+              </>
+            ) : (
+              "Send a Service Request"
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
