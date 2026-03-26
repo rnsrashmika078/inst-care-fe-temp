@@ -7,6 +7,12 @@ export default function RequestHistoryTable() {
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
 
+  // Review states
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewStatus, setReviewStatus] = useState("");
+
   useEffect(() => {
     if (!techId) return;
 
@@ -28,7 +34,6 @@ export default function RequestHistoryTable() {
           }
         );
         console.log(response);
-
 
         const data = await response.json();
         console.log(data);
@@ -55,6 +60,47 @@ export default function RequestHistoryTable() {
 
     fetchServiceRequests();
   }, [techId]);
+
+  // Reset review form when modal opens with a new job
+  useEffect(() => {
+    if (selectedJob) {
+      setRating(0);
+      setReviewText("");
+      setReviewStatus("");
+    }
+  }, [selectedJob]);
+
+  const submitReview = async () => {
+    if (!selectedJob || !rating || !reviewText.trim()) return;
+
+    setIsSubmittingReview(true);
+    setReviewStatus("");
+
+    try {
+      const response = await fetch(
+        `http://localhost/instrument-care-back-end/public/service-request/rate/${selectedJob.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
+          },
+          body: JSON.stringify({ rate: rating, review: reviewText }),
+        }
+      );
+
+      if (response.ok) {
+        setReviewStatus("Review submitted successfully!");
+      } else {
+        setReviewStatus("Error submitting review. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setReviewStatus("Error connecting to server. Please try again.");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   return (
     <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins">
@@ -163,10 +209,67 @@ export default function RequestHistoryTable() {
                 </span>
               </p>
             </div>
-            <div className="flex justify-end mt-6">
+
+            {/* Rate & Review Section (Only for Completed jobs) */}
+            {selectedJob.status === "Completed" && (
+              <div className="mt-6 border-t pt-4">
+                <h3 className="font-bold text-lg mb-2">Rate & Review Technician</h3>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-3">
+                  <div className="flex items-center">
+                    <span className="mr-3 font-semibold text-gray-700">Rating:</span>
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => setRating(star)}
+                          className={`text-3xl transition ${
+                            rating >= star ? "text-yellow-400" : "text-gray-300 hover:text-yellow-200"
+                          }`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <textarea
+                  className="w-full border rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3"
+                  rows="3"
+                  placeholder="Share your experience working with this technician..."
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  disabled={reviewStatus === "Review submitted successfully!"}
+                ></textarea>
+
+                <div className="flex justify-between items-center">
+                  <span
+                    className={`font-semibold ${
+                      reviewStatus.includes("successfully")
+                        ? "text-green-600"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {reviewStatus}
+                  </span>
+                  
+                  {reviewStatus !== "Review submitted successfully!" && (
+                    <button
+                      onClick={submitReview}
+                      disabled={isSubmittingReview || rating === 0 || !reviewText.trim()}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold shadow transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end mt-6 border-t pt-4">
               <button
                 onClick={() => setSelectedJob(null)}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="bg-gray-500 text-white px-5 py-2 rounded hover:bg-gray-600 transition"
               >
                 Close
               </button>

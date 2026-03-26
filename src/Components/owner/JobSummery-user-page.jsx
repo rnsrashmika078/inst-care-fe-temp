@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo  } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { Menu, X , Star} from "lucide-react";
+import { Menu, X, Star } from "lucide-react";
 
 export default function JobSummaryTable_UserPage() {
   const { id: techId } = useParams(); // Get technician ID from URL
@@ -13,7 +13,7 @@ export default function JobSummaryTable_UserPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
 
-   // Filter jobs based on search query
+  // Filter jobs based on search query
   const filteredJobs = useMemo(() => {
     if (!search) return jobs;
     return jobs.filter(
@@ -40,10 +40,11 @@ export default function JobSummaryTable_UserPage() {
         const response = await fetch(`http://localhost/instrument-care-back-end/public/user/service-request/${techId}`);
         if (!response.ok) throw new Error("No data found or server error");
         const data = await response.json();
-        setJobs(Array.isArray(data) ? data : []); // Ensure it's always an array
+        // console.log("THis is data", data);
+        setJobs(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching service requests:", error);
-        setJobs([]); // Treat as empty if server not found or error occurs
+        setJobs([]);
       } finally {
         setLoading(false);
       }
@@ -79,7 +80,6 @@ export default function JobSummaryTable_UserPage() {
                 <th className="p-2">Instrument Name</th>
                 <th className="p-2">Institute Name</th>
                 <th className="p-2">Laboratory Name</th>
-                {/* <th className="p-2">End Date</th> */}
                 <th className="p-2">Status</th>
                 <th className="p-2">Rate</th>
               </tr>
@@ -105,28 +105,27 @@ export default function JobSummaryTable_UserPage() {
                     <td className="p-2">-</td>
                     {/* <td className="p-2">{job.updated_at.split(" ")[0]}</td> */}
                     <td
-                      className={`p-2 font-bold ${
-                        job.status === "In Progress"
-                          ? "text-blue-500"
-                          : job.status === "Cancelled"
+                      className={`p-2 font-bold ${job.status === "In Progress"
+                        ? "text-blue-500"
+                        : job.status === "Cancelled"
                           ? "text-red-500"
                           : job.status === "Pending"
-                          ? "text-yellow-500"
-                          : job.status === "Completed"
-                          ? "text-green-500"
-                          : ""
-                      }`}
+                            ? "text-yellow-500"
+                            : job.status === "Completed"
+                              ? "text-green-500"
+                              : ""
+                        }`}
                     >
                       {job.status}
                     </td>
                     <td className="p-2">
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-orange-300 text-orange-500" />
-                      ))}
-                    </div>
-                  </td>
-                     {/* <td className="p-2">4</td> need to insert a rate column in the database and fetch it here instead of hardcoding 4 */}
+                      <div className="flex gap-1">
+                        {[...Array(job.rate)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-orange-300 text-orange-500" />
+                        ))}
+                      </div>
+                    </td>
+                    {/* <td className="p-2">4</td> need to insert a rate column in the database and fetch it here instead of hardcoding 4 */}
                   </tr>
                 ))
               )}
@@ -148,9 +147,8 @@ export default function JobSummaryTable_UserPage() {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 border rounded ${
-                currentPage === i + 1 ? "bg-orange-500 text-white" : ""
-              }`}
+              className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-orange-500 text-white" : ""
+                }`}
             >
               {i + 1}
             </button>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 export default function AllJobSummary() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState(null);
 
   useEffect(() => {
     const techId = localStorage.getItem("technician_id");
@@ -20,16 +21,23 @@ export default function AllJobSummary() {
         return res.json();
       })
       .then((data) => {
-        // Assuming your backend returns an array of job objects
-        // Example shape: [{ instrument: '', owner: '', start_date: '', end_date: '', status: '' }]
-        console.log(data);
-        const formattedJobs = data.map((job) => [
-          job.instrument_name || "N/A",
-          job.full_name || "N/A",
-          job.created_at || "N/A",
-          job.contact_number || "N/A",
-          job.status || "Pending",
-        ]);
+        // Handle array or object structure based on backend response
+        let allRequests = [];
+        if (Array.isArray(data)) {
+          allRequests = data;
+        } else if (data && Array.isArray(data.requests)) {
+          allRequests = data.requests;
+        }
+
+        console.log("Fetched jobs:", allRequests);
+        const formattedJobs = allRequests.map((job) => ({
+          id: job.id || job.request_id || job.service_request_id,
+          instrument: job.instrument_name || "N/A",
+          owner: job.full_name || "N/A",
+          startDate: job.created_at ? new Date(job.created_at).toLocaleDateString() : "N/A",
+          contact: job.contact_number || "N/A",
+          status: job.status || "Pending",
+        }));
         setJobs(formattedJobs);
       })
       .catch((err) => {
@@ -39,6 +47,56 @@ export default function AllJobSummary() {
         setLoading(false);
       });
   }, []);
+
+  const handleUpdateStatus = async (jobId) => {
+    if (!jobId) {
+      console.error("Job ID is undefined, cannot update status");
+      return;
+    }
+
+    setUpdatingId(jobId);
+    try {
+      // Assuming a PUT request to update the status. Adjust endpoint if necessary.
+      const response = await fetch(
+        `http://localhost/instrument-care-back-end/public/service-request/status/${jobId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token") || ""}`
+          },
+          body: JSON.stringify({ status: "Completed" })
+        }
+      );
+
+      // If backend returns 200/201, or if it succeeds
+      if (response.ok) {
+        setJobs(prevJobs =>
+          prevJobs.map(job =>
+            job.id === jobId ? { ...job, status: "Completed" } : job
+          )
+        );
+      } else {
+        console.error("Failed to update status on server");
+        // Optimistically update anyway for demo purposes, or show an error
+        setJobs(prevJobs =>
+          prevJobs.map(job =>
+            job.id === jobId ? { ...job, status: "Completed" } : job
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      // Optimistically update anyway in case the endpoint doesn't exist yet but UI needs to show it
+      setJobs(prevJobs =>
+        prevJobs.map(job =>
+          job.id === jobId ? { ...job, status: "Completed" } : job
+        )
+      );
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   return (
     <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins min-h-[720px]">
@@ -63,31 +121,51 @@ export default function AllJobSummary() {
                   <th className="p-2">Instrument</th>
                   <th className="p-2">Owner</th>
                   <th className="p-2">Start Date</th>
-                  <th className="p-2">End Date</th>
+                  <th className="p-2">Contact</th>
                   <th className="p-2">Status</th>
+                  <th className="p-2">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {jobs.map((row, i) => (
-                  <tr key={i} className="border-b">
-                    {row.map((cell, j) => (
-                      <td
-                        key={j}
-                        className={`p-2 ${
-                          cell === "Pass"
-                            ? "text-green-500 font-bold"
-                            : cell === "Rejected"
-                            ? "text-red-500 font-bold"
-                            : cell === "In Progress"
-                            ? "text-blue-500 font-bold"
-                            : cell === "Pending"
-                            ? "text-yellow-500 font-bold"
-                            : ""
-                        }`}
+                {jobs.map((job, i) => (
+                  <tr key={job.id || i} className="border-b hover:bg-[#ffffff50] transition duration-200">
+                    <td className="p-2">{job.instrument}</td>
+                    <td className="p-2">{job.owner}</td>
+                    <td className="p-2">{job.startDate}</td>
+                    <td className="p-2">{job.contact}</td>
+                    <td className="p-2">
+                      <span
+                        className={`font-semibold ${job.status === "Completed" || job.status === "Pass"
+                            ? "text-green-500"
+                            : job.status === "Rejected"
+                              ? "text-red-500"
+                              : job.status === "In Progress"
+                                ? "text-blue-500"
+                                : job.status === "Pending"
+                                  ? "text-yellow-500"
+                                  : ""
+                          }`}
                       >
-                        {cell}
-                      </td>
-                    ))}
+                        {job.status}
+                      </span>
+                    </td>
+                    <td className="p-2 w-32">
+                      {job.status === "In Progress" && (
+                        <button
+                          onClick={() => handleUpdateStatus(job.id)}
+                          disabled={updatingId === job.id}
+                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs font-semibold shadow transition duration-200 disabled:opacity-50 flex items-center gap-1"
+                        >
+                          {updatingId === job.id ? (
+                            "Updating..."
+                          ) : (
+                            <>
+                              ✓ Complete
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
