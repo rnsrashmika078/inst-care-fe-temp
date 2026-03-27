@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function ServiceRequestReject({
@@ -7,14 +7,65 @@ export default function ServiceRequestReject({
     yourEmail: "",
     subject: "",
     message: "",
+    request_id: null,
   },
-  onBack = () => {},
-  onSend = () => {},
+  onBack = () => { },
+  onSend = () => { },
 }) {
   const [formData, setFormData] = useState(initialFormData);
+  const [loading, setLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
+
+  // ✅ keep form synced when parent data changes
+  useEffect(() => {
+    setFormData(initialFormData);
+  }, [initialFormData]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSend = async () => {
+    const endpoint =
+      "http://localhost/instrument-care-back-end/public/api/send-owner-email-reject";
+
+    const payload = {
+      owner_email: formData.ownerEmail,
+      subject: formData.subject,
+      message: formData.message,
+      request_id: formData.request_id,
+    };
+
+    console.log("📤 Sending email payload:", JSON.stringify(payload, null, 2));
+
+    try {
+      setLoading(true);
+      setStatusMessage("");
+
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      console.log("✅ Email send response:", data);
+
+      if (response.ok && data?.success === true) {
+        onSend(data); // send to parent to show success component
+      } else {
+        setStatusMessage(
+          data?.message || "❌ Failed to send email. Please try again."
+        );
+      }
+    } catch (error) {
+      console.error("❌ Error sending email:", error);
+      setStatusMessage("❌ Failed to send email. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,6 +128,16 @@ export default function ServiceRequestReject({
           />
         </div>
 
+        {/* Error / Info Message */}
+        {statusMessage && (
+          <div
+            className={`text-sm mt-2 ${statusMessage.startsWith("✅") ? "text-green-600" : "text-red-600"
+              }`}
+          >
+            {statusMessage}
+          </div>
+        )}
+
         <hr className="mt-4" />
 
         {/* Buttons */}
@@ -86,16 +147,18 @@ export default function ServiceRequestReject({
               type="button"
               onClick={onBack}
               className="bg-red-500 hover:bg-red-400 text-white px-6 py-2 rounded-md font-semibold w-md"
+              disabled={loading}
             >
               Back
             </button>
           </Link>
           <button
             type="button"
-            onClick={() => onSend(formData)}
-            className="bg-green-500 hover:bg-green-400 text-white px-6 py-2 rounded-md font-semibold w-md"
+            onClick={handleSend}
+            className="bg-green-500 hover:bg-green-400 text-white px-6 py-2 rounded-md font-semibold w-md disabled:opacity-50"
+            disabled={loading}
           >
-            Send
+            {loading ? "Sending..." : "Send"}
           </button>
         </div>
       </form>

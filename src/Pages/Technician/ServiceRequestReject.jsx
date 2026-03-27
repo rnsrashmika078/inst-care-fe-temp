@@ -32,11 +32,11 @@ export default function Reject_Service_Request() {
       <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
         <Sidebar />
         <main className="flex-1 bg-[#ffffff80] rounded-lg p-4">
-          <h2 className="text-xl font-bold mb-4">Reject Service Request</h2>        
-          <br/>
+          <h2 className="text-xl font-bold mb-4">Reject Service Request</h2>
+          <br />
 
           {!showSuccess ? (
-            <ServiceRequestReject 
+            <ServiceRequestReject
               initialFormData={{
                 ownerEmail: email || "",
                 subject: `Service Request #${request_id || ""} Rejected`,
@@ -44,16 +44,16 @@ export default function Reject_Service_Request() {
                   "Dear Customer, your service request has been rejected.",
                 request_id: request_id || null,
               }}
-              onSend={handleEmailSuccess} 
+              onSend={handleEmailSuccess}
             />
           ) : (
-            <ServiceRequestRejectSuccess 
-              onBack={() => setShowSuccess(false)} 
+            <ServiceRequestRejectSuccess
+              onBack={() => setShowSuccess(false)}
               responseData={emailResponse}
             />
           )}
 
-          <br/>
+          <br />
           {/* <ServiceRequestRejectFailed/> */}
         </main>
       </div>

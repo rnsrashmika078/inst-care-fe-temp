@@ -49,54 +49,54 @@ export default function App() {
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/user-registration" element={<UserRegistration />} />
         <Route path="/auth/tech-registration" element={<Technician_Registration />} />
-        <Route path="/auth/verify-email" element={<VerifyEmail/>}/>
-        <Route path="/auth/email-entry-forgot-password" element={<EmailEntryForgotPassword/>}/>
-        <Route path="/auth/email-send-forgot-password" element={<EmailSendForgotPassword/>}/>
-        <Route path="/auth/set-new-password-forgot-password" element={<SetNewPasswordForgotPassword/>}/>
-        <Route path="/auth/password-reseted-forgot-password" element={<PasswordResetedForgotPassword/>}/>
+        <Route path="/auth/verify-email" element={<VerifyEmail />} />
+        <Route path="/auth/email-entry-forgot-password" element={<EmailEntryForgotPassword />} />
+        <Route path="/auth/email-send-forgot-password" element={<EmailSendForgotPassword />} />
+        <Route path="/auth/set-new-password-forgot-password" element={<SetNewPasswordForgotPassword />} />
+        <Route path="/auth/password-reseted-forgot-password" element={<PasswordResetedForgotPassword />} />
 
         {/* ===== Admin Routes (role: 1) ==== */}
         <Route
-          path="/admin/dashboard" 
+          path="/admin/dashboard"
           element={
             <ProtectedRoute allow={[1]}>
-              <Admin_Dashboard/>
+              <Admin_Dashboard />
             </ProtectedRoute>
           }
         />
 
         <Route
-          path="/admin/instrument" 
+          path="/admin/instrument"
           element={
             <ProtectedRoute allow={[1]}>
-              <All_Instruments/>
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route
-          path="/admin/service-requests" 
-          element={
-            <ProtectedRoute allow={[1]}>
-              <All_Service_Requests/>
+              <All_Instruments />
             </ProtectedRoute>
           }
         />
 
         <Route
-          path="/admin/technicians" 
+          path="/admin/service-requests"
           element={
             <ProtectedRoute allow={[1]}>
-              <All_Technicians/>
+              <All_Service_Requests />
             </ProtectedRoute>
           }
         />
-          
+
+        <Route
+          path="/admin/technicians"
+          element={
+            <ProtectedRoute allow={[1]}>
+              <All_Technicians />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/admin/owners"
           element={
             <ProtectedRoute allow={[1]}>
-              <All_Users/>
+              <All_Users />
             </ProtectedRoute>
           }
         />
