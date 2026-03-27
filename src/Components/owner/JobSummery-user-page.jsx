@@ -120,9 +120,11 @@ export default function JobSummaryTable_UserPage() {
                     </td>
                     <td className="p-2">
                       <div className="flex gap-1">
-                        {[...Array(job.rate)].map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-orange-300 text-orange-500" />
-                        ))}
+                        {job.rate > 0 ? (
+                          [...Array(job.rate)].map((_, i) => (
+                            <Star key={i} className="w-4 h-4 fill-orange-300 text-orange-500" />
+                          ))
+                        ) : null}
                       </div>
                     </td>
                     {/* <td className="p-2">4</td> need to insert a rate column in the database and fetch it here instead of hardcoding 4 */}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {} }) {
+export default function ServiceRequestForm({ onBack = () => { }, onSend = () => { } }) {
   const { id: technicianId } = useParams();
   const [instruments, setInstruments] = useState([]);
 
@@ -58,7 +58,7 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
       technician_id: technicianId,
       user_id: userId,
     };
-  console.log("🚀 Sending service request payload:", JSON.stringify(payload, null, 2));
+    console.log("🚀 Sending service request payload:", JSON.stringify(payload, null, 2));
 
     try {
       setLoading(true); // ✅ start loading
@@ -73,7 +73,7 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
           },
           body: JSON.stringify(payload),
         }
-        
+
       );
 
       const data = await response.json();
@@ -87,30 +87,30 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
   };
 
   useEffect(() => {
-  const fetchInstruments = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost/instrument-care-back-end/public/service-request/${technicianId}/instruments`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
+    const fetchInstruments = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost/instrument-care-back-end/public/service-request/${technicianId}/instruments`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
           }
-        }
-      );
+        );
 
-      if (!response.ok) throw new Error("Failed to fetch instruments");
+        if (!response.ok) throw new Error("Failed to fetch instruments");
 
-      const data = await response.json();
+        const data = await response.json();
 
-      setInstruments(data.instruments || []);
-    } catch (error) {
-      console.error("Error fetching instruments:", error);
-    }
-  };
+        setInstruments(data.instruments || []);
+      } catch (error) {
+        console.error("Error fetching instruments:", error);
+      }
+    };
 
-  fetchInstruments();
-}, [technicianId]);
+    fetchInstruments();
+  }, [technicianId]);
 
   return (
     <div className="w-full mx-auto bg-[#ffffff70] p-6 rounded-md shadow">
@@ -190,7 +190,7 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
               <div key={field.name}>
                 <label className="block font-semibold mb-1">
                   {field.label} <span className="text-red-500">*</span>
-                </label>  
+                </label>
                 {/* <input
                   type="text"
                   name={field.name}
@@ -208,7 +208,7 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
                     onChange={handleChange}
                     required
                   >
-                    {/* <option value="">Select Instrument</option> */}
+                    <option value="">Select Instrument</option>
 
                     {instruments.map((instrument) => (
                       <option key={instrument.instrument_id} value={instrument.intrument_id}>

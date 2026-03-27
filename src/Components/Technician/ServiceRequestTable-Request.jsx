@@ -24,7 +24,7 @@ export default function ServiceRequestTable_Request({ data, onView }) {
             <tr className="border-b">
               <th className="p-2">Instrument</th>
               <th className="p-2">Owner</th>
-              <th className="p-2">Start Date</th>
+              <th className="p-2">Request Date</th>
               <th className="p-2">Contact Number</th>
               <th className="p-2">Action</th>
             </tr>

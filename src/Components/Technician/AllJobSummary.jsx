@@ -34,7 +34,8 @@ export default function AllJobSummary() {
           id: job.id || job.request_id || job.service_request_id,
           instrument: job.instrument_name || "N/A",
           owner: job.full_name || "N/A",
-          startDate: job.created_at ? new Date(job.created_at).toLocaleDateString() : "N/A",
+          startDate: job.start_date ? new Date(job.start_date).toLocaleDateString() : "-",
+          endDate: job.end_date ? new Date(job.end_date).toLocaleDateString() : "-",
           contact: job.contact_number || "N/A",
           status: job.status || "Pending",
         }));
@@ -76,6 +77,7 @@ export default function AllJobSummary() {
             job.id === jobId ? { ...job, status: "Completed" } : job
           )
         );
+        window.location.reload();
       } else {
         console.error("Failed to update status on server");
         // Optimistically update anyway for demo purposes, or show an error
@@ -84,6 +86,7 @@ export default function AllJobSummary() {
             job.id === jobId ? { ...job, status: "Completed" } : job
           )
         );
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error updating status:", error);
@@ -93,8 +96,10 @@ export default function AllJobSummary() {
           job.id === jobId ? { ...job, status: "Completed" } : job
         )
       );
+      window.location.reload();
     } finally {
       setUpdatingId(null);
+      window.location.reload();
     }
   };
 
@@ -120,7 +125,8 @@ export default function AllJobSummary() {
                 <tr className="border-b">
                   <th className="p-2">Instrument</th>
                   <th className="p-2">Owner</th>
-                  <th className="p-2">Start Date</th>
+                  <th className="p-2">Accepted Date</th>
+                  <th className="p-2">Completed Date</th>
                   <th className="p-2">Contact</th>
                   <th className="p-2">Status</th>
                   <th className="p-2">Action</th>
@@ -132,18 +138,19 @@ export default function AllJobSummary() {
                     <td className="p-2">{job.instrument}</td>
                     <td className="p-2">{job.owner}</td>
                     <td className="p-2">{job.startDate}</td>
+                    <td className="p-2">{job.endDate}</td>
                     <td className="p-2">{job.contact}</td>
                     <td className="p-2">
                       <span
                         className={`font-semibold ${job.status === "Completed" || job.status === "Pass"
-                            ? "text-green-500"
-                            : job.status === "Rejected"
-                              ? "text-red-500"
-                              : job.status === "In Progress"
-                                ? "text-blue-500"
-                                : job.status === "Pending"
-                                  ? "text-yellow-500"
-                                  : ""
+                          ? "text-green-500"
+                          : job.status === "Rejected"
+                            ? "text-red-500"
+                            : job.status === "In Progress"
+                              ? "text-blue-500"
+                              : job.status === "Pending"
+                                ? "text-yellow-500"
+                                : ""
                           }`}
                       >
                         {job.status}
@@ -160,7 +167,7 @@ export default function AllJobSummary() {
                             "Updating..."
                           ) : (
                             <>
-                              ✓ Complete
+                              Complete
                             </>
                           )}
                         </button>

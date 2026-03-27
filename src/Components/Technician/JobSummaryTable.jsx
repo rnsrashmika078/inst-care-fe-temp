@@ -30,7 +30,7 @@ export default function JobSummaryTable() {
           job.instrument_name,
           job.full_name,
           job.created_at, // Assuming this is the start date
-          job.updated_at, // Assuming this is the end date (or you can adjust)
+          job.start_date, // Assuming this is the end date (or you can adjust)
           job.status,
         ]);
 
@@ -70,8 +70,8 @@ export default function JobSummaryTable() {
                 <tr className="border-b">
                   <th className="p-2">Instrument</th>
                   <th className="p-2">Owner</th>
-                  <th className="p-2">Start Date</th>
-                  <th className="p-2">End Date</th>
+                  <th className="p-2">Requested Date</th>
+                  <th className="p-2">Accepted Date</th>
                   <th className="p-2">Status</th>
                 </tr>
               </thead>
@@ -81,17 +81,16 @@ export default function JobSummaryTable() {
                     {row.map((cell, j) => (
                       <td
                         key={j}
-                        className={`p-2 ${
-                          cell === "Pass"
-                            ? "text-green-500 font-bold"
-                            : cell === "Rejected"
+                        className={`p-2 ${cell === "Pass"
+                          ? "text-green-500 font-bold"
+                          : cell === "Rejected"
                             ? "text-red-500 font-bold"
                             : cell === "Pending"
-                            ? "text-yellow-500 font-bold"
-                            : cell === "In Progress"
-                            ? "text-blue-500 font-bold"
-                            : ""
-                        }`}
+                              ? "text-yellow-500 font-bold"
+                              : cell === "In Progress"
+                                ? "text-blue-500 font-bold"
+                                : ""
+                          }`}
                       >
                         {cell}
                       </td>

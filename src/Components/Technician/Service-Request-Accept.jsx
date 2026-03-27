@@ -8,8 +8,8 @@ export default function ServiceRequestAccept({
     message: "",
     request_id: null,
   },
-  onBack = () => {},
-  onSend = () => {}, // called when backend returns success
+  onBack = () => { },
+  onSend = () => { }, // called when backend returns success
 }) {
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
@@ -116,9 +116,8 @@ export default function ServiceRequestAccept({
         {/* Error / Info Message */}
         {statusMessage && (
           <div
-            className={`text-sm mt-2 ${
-              statusMessage.startsWith("✅") ? "text-green-600" : "text-red-600"
-            }`}
+            className={`text-sm mt-2 ${statusMessage.startsWith("✅") ? "text-green-600" : "text-red-600"
+              }`}
           >
             {statusMessage}
           </div>
