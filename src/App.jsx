@@ -105,7 +105,7 @@ export default function App() {
         <Route
           path="/tech/dashboard"
           element={
-            <ProtectedRoute allow={[10]}>
+            <ProtectedRoute allow={[1, 10]}>
               <Technician_Dashboard />
             </ProtectedRoute>
           }
@@ -113,7 +113,7 @@ export default function App() {
         <Route
           path="/tech/service-request"
           element={
-            <ProtectedRoute allow={[10]}>
+            <ProtectedRoute allow={[1, 10]}>
               <Service_Request />
             </ProtectedRoute>
           }
@@ -121,7 +121,7 @@ export default function App() {
         <Route
           path="/tech/profile"
           element={
-            <ProtectedRoute allow={[10]}>
+            <ProtectedRoute allow={[1, 10]}>
               <Technician_Profile />
             </ProtectedRoute>
           }
@@ -129,7 +129,7 @@ export default function App() {
         <Route
           path="/tech/all-service-request"
           element={
-            <ProtectedRoute allow={[10]}>
+            <ProtectedRoute allow={[1, 10]}>
               <AllServiceRequestPage />
             </ProtectedRoute>
           }
@@ -137,7 +137,7 @@ export default function App() {
         <Route
           path="/tech/all-job-summary"
           element={
-            <ProtectedRoute allow={[10]}>
+            <ProtectedRoute allow={[1, 10]}>
               <AllJobSummaryPage />
             </ProtectedRoute>
           }
@@ -145,7 +145,7 @@ export default function App() {
         <Route
           path="/tech/accept-service-request"
           element={
-            <ProtectedRoute allow={[10]}>
+            <ProtectedRoute allow={[1, 10]}>
               <Accept_Service_Request />
             </ProtectedRoute>
           }
@@ -153,7 +153,7 @@ export default function App() {
         <Route
           path="/tech/reject-service-request"
           element={
-            <ProtectedRoute allow={[10]}>
+            <ProtectedRoute allow={[1, 10]}>
               <Reject_Service_Request />
             </ProtectedRoute>
           }
@@ -163,7 +163,7 @@ export default function App() {
         <Route
           path="/user/dashboard"
           element={
-            <ProtectedRoute allow={[8]}>
+            <ProtectedRoute allow={[1, 2, 3, 4, 5, 6, 7, 8, 9]}>
               <User_Dashboard />
             </ProtectedRoute>
           }
@@ -171,7 +171,7 @@ export default function App() {
         <Route
           path="/user/view-profile/:id"
           element={
-            <ProtectedRoute allow={[8]}>
+            <ProtectedRoute allow={[1, 2, 3, 4, 5, 6, 7, 8, 9]}>
               <ViewProfile />
             </ProtectedRoute>
           }
@@ -180,7 +180,7 @@ export default function App() {
         <Route
           path="/user/service-request/:id"
           element={
-            <ProtectedRoute allow={[8]}>
+            <ProtectedRoute allow={[1, 2, 3, 4, 5, 6, 7, 8, 9]}>
               <ServiceRequest />
             </ProtectedRoute>
           }
@@ -189,7 +189,7 @@ export default function App() {
         <Route
           path="/user/service-history/:id"
           element={
-            <ProtectedRoute allow={[8]}>
+            <ProtectedRoute allow={[1, 2, 3, 4, 5, 6, 7, 8, 9]}>
               <RequestHistory />
             </ProtectedRoute>
           }
@@ -198,7 +198,7 @@ export default function App() {
         <Route
           path="/user/my-request"
           element={
-            <ProtectedRoute allow={[8]}>
+            <ProtectedRoute allow={[1, 2, 3, 4, 5, 6, 7, 8, 9]}>
               <MyRequest />
             </ProtectedRoute>
           }
