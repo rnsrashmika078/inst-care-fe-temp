@@ -4,7 +4,7 @@ import {
   Home,
   ArrowUpRight,
   SquareArrowOutUpRight,
-  Microscope, 
+  Microscope,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -17,7 +17,7 @@ export default function TechniciansCard({ searchTerm }) {
     const fetchTechnicians = async () => {
       try {
         const response = await fetch(
-          "http://localhost/instrument-care-back-end/public/user/dashboard",
+          "http://localhost/instrument-care-back-end/public/user/dashboard/approved",
           {
             method: "GET",
             headers: {
