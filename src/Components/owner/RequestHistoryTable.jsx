@@ -145,17 +145,16 @@ export default function RequestHistoryTable() {
                     <td className="p-2">{job.created_at?.split(" ")[0]}</td>
                     <td className="p-2">{job.updated_at?.split(" ")[0]}</td>
                     <td
-                      className={`p-2 font-bold ${
-                        job.status === "In Progress"
+                      className={`p-2 font-bold ${job.status === "In Progress"
                           ? "text-blue-500"
-                          : job.status === "Cancelled"
-                          ? "text-red-500"
-                          : job.status === "Pending"
-                          ? "text-yellow-500"
-                          : job.status === "Completed"
-                          ? "text-green-500"
-                          : ""
-                      }`}
+                          : job.status === "Rejected"
+                            ? "text-red-500"
+                            : job.status === "Pending"
+                              ? "text-yellow-500"
+                              : job.status === "Completed"
+                                ? "text-green-500"
+                                : ""
+                        }`}
                     >
                       {job.status}
                     </td>
@@ -193,17 +192,16 @@ export default function RequestHistoryTable() {
               <p className="col-span-2">
                 <strong>Status:</strong>{" "}
                 <span
-                  className={`font-bold ${
-                    selectedJob.status === "In Progress"
+                  className={`font-bold ${selectedJob.status === "In Progress"
                       ? "text-blue-500"
                       : selectedJob.status === "Cancelled"
-                      ? "text-red-500"
-                      : selectedJob.status === "Pending"
-                      ? "text-yellow-500"
-                      : selectedJob.status === "Completed"
-                      ? "text-green-500"
-                      : ""
-                  }`}
+                        ? "text-red-500"
+                        : selectedJob.status === "Pending"
+                          ? "text-yellow-500"
+                          : selectedJob.status === "Completed"
+                            ? "text-green-500"
+                            : ""
+                    }`}
                 >
                   {selectedJob.status}
                 </span>
@@ -222,9 +220,8 @@ export default function RequestHistoryTable() {
                         <button
                           key={star}
                           onClick={() => setRating(star)}
-                          className={`text-3xl transition ${
-                            rating >= star ? "text-yellow-400" : "text-gray-300 hover:text-yellow-200"
-                          }`}
+                          className={`text-3xl transition ${rating >= star ? "text-yellow-400" : "text-gray-300 hover:text-yellow-200"
+                            }`}
                         >
                           ★
                         </button>
@@ -232,7 +229,7 @@ export default function RequestHistoryTable() {
                     </div>
                   </div>
                 </div>
-                
+
                 <textarea
                   className="w-full border rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3"
                   rows="3"
@@ -244,15 +241,14 @@ export default function RequestHistoryTable() {
 
                 <div className="flex justify-between items-center">
                   <span
-                    className={`font-semibold ${
-                      reviewStatus.includes("successfully")
+                    className={`font-semibold ${reviewStatus.includes("successfully")
                         ? "text-green-600"
                         : "text-red-500"
-                    }`}
+                      }`}
                   >
                     {reviewStatus}
                   </span>
-                  
+
                   {reviewStatus !== "Review submitted successfully!" && (
                     <button
                       onClick={submitReview}
