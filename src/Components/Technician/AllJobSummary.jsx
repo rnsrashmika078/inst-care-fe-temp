@@ -51,17 +51,6 @@ export default function AllJobSummary() {
           allRequests = data.requests;
         }
 
-        console.log("Fetched jobs:", allRequests);
-        // const formattedJobs = allRequests.map((job) => ({
-        //   id: job.id || job.request_id || job.service_request_id,
-        //   instrument: job.instrument_name || "N/A",
-        //   owner: job.full_name || "N/A",
-        //   startDate: job.start_date ? new Date(job.start_date).toLocaleDateString() : "-",
-        //   endDate: job.end_date ? new Date(job.end_date).toLocaleDateString() : "-",
-        //   contact: job.contact_number || "N/A",
-        //   status: job.status || "Pending",
-        // }));
-        // setJobs(formattedJobs);
         setJobs(allRequests);
       })
       .catch((err) => {
@@ -171,6 +160,7 @@ export default function AllJobSummary() {
                 <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Completed Date</th>
                 <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Status</th>
                 <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Action</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Feedback</th>
               </tr>
             </thead>
             <tbody>
@@ -203,7 +193,10 @@ export default function AllJobSummary() {
                       <div><span className="font-semibold text-gray-500">Consumption Pd:</span> {job.instrument_consumption_period}</div>
                     </div>
                   </td>
-                  <td className="p-4 border border-gray-200 align-top min-w-[250px] text-gray-800 whitespace-normal leading-relaxed">{job.issue_description}</td>
+                  {/* <td className="p-4 border border-gray-200 align-top max-w-[250px] break-words text-gray-800 whitespace-normal leading-relaxed">{job.issue_description}</td> */}
+                  <td className="p-4 border border-gray-200 align-top max-w-[250px] whitespace-normal break-words text-gray-800 leading-relaxed">
+                    {job.issue_description}
+                  </td>
                   <td className="p-4 border border-gray-200 align-top whitespace-nowrap text-gray-700">{job.created_at}</td>
                   <td className="p-4 border border-gray-200 align-top whitespace-nowrap text-gray-700">{job.start_date}</td>
                   <td className="p-4 border border-gray-200 align-top whitespace-nowrap text-gray-700">{job.end_date}</td>
@@ -233,6 +226,16 @@ export default function AllJobSummary() {
                         {updatingId === job.id ? "Updating..." : "Complete"}
                       </button>
                     )}
+                  </td>
+                  <td className="p-4 border border-gray-200 align-top max-w-[250px] whitespace-normal break-words">
+                    <div className="flex flex-col gap-1.5 text-gray-700">
+                      <div>
+                        <span className="font-semibold text-gray-500">Rate:</span> {job.rate}
+                      </div>
+                      <div className="break-words">
+                        <span className="font-semibold text-gray-500">Review:</span> {job.review}
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ))}

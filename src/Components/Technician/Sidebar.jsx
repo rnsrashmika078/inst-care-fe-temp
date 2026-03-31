@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import profileImage from '../../assets/images/profile-image.jpeg';
+import profileImage from "../../assets/images/profile-image.jpeg";
 
 export default function Sidebar() {
-  const [avatarSrc, setAvatarSrc] = useState(profileImage);
   const [fullName, setFullName] = useState("Untitled Technician");
   const [designation, setDesignation] = useState("Technician");
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -23,9 +23,9 @@ export default function Sidebar() {
             method: "GET",
             headers: token
               ? {
-                  "Accept": "application/json",
-                  "Authorization": `Bearer ${token}`
-                }
+                "Accept": "application/json",
+                "Authorization": `Bearer ${token}`
+              }
               : { "Accept": "application/json" },
           }
         );
@@ -38,14 +38,10 @@ export default function Sidebar() {
 
         const data = await res.json();
 
-        // If backend returns a Cloudinary or other URL in profile_image_url, use it
-        if (data.profile_image_url) {
-          setAvatarSrc(data.profile_image_url);
-        }
-
         // Update name and designation if provided
         if (data.full_name) setFullName(data.full_name);
         if (data.current_designation) setDesignation(data.current_designation);
+        if (data.profile_image) setImage(data.profile_image);
         else if (data.company_designation) setDesignation(data.company_designation);
 
       } catch (err) {
@@ -60,11 +56,11 @@ export default function Sidebar() {
     <aside className="bg-[#ffffff80] text-black rounded-lg w-full md:w-64 flex-shrink-0 flex flex-col justify-between p-4 font-poppins">
       {/* Profile Section */}
       <div className="flex flex-col items-center">
-        <div className="w-20 h-20 rounded-full border-2 border-white flex items-center justify-center text-4xl mb-4">
+        <div className="w-20 h-20 rounded-full border-2 border-white flex items-center justify-center text-4xl mb-4 overflow-hidden bg-white">
           <img
-            src={avatarSrc}
+            src={image ? `http://localhost/instrument-care-back-end/public/${image}` : profileImage}
             alt="Profile"
-            className="h-20 w-20 rounded-full object-cover cursor-pointer border border-gray-300 hover:scale-105 transition-transform"
+            className="h-full w-full object-cover cursor-pointer hover:scale-105 transition-transform"
           />
         </div>
         <h2 className="text-lg font-bold">{fullName}</h2>
@@ -72,24 +68,24 @@ export default function Sidebar() {
         <hr className="w-full border-gray-700 my-4" />
         <nav className="flex flex-col items-center space-y-4 w-full">
 
-            <Link to="/tech/dashboard">
-                {/* <button className="bg-white/40 text-gray-800 hover:bg-white/80 font-bold px-4 py-2 rounded-md w-48"> */}
-                <button className="bg-transparent border border-orange-200 text-orange-500 hover:bg-orange-200 hover:text-orange-700 font-semibold px-4 py-2 rounded-md w-48 transition">
-                    Dashboard
-                </button>
-            </Link>
+          <Link to="/tech/dashboard">
+            {/* <button className="bg-white/40 text-gray-800 hover:bg-white/80 font-bold px-4 py-2 rounded-md w-48"> */}
+            <button className="bg-transparent border border-orange-200 text-orange-500 hover:bg-orange-200 hover:text-orange-700 font-semibold px-4 py-2 rounded-md w-48 transition">
+              Dashboard
+            </button>
+          </Link>
 
-            <Link to="/tech/service-request">
-                <button className="bg-transparent border border-orange-200 text-orange-500 hover:bg-orange-200 hover:text-orange-700 font-semibold px-4 py-2 rounded-md w-48 transition">
-                    Service Request
-                </button>
-            </Link>
+          <Link to="/tech/service-request">
+            <button className="bg-transparent border border-orange-200 text-orange-500 hover:bg-orange-200 hover:text-orange-700 font-semibold px-4 py-2 rounded-md w-48 transition">
+              Service Request
+            </button>
+          </Link>
 
-            <Link to="/tech/profile">
-                <button className="bg-transparent border border-orange-200 text-orange-500 hover:bg-orange-200 hover:text-orange-700 font-semibold px-4 py-2 rounded-md w-48 transition">
-                    My Profile
-                </button>
-            </Link>
+          <Link to="/tech/profile">
+            <button className="bg-transparent border border-orange-200 text-orange-500 hover:bg-orange-200 hover:text-orange-700 font-semibold px-4 py-2 rounded-md w-48 transition">
+              My Profile
+            </button>
+          </Link>
 
         </nav>
       </div>

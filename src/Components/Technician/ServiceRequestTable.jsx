@@ -89,6 +89,9 @@ export default function ServiceRequestTable() {
           </button>
         </Link>
       </div>
+      <div className="mb-2">
+        <p className="text-gray-500 italic text-sm">*Please click on the row if available to view more details</p>
+      </div>
 
       {loading ? (
         <p className="text-gray-500 italic p-4 text-center">

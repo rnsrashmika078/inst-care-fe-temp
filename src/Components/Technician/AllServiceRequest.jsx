@@ -6,6 +6,12 @@ export default function AllServiceRequestTable() {
   const [error, setError] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
 
+  // Search and Filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   useEffect(() => {
     const fetchRequests = async () => {
       try {
@@ -72,10 +78,93 @@ export default function AllServiceRequestTable() {
     }
   };
 
+  const filteredRequests = requests.filter((request) => {
+    // 1. Search filter
+    const searchStr = searchTerm.toLowerCase();
+    const matchesSearch =
+      `SR/${request.id}`.toLowerCase().includes(searchStr) ||
+      (request.full_name || "").toLowerCase().includes(searchStr) ||
+      (request.instrument_name || "").toLowerCase().includes(searchStr) ||
+      (request.physical_address || "").toLowerCase().includes(searchStr);
+
+    // 2. Status filter
+    const matchesStatus =
+      statusFilter === "All" ||
+      (request.status || "").toLowerCase() === statusFilter.toLowerCase();
+
+    // 3. Date filter
+    const reqDate = new Date(request.created_at);
+    reqDate.setHours(0, 0, 0, 0);
+
+    let matchesStartDate = true;
+    if (startDate) {
+      const sDate = new Date(startDate);
+      sDate.setHours(0, 0, 0, 0);
+      matchesStartDate = reqDate >= sDate;
+    }
+
+    let matchesEndDate = true;
+    if (endDate) {
+      const eDate = new Date(endDate);
+      eDate.setHours(0, 0, 0, 0);
+      matchesEndDate = reqDate <= eDate;
+    }
+
+    return matchesSearch && matchesStatus && matchesStartDate && matchesEndDate;
+  });
+
   return (
     <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 mb-6 font-poppins min-h-[780px]">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-lg text-gray-800">All Service Requests</h3>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+        <h3 className="font-bold text-lg text-gray-800 whitespace-nowrap">All Service Requests</h3>
+
+        {/* Search and Filters */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Search */}
+          <input
+            type="text"
+            placeholder="Search request..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+          >
+            <option value="All">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+
+          {/* Date Filters */}
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              title="Start Date"
+            />
+            <span className="text-gray-500">-</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              title="End Date"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <p className="text-gray-500 italic text-sm">*Please click on the row if available to view more details</p>
       </div>
 
       {loading ? (
@@ -88,30 +177,46 @@ export default function AllServiceRequestTable() {
         <p className="text-gray-500 italic p-4 text-center">
           No service requests found.
         </p>
+      ) : filteredRequests.length === 0 ? (
+        <p className="text-gray-500 italic p-4 text-center">
+          No matching service requests found based on your filters.
+        </p>
       ) : (
-        <div className="overflow-x-auto max-h-[720px] overflow-y-auto">
-          <table className="w-full text-left text-sm border-collapse">
-            <thead className="bg-orange-100 sticky top-0">
+        <div className="overflow-x-auto max-h-[720px] overflow-y-auto w-full">
+          <table className="w-full text-left text-sm border-collapse min-w-[800px]">
+            <thead className="bg-orange-100 sticky top-0 z-10 w-full">
               <tr>
-                <th className="p-2">Owner</th>
-                <th className="p-2">Instrument</th>
-                <th className="p-2">Start Date</th>
-                <th className="p-2">Contact Number</th>
+                <th className="p-2 min-w-[100px]">Request ID</th>
+                <th className="p-2 min-w-[150px]">Client Name</th>
+                <th className="p-2 min-w-[150px]">Instrument Name</th>
+                <th className="p-2 min-w-[120px]">Request Date</th>
+                <th className="p-2 min-w-[150px]">Location</th>
+                <th className="p-2 min-w-[120px]">Status</th>
               </tr>
             </thead>
             <tbody>
-              {requests.map((request) => (
+              {filteredRequests.map((request) => (
                 <tr
                   key={request.id}
                   className="border-b cursor-pointer hover:bg-orange-50 transition"
                   onClick={() => handleRowClick(request)}
                 >
+                  <td className="p-2">SR/{request.id}</td>
                   <td className="p-2">{request.full_name}</td>
                   <td className="p-2">{request.instrument_name}</td>
                   <td className="p-2">
                     {new Date(request.created_at).toLocaleDateString()}
                   </td>
-                  <td className="p-2">{request.contact_number}</td>
+                  <td className="p-2">{request.physical_address}</td>
+                  <td className="p-2">
+                    <span
+                      className={`px-2 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                        request.status
+                      )}`}
+                    >
+                      {request.status}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -145,38 +250,96 @@ export default function AllServiceRequestTable() {
 
             {/* Details Table */}
             <div className="overflow-x-auto max-h-[70vh]">
-              <table className="w-full text-left text-sm border-collapse">
+              <table className="w-full text-left text-sm border border-gray-200 rounded-xl overflow-hidden">
                 <tbody>
-                  {Object.entries(selectedRequest).map(([key, value], idx) => {
-                    if (key === "status") {
-                      return (
-                        <tr
-                          key={idx}
-                          className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                        >
-                          <td className="p-3 font-semibold capitalize">{key}</td>
-                          <td className="p-3">
-                            <span
-                              className={`px-2 py-1 rounded-full text-sm font-semibold ${getStatusColor(
-                                value
-                              )}`}
-                            >
-                              {value}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    }
-                    return (
-                      <tr
-                        key={idx}
-                        className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                      >
-                        <td className="p-3 font-semibold capitalize">{key}</td>
-                        <td className="p-3">{value || "N/A"}</td>
-                      </tr>
-                    );
-                  })}
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Request ID</td>
+                    <td className="p-3 text-gray-800 break-words">SR/{selectedRequest.id}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-black w-1/3 ">Client Details</td>
+                    <td className="p-3"></td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Client Name</td>
+                    <td className="p-3">{selectedRequest.full_name}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Email</td>
+                    <td className="p-3">{selectedRequest.email}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Address</td>
+                    <td className="p-3">{selectedRequest.physical_address}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Contact Number</td>
+                    <td className="p-3">{selectedRequest.contact_number}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-black w-1/3">Institute Details</td>
+                    <td className="p-3"></td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Institute Name</td>
+                    <td className="p-3">{selectedRequest.institute_name}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Institute Address</td>
+                    <td className="p-3">{selectedRequest.institute_address}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-black w-1/3">Instrument Details</td>
+                    <td className="p-3"></td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Instrument Name</td>
+                    <td className="p-3">{selectedRequest.instrument_name}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Instrument Brand</td>
+                    <td className="p-3">{selectedRequest.instrument_brand}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Instrument Model</td>
+                    <td className="p-3">{selectedRequest.instrument_model}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Instrument Manufacturer</td>
+                    <td className="p-3">{selectedRequest.instrument_manufacturer}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Manufactured Year</td>
+                    <td className="p-3">{selectedRequest.manufactured_year}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Product Testing Type</td>
+                    <td className="p-3">{selectedRequest.product_testing_type}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Testing Parameter</td>
+                    <td className="p-3">{selectedRequest.testing_parameter}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Consumption Period</td>
+                    <td className="p-3">{selectedRequest.consumption_period}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Problem Description</td>
+                    <td className="p-3">{selectedRequest.issue_description}</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-black w-1/3 ">Feedback</td>
+                    <td className="p-3"></td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Rate</td>
+                    <td className="p-3">{selectedRequest.rate}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50">Review</td>
+                    <td className="p-3">{selectedRequest.review}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>

@@ -39,7 +39,7 @@ export default function ServiceRequestTable_Request({ data, onView }) {
             {pendingRequests.length > 0 ? (
               pendingRequests.map((req, index) => (
                 <tr key={index} className="border-b">
-                  <td className="p-2">{req.id}</td>
+                  <td className="p-2">SR/{req.id}</td>
                   <td className="p-2">{req.full_name}</td>
                   <td className="p-2">{req.instrument_name}</td>
                   <td className="p-2">{req.created_at}</td>

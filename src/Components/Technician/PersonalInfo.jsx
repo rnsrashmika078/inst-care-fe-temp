@@ -1,4 +1,4 @@
-  import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 // import { uploadToCloudinary } from "../utils/cloudinary";
 import profileImage from "../../assets/images/profile-image.jpeg";
 
@@ -52,13 +52,13 @@ export default function PersonalInfo() {
           supervisor_Email: data.supervisor_email || "",
           supervisor_Contact_No: data.supervisor_contact_no || "",
           // profileImagePreview: data.profile_image_url || null,
-          profileImagePreview: data.profile_image ? `http://localhost/instrument-care-back-end/public/${data.profile_image}`: null,
+          profileImagePreview: data.profile_image ? `http://localhost/instrument-care-back-end/public/${data.profile_image}` : null,
           gender: data.gender || "",
           title: data.title || "",
           initials: data.name_with_initials || "",
           district: data.district || "",
         }));
-        
+
       } catch (err) {
         console.error("Failed to fetch profile", err);
       }
@@ -96,57 +96,57 @@ export default function PersonalInfo() {
 
 
   const handleSubmit = async () => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const form = new FormData();
+      const form = new FormData();
 
-    form.append("fullName", formData.fullName);
-    form.append("nic", formData.nic);
-    form.append("address", formData.address);
-    form.append("officePhone", formData.officePhone);
-    form.append("personalNumber", formData.mobilePhone);
-    form.append("email", formData.email);
-    form.append("institute_name", formData.institute_name);
-    form.append("current_designation", formData.designation);
-    form.append("supervisor_name", formData.supervisor_name);
-    form.append("supervisor_Designation", formData.supervisor_Designation);
-    form.append("supervisor_Email", formData.supervisor_Email);
-    form.append("supervisor_Contract_No", formData.supervisor_Contact_No);
-    form.append("gender", formData.gender);
-    form.append("title", formData.title);
-    form.append("initials", formData.initials);
-    form.append("district", formData.district);
+      form.append("fullName", formData.fullName);
+      form.append("nic", formData.nic);
+      form.append("address", formData.address);
+      form.append("officePhone", formData.officePhone);
+      form.append("personalNumber", formData.mobilePhone);
+      form.append("email", formData.email);
+      form.append("institute_name", formData.institute_name);
+      form.append("current_designation", formData.designation);
+      form.append("supervisor_name", formData.supervisor_name);
+      form.append("supervisor_Designation", formData.supervisor_Designation);
+      form.append("supervisor_Email", formData.supervisor_Email);
+      form.append("supervisor_Contract_No", formData.supervisor_Contact_No);
+      form.append("gender", formData.gender);
+      form.append("title", formData.title);
+      form.append("initials", formData.initials);
+      form.append("district", formData.district);
 
-    // Append image file
-    if (formData.profileImage) {
-      form.append("profile_image", formData.profileImage);
-    }
-
-    const res = await fetch(
-      `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
-      {
-        method: "POST", // ⚠️ better for file upload
-        body: form,
+      // Append image file
+      if (formData.profileImage) {
+        form.append("profile_image", formData.profileImage);
       }
-    );
 
-    const result = await res.json();
+      const res = await fetch(
+        `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+        {
+          method: "POST", // ⚠️ better for file upload
+          body: form,
+        }
+      );
 
-    if (res.ok) {
-      alert("Profile updated successfully");
-    } else {
-      alert(result.error || "Update failed");
-      console.error("❌ API Error:", result);
+      const result = await res.json();
+
+      if (res.ok) {
+        alert("Profile updated successfully");
+      } else {
+        alert(result.error || "Update failed");
+        console.error("❌ API Error:", result);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Error updating profile");
+    } finally {
+      setLoading(false);
     }
-
-  } catch (err) {
-    console.error(err);
-    alert("Error updating profile");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="bg-[#ffffff80] shadow-md rounded-xl p-6">
@@ -175,7 +175,7 @@ export default function PersonalInfo() {
 
       {/* Form Fields Grid */}
       <div className="grid md:grid-cols-2 gap-6">
-        
+
         {/* Title */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
@@ -290,7 +290,7 @@ export default function PersonalInfo() {
             <option value="Mullaitivu">Mullaitivu</option>
             <option value="Nuwara Eliya">Nuwara Eliya</option>
             <option value="Polonnaruwa">Polonnaruwa</option>
-            <option value="Puttalam">Puttalam</option>  
+            <option value="Puttalam">Puttalam</option>
             <option value="Ratnapura">Ratnapura</option>
             <option value="Trincomalee">Trincomalee</option>
             <option value="Vavuniya">Vavuniya</option>
@@ -418,12 +418,12 @@ export default function PersonalInfo() {
             className="input w-full"
             maxLength={10}
           />
-      </div>
+        </div>
 
-      
-      
-    </div>
-    <div className="mt-6 flex justify-end">
+
+
+      </div>
+      <div className="mt-6 flex justify-end">
         <button
           onClick={handleSubmit}
           disabled={loading}
