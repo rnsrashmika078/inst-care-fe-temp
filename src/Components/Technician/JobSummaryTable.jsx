@@ -27,10 +27,11 @@ export default function JobSummaryTable() {
 
         // Transform data to match the table structure: [Instrument, Owner, Start Date, End Date, Status]
         const transformedData = data.map((job) => [
-          job.instrument_name,
+          "SR/" + job.id,
           job.full_name,
+          job.instrument_name,
           job.created_at, // Assuming this is the start date
-          job.start_date, // Assuming this is the end date (or you can adjust)
+          job.physical_address, // Assuming this is the end date (or you can adjust)
           job.status,
         ]);
 
@@ -68,10 +69,11 @@ export default function JobSummaryTable() {
             <table className="w-full text-left text-sm border-collapse">
               <thead>
                 <tr className="border-b">
-                  <th className="p-2">Instrument</th>
-                  <th className="p-2">Owner</th>
-                  <th className="p-2">Requested Date</th>
-                  <th className="p-2">Accepted Date</th>
+                  <th className="p-2">Request ID</th>
+                  <th className="p-2">Client Name</th>
+                  <th className="p-2">Instrument Name</th>
+                  <th className="p-2">Request Date</th>
+                  <th className="p-2">Location</th>
                   <th className="p-2">Status</th>
                 </tr>
               </thead>
@@ -89,7 +91,9 @@ export default function JobSummaryTable() {
                               ? "text-yellow-500 font-bold"
                               : cell === "In Progress"
                                 ? "text-blue-500 font-bold"
-                                : ""
+                                : cell === "Completed"
+                                  ? "text-green-500 font-bold"
+                                  : ""
                           }`}
                       >
                         {cell}

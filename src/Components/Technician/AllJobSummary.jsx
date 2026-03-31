@@ -5,6 +5,28 @@ export default function AllJobSummary() {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
 
+  //for search
+  const [search, setSearch] = useState("");
+
+  const filteredJobs = jobs.filter((job) => {
+    const searchTerm = search.toLowerCase();
+    return (
+      (job.id?.toString() || "").includes(searchTerm) ||
+      (job.full_name || "").toLowerCase().includes(searchTerm) ||
+      (job.contact_number || "").toLowerCase().includes(searchTerm) ||
+      (job.email || "").toLowerCase().includes(searchTerm) ||
+      (job.institute_name || "").toLowerCase().includes(searchTerm) ||
+      (job.instrument_name || "").toLowerCase().includes(searchTerm) ||
+      (job.instrument_model || "").toLowerCase().includes(searchTerm) ||
+      (job.instrument_brand || "").toLowerCase().includes(searchTerm) ||
+      (job.instrument_manufacturer || "").toLowerCase().includes(searchTerm) ||
+      (job.instrument_product_testing_type || "").toLowerCase().includes(searchTerm) ||
+      (job.instrument_testing_parameter || "").toLowerCase().includes(searchTerm) ||
+      (job.issue_description || "").toLowerCase().includes(searchTerm) ||
+      (job.status || "").toLowerCase().includes(searchTerm)
+    );
+  });
+
   useEffect(() => {
     const techId = localStorage.getItem("technician_id");
     if (!techId) {
@@ -30,16 +52,17 @@ export default function AllJobSummary() {
         }
 
         console.log("Fetched jobs:", allRequests);
-        const formattedJobs = allRequests.map((job) => ({
-          id: job.id || job.request_id || job.service_request_id,
-          instrument: job.instrument_name || "N/A",
-          owner: job.full_name || "N/A",
-          startDate: job.start_date ? new Date(job.start_date).toLocaleDateString() : "-",
-          endDate: job.end_date ? new Date(job.end_date).toLocaleDateString() : "-",
-          contact: job.contact_number || "N/A",
-          status: job.status || "Pending",
-        }));
-        setJobs(formattedJobs);
+        // const formattedJobs = allRequests.map((job) => ({
+        //   id: job.id || job.request_id || job.service_request_id,
+        //   instrument: job.instrument_name || "N/A",
+        //   owner: job.full_name || "N/A",
+        //   startDate: job.start_date ? new Date(job.start_date).toLocaleDateString() : "-",
+        //   endDate: job.end_date ? new Date(job.end_date).toLocaleDateString() : "-",
+        //   contact: job.contact_number || "N/A",
+        //   status: job.status || "Pending",
+        // }));
+        // setJobs(formattedJobs);
+        setJobs(allRequests);
       })
       .catch((err) => {
         console.error("Error fetching job summaries:", err);
@@ -104,80 +127,117 @@ export default function AllJobSummary() {
   };
 
   return (
-    <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins min-h-[720px]">
-      <div className="flex justify-between items-center mb-4">
+    <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins w-full max-w-[1300px] mx-auto h-[calc(100vh-150px)] min-h-[400px] flex flex-col">
+      <div className="flex justify-between items-center mb-4 shrink-0">
         <h3 className="font-bold">All Job Summary</h3>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search records..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            // setCurrentPage(1); 
+          }}
+          className="w-full md:w-3/3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-300"
+        />
+      </div>
+
+
+      <div className="w-full flex-1 overflow-auto bg-white rounded-md border border-gray-200">
         {loading ? (
           <p className="text-gray-500 italic p-4 text-center">
             Loading job summaries...
           </p>
-        ) : jobs.length === 0 ? (
+        ) : filteredJobs.length === 0 ? (
           <p className="text-gray-500 italic p-4 text-center">
-            No job summaries found.
+            No matching job summaries found.
           </p>
         ) : (
-          <div className="max-h-[720px] overflow-y-auto">
-            <table className="w-full text-left text-sm border-collapse">
-              <thead>
-                <tr className="border-b">
-                  <th className="p-2">Instrument</th>
-                  <th className="p-2">Owner</th>
-                  <th className="p-2">Accepted Date</th>
-                  <th className="p-2">Completed Date</th>
-                  <th className="p-2">Contact</th>
-                  <th className="p-2">Status</th>
-                  <th className="p-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {jobs.map((job, i) => (
-                  <tr key={job.id || i} className="border-b hover:bg-[#ffffff50] transition duration-200">
-                    <td className="p-2">{job.instrument}</td>
-                    <td className="p-2">{job.owner}</td>
-                    <td className="p-2">{job.startDate}</td>
-                    <td className="p-2">{job.endDate}</td>
-                    <td className="p-2">{job.contact}</td>
-                    <td className="p-2">
-                      <span
-                        className={`font-semibold ${job.status === "Completed" || job.status === "Pass"
-                          ? "text-green-500"
-                          : job.status === "Rejected"
-                            ? "text-red-500"
-                            : job.status === "In Progress"
-                              ? "text-blue-500"
-                              : job.status === "Pending"
-                                ? "text-yellow-500"
-                                : ""
-                          }`}
+          <table className="w-full text-left text-sm border-collapse min-w-max">
+            <thead className="bg-gray-100 sticky top-0 z-10 shadow-sm">
+              <tr>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Request ID</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Client Name</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Contact Details</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Institute Details</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Instrument Name</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Instrument Details</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Problem Description</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Request Date</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Accepted Date</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Completed Date</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Status</th>
+                <th className="p-3 border border-gray-200 font-semibold whitespace-nowrap">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredJobs.map((job, i) => (
+                <tr key={job.id || i} className="border-b hover:bg-[#ffffff80] transition duration-200">
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap text-gray-800 font-medium">SR/{job.id}</td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap text-gray-800">{job.full_name}</td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap">
+                    <div className="flex flex-col gap-1.5 text-gray-700">
+                      <div><span className="font-semibold text-gray-500">Mobile:</span> {job.contact_number}</div>
+                      <div><span className="font-semibold text-gray-500">Email:</span> {job.email}</div>
+                      <div><span className="font-semibold text-gray-500">Address:</span> {job.physical_address}</div>
+                    </div>
+                  </td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap">
+                    <div className="flex flex-col gap-1.5 text-gray-700">
+                      <div><span className="font-semibold text-gray-500">Name:</span> {job.institute_name}</div>
+                      <div><span className="font-semibold text-gray-500">Address:</span> {job.institute_address}</div>
+                    </div>
+                  </td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap font-medium text-gray-800">{job.instrument_name}</td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap">
+                    <div className="flex flex-col gap-1.5 text-gray-700">
+                      <div><span className="font-semibold text-gray-500">Brand:</span> {job.instrument_brand}</div>
+                      <div><span className="font-semibold text-gray-500">Model:</span> {job.instrument_model}</div>
+                      <div><span className="font-semibold text-gray-500">Manufacturer:</span> {job.instrument_manufacturer}</div>
+                      <div><span className="font-semibold text-gray-500">Manufacture Year:</span> {job.instrument_manufactured_year}</div>
+                      <div><span className="font-semibold text-gray-500">Testing Type:</span> {job.instrument_product_testing_type}</div>
+                      <div><span className="font-semibold text-gray-500">Testing Parameter:</span> {job.instrument_testing_parameter}</div>
+                      <div><span className="font-semibold text-gray-500">Consumption Pd:</span> {job.instrument_consumption_period}</div>
+                    </div>
+                  </td>
+                  <td className="p-4 border border-gray-200 align-top min-w-[250px] text-gray-800 whitespace-normal leading-relaxed">{job.issue_description}</td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap text-gray-700">{job.created_at}</td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap text-gray-700">{job.start_date}</td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap text-gray-700">{job.end_date}</td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap">
+                    <span
+                      className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide ${job.status === "Completed" || job.status === "Pass"
+                        ? "bg-green-100 text-green-700"
+                        : job.status === "Rejected"
+                          ? "bg-red-100 text-red-700"
+                          : job.status === "In Progress"
+                            ? "bg-blue-100 text-blue-700"
+                            : job.status === "Pending"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-gray-100 text-gray-700"
+                        }`}
+                    >
+                      {job.status}
+                    </span>
+                  </td>
+                  <td className="p-4 border border-gray-200 align-top whitespace-nowrap">
+                    {job.status === "In Progress" && (
+                      <button
+                        onClick={() => handleUpdateStatus(job.id)}
+                        disabled={updatingId === job.id}
+                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-semibold shadow transition duration-200 disabled:opacity-50 flex items-center justify-center min-w-[100px]"
                       >
-                        {job.status}
-                      </span>
-                    </td>
-                    <td className="p-2 w-32">
-                      {job.status === "In Progress" && (
-                        <button
-                          onClick={() => handleUpdateStatus(job.id)}
-                          disabled={updatingId === job.id}
-                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs font-semibold shadow transition duration-200 disabled:opacity-50 flex items-center gap-1"
-                        >
-                          {updatingId === job.id ? (
-                            "Updating..."
-                          ) : (
-                            <>
-                              Complete
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        {updatingId === job.id ? "Updating..." : "Complete"}
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>
