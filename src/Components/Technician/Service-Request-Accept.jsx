@@ -77,7 +77,7 @@ export default function ServiceRequestAccept({
         {/* Owner Email */}
         <div className="flex flex-col sm:flex-row sm:items-center">
           <label className="font-semibold w-full sm:w-1/3 mb-1 sm:mb-0">
-            Owner Email Address
+            Client Email Address
           </label>
           <input
             type="email"

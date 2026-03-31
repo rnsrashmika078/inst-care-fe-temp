@@ -79,7 +79,7 @@ export default function ServiceRequestReject({
         {/* Owner Email */}
         <div className="flex flex-col sm:flex-row sm:items-center">
           <label className="font-semibold w-full sm:w-1/3 mb-1 sm:mb-0">
-            Owner Email Address
+            Client Email Address
           </label>
           <input
             type="email"
@@ -90,7 +90,7 @@ export default function ServiceRequestReject({
         </div>
 
         {/* Your Email */}
-        <div className="flex flex-col sm:flex-row sm:items-center">
+        {/* <div className="flex flex-col sm:flex-row sm:items-center">
           <label className="font-semibold w-full sm:w-1/3 mb-1 sm:mb-0">
             Your Email Address
           </label>
@@ -100,7 +100,7 @@ export default function ServiceRequestReject({
             onChange={(e) => handleChange("yourEmail", e.target.value)}
             className="border rounded px-2 py-1 w-full sm:w-2/3"
           />
-        </div>
+        </div> */}
 
         {/* Subject */}
         <div className="flex flex-col sm:flex-row sm:items-center">
