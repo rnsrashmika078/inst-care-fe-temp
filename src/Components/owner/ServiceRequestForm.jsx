@@ -120,14 +120,14 @@ export default function ServiceRequestForm({ onBack = () => { }, onSend = () => 
           <h2 className="text-lg font-semibold mb-4">Personal Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { label: "Full Name", name: "full_name", placeholder: "Avishka Shehan Jayasiri" },
-              { label: "Email Address", name: "email", placeholder: "example@example.com" },
-              { label: "Physical Address", name: "physical_address", placeholder: "Main Road, Pitipana, Homagama" },
-              { label: "Contact Number", name: "contact_number", placeholder: "+94 71 23 45 678" },
+              { label: "Full Name", name: "full_name", placeholder: "" },
+              { label: "Email Address", name: "email", placeholder: "" },
+              { label: "Physical Address", name: "physical_address", placeholder: "" },
+              { label: "Contact Number", name: "contact_number", placeholder: "07XXXXXXXX" },
             ].map((field) => (
               <div key={field.name}>
                 <label className="block font-semibold mb-1">
-                  {field.label} <span className="text-red-500">*</span>
+                  {field.label} <span className="text-red-500"></span>
                 </label>
                 <input
                   type={field.name === "email" ? "email" : "text"}
@@ -150,12 +150,12 @@ export default function ServiceRequestForm({ onBack = () => { }, onSend = () => 
           <h2 className="text-lg font-semibold mb-4">Institute Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { label: "Name", name: "institute_name", placeholder: "National Science Foundation" },
-              { label: "Address", name: "institute_address", placeholder: "46/b De Mel Road, Colombo 07" },
+              { label: "Institute Name", name: "institute_name", placeholder: "" },
+              { label: "Institute Address", name: "institute_address", placeholder: "" },
             ].map((field) => (
               <div key={field.name}>
                 <label className="block font-semibold mb-1">
-                  {field.label} <span className="text-red-500">*</span>
+                  {field.label} <span className="text-red-500"></span>
                 </label>
                 <input
                   type="text"
@@ -178,18 +178,18 @@ export default function ServiceRequestForm({ onBack = () => { }, onSend = () => 
           <h2 className="text-lg font-semibold mb-4">Instrument Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { label: "Name", name: "instrument_name", placeholder: "Microscope" },
-              { label: "Brand", name: "instrument_brand", placeholder: "" },
-              { label: "Model", name: "instrument_model", placeholder: "" },
-              { label: "Manufacturer", name: "instrument_manufacturer", placeholder: "" },
-              { label: "Manufactured Year", name: "manufactured_year", placeholder: "" },
-              { label: "Type of product testing", name: "product_testing_type", placeholder: "" },
-              { label: "Testing parameter", name: "testing_parameter", placeholder: "" },
-              { label: "Consumption Period", name: "consumption_period", placeholder: "" },
+              { label: "Instrument Name", name: "instrument_name", placeholder: "" },
+              { label: "Instrument Brand", name: "instrument_brand", placeholder: "Ex: Hanna Instruments" },
+              { label: "Instrument Model", name: "instrument_model", placeholder: "Ex: HI9813-5" },
+              { label: "Instrument Manufacturer", name: "instrument_manufacturer", placeholder: "Ex: Hanna Instruments" },
+              { label: "Manufactured Year", name: "manufactured_year", placeholder: "Ex: 2026" },
+              { label: "Type of product testing", name: "product_testing_type", placeholder: "Ex: Water Quality Testing" },
+              { label: "Testing parameter", name: "testing_parameter", placeholder: "Ex: pH, EC, TDS" },
+              { label: "Consumption Period", name: "consumption_period", placeholder: "Ex: 1 Year" },
             ].map((field) => (
               <div key={field.name}>
                 <label className="block font-semibold mb-1">
-                  {field.label} <span className="text-red-500">*</span>
+                  {field.label} <span className="text-red-500"></span>
                 </label>
                 {/* <input
                   type="text"
@@ -233,12 +233,12 @@ export default function ServiceRequestForm({ onBack = () => { }, onSend = () => 
 
           <div className="mt-4">
             <label className="block font-semibold mb-1">
-              Description About Issue <span className="text-red-500">*</span>
+              Description About Issue <span className="text-red-500"></span>
             </label>
             <textarea
               rows="4"
               name="issue_description"
-              placeholder="Need to clean the lens"
+              placeholder="Ex: Need to repair the instrument"
               className="w-full border rounded px-3 py-2"
               value={formData.issue_description}
               onChange={handleChange}

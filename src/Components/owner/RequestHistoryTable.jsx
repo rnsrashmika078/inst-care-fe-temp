@@ -108,15 +108,21 @@ export default function RequestHistoryTable() {
         <h3 className="font-bold">Job Summary</h3>
       </div>
 
+      <div className="mb-2">
+        <p className="text-gray-500 italic text-sm">*Please click on the row if available to view more details</p>
+      </div>
+
       <div className="overflow-x-auto">
         <div className="max-h-[540px] overflow-y-auto">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
               <tr className="border-b">
-                <th className="p-2">Instrument</th>
-                <th className="p-2">Owner</th>
-                <th className="p-2">Start Date</th>
-                <th className="p-2">End Date</th>
+                <th className="p-2">Request ID</th>
+                <th className="p-2">Instrument Name</th>
+                <th className="p-2">Problem Description</th>
+                <th className="p-2">Request Date</th>
+                <th className="p-2">Accepted Date</th>
+                <th className="p-2">Completed Date</th>
                 <th className="p-2">Status</th>
               </tr>
             </thead>
@@ -140,20 +146,22 @@ export default function RequestHistoryTable() {
                     className="border-b hover:bg-gray-100 cursor-pointer"
                     onClick={() => setSelectedJob(job)}
                   >
+                    <td className="p-2">SR/{job.id}</td>
                     <td className="p-2">{job.instrument_name}</td>
-                    <td className="p-2">{job.full_name}</td>
+                    <td className="p-2">{job.issue_description}</td>
                     <td className="p-2">{job.created_at?.split(" ")[0]}</td>
-                    <td className="p-2">{job.updated_at?.split(" ")[0]}</td>
+                    <td className="p-2">{job.start_date?.split(" ")[0]}</td>
+                    <td className="p-2">{job.end_date?.split(" ")[0]}</td>
                     <td
                       className={`p-2 font-bold ${job.status === "In Progress"
-                          ? "text-blue-500"
-                          : job.status === "Rejected"
-                            ? "text-red-500"
-                            : job.status === "Pending"
-                              ? "text-yellow-500"
-                              : job.status === "Completed"
-                                ? "text-green-500"
-                                : ""
+                        ? "text-blue-500"
+                        : job.status === "Rejected"
+                          ? "text-red-500"
+                          : job.status === "Pending"
+                            ? "text-yellow-500"
+                            : job.status === "Completed"
+                              ? "text-green-500"
+                              : ""
                         }`}
                     >
                       {job.status}
@@ -178,29 +186,29 @@ export default function RequestHistoryTable() {
               <p><strong>Email:</strong> {selectedJob.email}</p>
               <p><strong>Contact:</strong> {selectedJob.contact_number}</p>
               <p><strong>Address:</strong> {selectedJob.physical_address}</p>
-              <p><strong>Institute:</strong> {selectedJob.institute_name}</p>
+              <p><strong>Institute Name:</strong> {selectedJob.institute_name}</p>
               <p><strong>Institute Address:</strong> {selectedJob.institute_address}</p>
-              <p><strong>Instrument:</strong> {selectedJob.instrument_name}</p>
-              <p><strong>Brand:</strong> {selectedJob.instrument_brand}</p>
-              <p><strong>Model:</strong> {selectedJob.instrument_model}</p>
-              <p><strong>Manufacturer:</strong> {selectedJob.instrument_manufacturer}</p>
-              <p><strong>Year:</strong> {selectedJob.manufactured_year}</p>
-              <p><strong>Testing Type:</strong> {selectedJob.product_testing_type}</p>
+              <p><strong>Instrument Name:</strong> {selectedJob.instrument_name}</p>
+              <p><strong>Instrument Brand:</strong> {selectedJob.instrument_brand}</p>
+              <p><strong>Instrument Model:</strong> {selectedJob.instrument_model}</p>
+              <p><strong>Instrument Manufacturer:</strong> {selectedJob.instrument_manufacturer}</p>
+              <p><strong>ManufacturedYear:</strong> {selectedJob.manufactured_year}</p>
+              <p><strong>Product Testing Type:</strong> {selectedJob.product_testing_type}</p>
               <p><strong>Testing Parameter:</strong> {selectedJob.testing_parameter}</p>
               <p><strong>Consumption Period:</strong> {selectedJob.consumption_period}</p>
-              <p className="col-span-2"><strong>Issue:</strong> {selectedJob.issue_description}</p>
+              <p className="col-span-2"><strong>Problem Description:</strong> {selectedJob.issue_description}</p>
               <p className="col-span-2">
                 <strong>Status:</strong>{" "}
                 <span
                   className={`font-bold ${selectedJob.status === "In Progress"
-                      ? "text-blue-500"
-                      : selectedJob.status === "Cancelled"
-                        ? "text-red-500"
-                        : selectedJob.status === "Pending"
-                          ? "text-yellow-500"
-                          : selectedJob.status === "Completed"
-                            ? "text-green-500"
-                            : ""
+                    ? "text-blue-500"
+                    : selectedJob.status === "Rejected"
+                      ? "text-red-500"
+                      : selectedJob.status === "Pending"
+                        ? "text-yellow-500"
+                        : selectedJob.status === "Completed"
+                          ? "text-green-500"
+                          : ""
                     }`}
                 >
                   {selectedJob.status}
@@ -209,7 +217,7 @@ export default function RequestHistoryTable() {
             </div>
 
             {/* Rate & Review Section (Only for Completed jobs) */}
-            {selectedJob.status === "Completed" && (
+            {selectedJob.status === "Completed" && selectedJob.rate === 0 && (
               <div className="mt-6 border-t pt-4">
                 <h3 className="font-bold text-lg mb-2">Rate & Review Technician</h3>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-3">
@@ -242,8 +250,8 @@ export default function RequestHistoryTable() {
                 <div className="flex justify-between items-center">
                   <span
                     className={`font-semibold ${reviewStatus.includes("successfully")
-                        ? "text-green-600"
-                        : "text-red-500"
+                      ? "text-green-600"
+                      : "text-red-500"
                       }`}
                   >
                     {reviewStatus}

@@ -480,7 +480,7 @@ export default function ProfileCard() {
             ))}
           </div>
         ) : (
-          <span className="text-gray-400 text-xs">N/A</span>
+          <span className="text-gray-400 text-xs">No experience available</span>
         )}
       </div>
 
