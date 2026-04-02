@@ -2,17 +2,17 @@ import { useState, useEffect } from "react";
 
 export default function WorkExperience() {
     const userId = localStorage.getItem("user_id");
-    const [tech_id,setTechId] = useState(null);
+    const [tech_id, setTechId] = useState(null);
 
     const [oldExperience, setOldExperience] = useState([]);
     const [experience, setExperience] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchTechnicianID();
-    },[]);
+    }, []);
 
-    const fetchTechnicianID = async ()=>{
+    const fetchTechnicianID = async () => {
         const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`);
         const data = await res.json();
         setTechId(data.id || null);
@@ -24,7 +24,7 @@ export default function WorkExperience() {
         }
     }, [tech_id]);
 
-    const fetchTechnicianWorkExperience = async ()=>{
+    const fetchTechnicianWorkExperience = async () => {
         try {
             const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/work-experience/${tech_id}`);
             const data = await res.json();
@@ -61,7 +61,7 @@ export default function WorkExperience() {
         try {
             setLoading(true);
             console.log("📤 Sending work experiences:", experience);
-            
+
             const res = await fetch(
                 `http://localhost/instrument-care-back-end/public/tech/profile/work/${tech_id}`,
                 {
@@ -96,23 +96,23 @@ export default function WorkExperience() {
             <h3 className="font-medium mb-3">Previous Experience</h3>
 
             <div className="space-y-3">
-            {oldExperience.map((exp, i) => (
-                <div
-                key={i}
-                className="border rounded-lg p-3 bg-gray-50 hover:bg-gray-100 transition"
-                >
-                <p className="font-medium text-gray-800">{exp.organization_name}</p>
+                {oldExperience.map((exp, i) => (
+                    <div
+                        key={i}
+                        className="border rounded-lg p-3 bg-gray-50 hover:bg-gray-100 transition"
+                    >
+                        <p className="font-medium text-gray-800">{exp.organization_name}</p>
 
-                <p className="text-sm text-gray-600">
-                    {exp.position_title}
-                </p>
+                        <p className="text-sm text-gray-600">
+                            {exp.position_title}
+                        </p>
 
-                <p className="text-xs text-gray-500">
-                    {exp.years_of_experience} years experience ( {exp.start_date} to {exp.end_date} )
-                </p>
-                
-                </div>
-            ))}
+                        <p className="text-xs text-gray-500">
+                            {exp.years_of_experience} years experience ( {exp.start_date} to {exp.end_date} )
+                        </p>
+
+                    </div>
+                ))}
             </div>
 
             {experience.map((exp, i) => (
@@ -154,16 +154,16 @@ export default function WorkExperience() {
                     </div>
 
                     <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
-                    <input
-                        name="end_date"
-                        value={exp.end_date || ""}
-                        onChange={(e) => handleChange(i, e)}
-                        type="date"
-                        placeholder="End Date"
-                        className="border p-2 rounded"
-                    />
-                </div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                        <input
+                            name="end_date"
+                            value={exp.end_date || ""}
+                            onChange={(e) => handleChange(i, e)}
+                            type="date"
+                            placeholder="End Date"
+                            className="border p-2 rounded"
+                        />
+                    </div>
                     {experience.length >= 1 && (
                         <button
                             type="button"
