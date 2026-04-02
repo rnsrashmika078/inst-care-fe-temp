@@ -13,6 +13,30 @@ export default function RequestHistoryTable() {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewStatus, setReviewStatus] = useState("");
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  const filteredJobs = jobs.filter((job) => {
+    const searchLower = searchTerm.toLowerCase();
+    const idMatch = `SR/${job.id}`.toLowerCase().includes(searchLower);
+    const instrumentMatch = job.instrument_name?.toLowerCase().includes(searchLower);
+    const descriptionMatch = job.issue_description?.toLowerCase().includes(searchLower);
+    const statusMatch = job.status?.toLowerCase().includes(searchLower);
+    const requestDateMatch = job.created_at?.toLowerCase().includes(searchLower);
+    const acceptedDateMatch = job.accepted_at?.toLowerCase().includes(searchLower);
+    const completedDateMatch = job.completed_at?.toLowerCase().includes(searchLower);
+
+    const matchesSearch = !searchTerm || idMatch || instrumentMatch || descriptionMatch || statusMatch || requestDateMatch || acceptedDateMatch || completedDateMatch;
+
+    const jobDate = job.created_at?.split(" ")[0] || "";
+    let matchesDate = true;
+    if (fromDate && jobDate < fromDate) matchesDate = false;
+    if (toDate && jobDate > toDate) matchesDate = false;
+
+    return matchesSearch && matchesDate;
+  });
+
   useEffect(() => {
     if (!techId) return;
 
@@ -104,8 +128,33 @@ export default function RequestHistoryTable() {
 
   return (
     <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold">Job Summary</h3>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+        <h3 className="font-bold text-lg">Service Request History</h3>
+        <div className="flex flex-col xl:flex-row gap-3 w-full md:w-auto items-start xl:items-center">
+          <input
+            type="text"
+            placeholder="Search by ID, instrument, status..."
+            className="border px-3 py-2 rounded-md text-sm w-full md:w-64 focus:outline-none focus:ring-1 focus:ring-orange-400"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-600">Request Date</span>
+            <input
+              type="date"
+              className="border px-2 py-1.5 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-orange-400"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+            <span className="text-sm font-medium text-gray-600">To</span>
+            <input
+              type="date"
+              className="border px-2 py-1.5 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-orange-400"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="mb-2">
@@ -129,18 +178,18 @@ export default function RequestHistoryTable() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="text-center text-gray-500 italic p-4">
+                  <td colSpan={7} className="text-center text-gray-500 italic p-4">
                     Loading...
                   </td>
                 </tr>
-              ) : jobs.length === 0 ? (
+              ) : filteredJobs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center text-gray-500 italic p-4">
-                    No job summaries found.
+                  <td colSpan={7} className="text-center text-gray-500 italic p-4">
+                    No matching job summaries found.
                   </td>
                 </tr>
               ) : (
-                jobs.map((job) => (
+                filteredJobs.map((job) => (
                   <tr
                     key={job.id}
                     className="border-b hover:bg-gray-100 cursor-pointer"

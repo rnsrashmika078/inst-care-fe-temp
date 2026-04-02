@@ -10,14 +10,14 @@ import { doFrontendLogout /* or logoutWithBackend */ } from "../auth/Logout";
 export default function Navbar() {
 
   const navigate = useNavigate();
-  
-    const handleLogout = async () => {
-      // EITHER: await logoutWithBackend();   // if you have an API
-      doFrontendLogout();                     // frontend-only
-  
-      // use replace so the Back button won't jump into a protected page
-      navigate("/", { replace: true });
-    };
+
+  const handleLogout = async () => {
+    // EITHER: await logoutWithBackend();   // if you have an API
+    doFrontendLogout();                     // frontend-only
+
+    // use replace so the Back button won't jump into a protected page
+    navigate("/", { replace: true });
+  };
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -50,41 +50,41 @@ export default function Navbar() {
 
           {/* Desktop profile picture & logout */}
           <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
-            
+
 
             {/* Profile picture clickable */}
-              <img
+            {/* <img
                 src={profileImage}
                 alt="Profile"
                 className="h-10 w-10 rounded-full object-cover cursor-pointer border border-gray-300 hover:scale-105 transition-transform"
-              />
+              /> */}
 
             {/* All Service Requests */}
-              <Link to="/user/my-request">
-                <button className="bg-orange-200 text-orange-600 px-4 py-2 rounded-md font-medium hover:bg-orange-300 transition font-poppins cursor-pointer">
-                  My Request
-                </button>
-              </Link>
+            <Link to="/user/my-request">
+              <button className="bg-orange-200 text-orange-600 px-4 py-2 rounded-md font-medium hover:bg-orange-300 transition font-poppins cursor-pointer">
+                My Request
+              </button>
+            </Link>
 
             {/* Log out button */}
 
-              <button
-                className="bg-orange-400 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-500 transition font-poppins cursor-pointer"
-                onClick={handleLogout}
-              >
-                  Log Out
-              </button>
+            <button
+              className="bg-orange-400 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-500 transition font-poppins cursor-pointer"
+              onClick={handleLogout}
+            >
+              Log Out
+            </button>
 
           </div>
 
           {/* Mobile menu icon */}
           <div className="md:hidden flex-shrink-0 flex items-center space-x-2">
             {/* Mobile profile picture clickable */}
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="h-9 w-9 rounded-full object-cover cursor-pointer border border-gray-300 hover:scale-105 transition-transform"
-              />
+            <img
+              src={profileImage}
+              alt="Profile"
+              className="h-9 w-9 rounded-full object-cover cursor-pointer border border-gray-300 hover:scale-105 transition-transform"
+            />
 
             {/* Hamburger menu */}
             <button

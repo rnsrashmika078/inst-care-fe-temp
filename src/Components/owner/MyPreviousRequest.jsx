@@ -5,11 +5,37 @@ export default function MyPreviousRequestHistoryTable() {
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  const filteredJobs = jobs.filter((job) => {
+    const searchLower = searchTerm.toLowerCase();
+    const idMatch = `SR/${job.id}`.toLowerCase().includes(searchLower);
+    const instrumentMatch = (job.instrument_name || "").toLowerCase().includes(searchLower);
+    const descriptionMatch = (job.issue_description || "").toLowerCase().includes(searchLower);
+    const statusMatch = (job.status || "").toLowerCase().includes(searchLower);
+    const techNameMatch = (job.technician_name || "").toLowerCase().includes(searchLower);
+    const requestDateMatch = (job.created_at || "").toLowerCase().includes(searchLower);
+    const acceptedDateMatch = (job.accepted_at || "").toLowerCase().includes(searchLower);
+    const completedDateMatch = (job.completed_at || "").toLowerCase().includes(searchLower);
+
+    const matchesSearch = !searchTerm || idMatch || instrumentMatch || descriptionMatch || statusMatch || techNameMatch || requestDateMatch || acceptedDateMatch || completedDateMatch;
+
+    const jobDate = job.created_at?.split(" ")[0] || "";
+    let matchesDate = true;
+    if (fromDate && jobDate < fromDate) matchesDate = false;
+    if (toDate && jobDate > toDate) matchesDate = false;
+
+    return matchesSearch && matchesDate;
+  });
+
+
   useEffect(() => {
     const fetchServiceRequests = async () => {
       setLoading(true);
       try {
-        const userId = localStorage.getItem("user_id"); // ✅ get logged-in user ID
+        const userId = localStorage.getItem("user_id");
         if (!userId) throw new Error("User not logged in");
 
         const response = await fetch(
@@ -20,7 +46,7 @@ export default function MyPreviousRequestHistoryTable() {
               "Content-Type": "application/json",
               "Authorization": `Bearer ${localStorage.getItem("token")}`,
             },
-            body: JSON.stringify({ user_id: userId }), // ✅ send user_id in body
+            body: JSON.stringify({ user_id: userId }),
           }
         );
 
@@ -30,7 +56,7 @@ export default function MyPreviousRequestHistoryTable() {
           throw new Error(data.error || "No data found or server error");
         }
 
-        // ✅ Support both array and object responses
+
         if (Array.isArray(data)) {
           setJobs(data);
         } else if (data.data && Array.isArray(data.data)) {
@@ -47,12 +73,41 @@ export default function MyPreviousRequestHistoryTable() {
     };
 
     fetchServiceRequests();
-  }, []); // ✅ Removed techId dependency
+  }, []);
 
   return (
     <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold">Job Summary</h3>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+        <h3 className="font-bold text-lg">Service Request History</h3>
+        <div className="flex flex-col xl:flex-row gap-3 w-full md:w-auto items-start xl:items-center">
+          <input
+            type="text"
+            placeholder="Search by ID, instrument, status..."
+            className="border px-3 py-2 rounded-md text-sm w-full md:w-64 focus:outline-none focus:ring-1 focus:ring-orange-400"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-600">Request Date</span>
+            <input
+              type="date"
+              className="border px-2 py-1.5 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-orange-400"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+            <span className="text-sm font-medium text-gray-600">To</span>
+            <input
+              type="date"
+              className="border px-2 py-1.5 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-orange-400"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-2">
+        <p className="text-gray-500 italic text-sm">*Please click on the row if available to view more details</p>
       </div>
 
       <div className="overflow-x-auto">
@@ -60,49 +115,54 @@ export default function MyPreviousRequestHistoryTable() {
           <table className="w-full text-left text-sm border-collapse">
             <thead>
               <tr className="border-b">
-                <th className="p-2">Instrument</th>
-                <th className="p-2">Owner</th>
-                <th className="p-2">Start Date</th>
-                <th className="p-2">End Date</th>
+                <th className="p-2">Request ID</th>
+                <th className="p-2">Instrument Name</th>
+                <th className="p-2">Problem Description</th>
+                <th className="p-2">Technician Name</th>
+                <th className="p-2">Request Date</th>
+                <th className="p-2">Accept Date</th>
+                <th className="p-2">Completed Date</th>
                 <th className="p-2">Status</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="text-center text-gray-500 italic p-4">
+                  <td colSpan={8} className="text-center text-gray-500 italic p-4">
                     Loading...
                   </td>
                 </tr>
-              ) : jobs.length === 0 ? (
+              ) : filteredJobs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center text-gray-500 italic p-4">
-                    No job summaries found.
+                  <td colSpan={8} className="text-center text-gray-500 italic p-4">
+                    No matching job summaries found.
                   </td>
                 </tr>
               ) : (
-                jobs.map((job) => (
+                filteredJobs.map((job) => (
                   <tr
                     key={job.id}
                     className="border-b hover:bg-gray-100 cursor-pointer"
                     onClick={() => setSelectedJob(job)}
                   >
+                    <td className="p-2">SR/{job.id}</td>
                     <td className="p-2">{job.instrument_name}</td>
-                    <td className="p-2">{job.full_name}</td>
+                    <td className="p-2">{job.issue_description}</td>
+                    <td className="p-2">{job.technician_name}</td>
                     <td className="p-2">{job.created_at?.split(" ")[0]}</td>
-                    <td className="p-2">{job.updated_at?.split(" ")[0]}</td>
+                    <td className="p-2">{job.start_date?.split(" ")[0]}</td>
+                    <td className="p-2">{job.end_date?.split(" ")[0]}</td>
                     <td
-                      className={`p-2 font-bold ${
-                        job.status === "In Progress"
-                          ? "text-blue-500"
-                          : job.status === "Cancelled"
+                      className={`p-2 font-bold ${job.status === "In Progress"
+                        ? "text-blue-500"
+                        : job.status === "Cancelled"
                           ? "text-red-500"
                           : job.status === "Pending"
-                          ? "text-yellow-500"
-                          : job.status === "Completed"
-                          ? "text-green-500"
-                          : ""
-                      }`}
+                            ? "text-yellow-500"
+                            : job.status === "Completed"
+                              ? "text-green-500"
+                              : ""
+                        }`}
                     >
                       {job.status}
                     </td>
@@ -122,35 +182,33 @@ export default function MyPreviousRequestHistoryTable() {
               Service Request #{selectedJob.id}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <p><strong>Full Name:</strong> {selectedJob.full_name}</p>
-              <p><strong>Email:</strong> {selectedJob.email}</p>
-              <p><strong>Contact:</strong> {selectedJob.contact_number}</p>
-              <p><strong>Address:</strong> {selectedJob.physical_address}</p>
-              <p><strong>Institute:</strong> {selectedJob.institute_name}</p>
+              <p><strong>Technician Name:</strong> {selectedJob.technician_name}</p>
+              <p><strong>Technician Email:</strong> {selectedJob.technician_email}</p>
+              <p><strong>Technician Contact:</strong> {selectedJob.personal_number}</p>
+              <p><strong>Institute Name:</strong> {selectedJob.institute_name}</p>
               <p><strong>Institute Address:</strong> {selectedJob.institute_address}</p>
-              <p><strong>Instrument:</strong> {selectedJob.instrument_name}</p>
-              <p><strong>Brand:</strong> {selectedJob.instrument_brand}</p>
-              <p><strong>Model:</strong> {selectedJob.instrument_model}</p>
-              <p><strong>Manufacturer:</strong> {selectedJob.instrument_manufacturer}</p>
-              <p><strong>Year:</strong> {selectedJob.manufactured_year}</p>
-              <p><strong>Testing Type:</strong> {selectedJob.product_testing_type}</p>
+              <p><strong>Instrument Name:</strong> {selectedJob.instrument_name}</p>
+              <p><strong>Instrument Brand:</strong> {selectedJob.instrument_brand}</p>
+              <p><strong>Instrument Model:</strong> {selectedJob.instrument_model}</p>
+              <p><strong>Instrument Manufacturer:</strong> {selectedJob.instrument_manufacturer}</p>
+              <p><strong>Manufactured Year:</strong> {selectedJob.manufactured_year}</p>
+              <p><strong>Product Testing Type:</strong> {selectedJob.product_testing_type}</p>
               <p><strong>Testing Parameter:</strong> {selectedJob.testing_parameter}</p>
               <p><strong>Consumption Period:</strong> {selectedJob.consumption_period}</p>
-              <p className="col-span-2"><strong>Issue:</strong> {selectedJob.issue_description}</p>
+              <p className="col-span-2"><strong>Problem Description:</strong> {selectedJob.issue_description}</p>
               <p className="col-span-2">
                 <strong>Status:</strong>{" "}
                 <span
-                  className={`font-bold ${
-                    selectedJob.status === "In Progress"
-                      ? "text-blue-500"
-                      : selectedJob.status === "Cancelled"
+                  className={`font-bold ${selectedJob.status === "In Progress"
+                    ? "text-blue-500"
+                    : selectedJob.status === "Cancelled"
                       ? "text-red-500"
                       : selectedJob.status === "Pending"
-                      ? "text-yellow-500"
-                      : selectedJob.status === "Completed"
-                      ? "text-green-500"
-                      : ""
-                  }`}
+                        ? "text-yellow-500"
+                        : selectedJob.status === "Completed"
+                          ? "text-green-500"
+                          : ""
+                    }`}
                 >
                   {selectedJob.status}
                 </span>
