@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import DefaultProfileImage from "../../assets/images/profile-image.jpeg"; // local default image
+import DefaultProfileImage from "../../assets/images/profile-image.jpeg";
 
 export default function TechniciansCard({ searchTerm }) {
   const [technicians, setTechnicians] = useState([]);
@@ -45,11 +45,10 @@ export default function TechniciansCard({ searchTerm }) {
     const term = (searchTerm || "").toLowerCase();
     return (
       (tech.full_name || "").toLowerCase().includes(term) ||
-      (tech.company_designation || "").toLowerCase().includes(term) ||
+      (tech.current_designation || "").toLowerCase().includes(term) ||
       (tech.bio || "").toLowerCase().includes(term) ||
-      (tech.certificate_name || "").toLowerCase().includes(term) ||
       (tech.institute_name || "").toLowerCase().includes(term) ||
-      (tech.caring_instruments || "").toLowerCase().includes(term)
+      (tech.instruments || "").toLowerCase().includes(term)
     );
   });
 
@@ -61,8 +60,8 @@ export default function TechniciansCard({ searchTerm }) {
             filteredTechnicians.map((tech, index) => {
               // Use profile_image_url if available, otherwise default local image
               const imageUrl =
-                tech.profile_image_url && tech.profile_image_url.trim() !== ""
-                  ? tech.profile_image_url
+                tech.profile_image !== null
+                  ? `http://localhost/instrument-care-back-end/public/${tech.profile_image}`
                   : DefaultProfileImage;
 
               return (
@@ -85,21 +84,21 @@ export default function TechniciansCard({ searchTerm }) {
                         <CheckCircle className="w-4 h-4 text-green-500" />
                       </div>
                       <div className="text-xs font-semibold flex items-center gap-1">
-                        {tech.company_designation || "-"}
+                        {tech.current_designation || "-"}
                       </div>
                     </div>
 
                     <p className="text-gray-400 text-sm mt-1">{tech.bio || "-"}</p>
 
                     <div className="flex flex-col mt-4 text-sm text-gray-400 gap-2">
-                      <div className="flex items-center gap-1">
+                      {/* <div className="flex items-center gap-1">
                         <Award className="w-4 h-4" /> {tech.certificate_name || "-"}
-                      </div>
+                      </div> */}
                       <div className="flex items-center gap-1">
                         <Home className="w-4 h-4" /> {tech.institute_name || "-"}
                       </div>
                       <div className="flex items-center gap-1">
-                        <Microscope className="w-4 h-4" /> {tech.caring_instruments || "-"}
+                        <Microscope className="w-4 h-4" /> {tech.instruments || "-"}
                       </div>
                     </div>
                   </div>
