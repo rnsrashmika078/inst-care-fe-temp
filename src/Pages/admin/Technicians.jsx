@@ -31,10 +31,11 @@ export default function All_Technicians() {
     <>
       <Navbar />
 
-      <div
+      {/* <div
         className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${BG})` }}
-      >
+      > */}
+      <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
         <Admin_Sidebar />
 
         <main className="flex-1 bg-[#ffffff80] rounded-lg p-4">
@@ -43,7 +44,7 @@ export default function All_Technicians() {
           {loading ? (
             <p className="text-center text-gray-500">Loading technicians...</p>
           ) : (
-            <AllTechnicianTable usersData={technicians}/>
+            <AllTechnicianTable usersData={technicians} />
           )}
         </main>
       </div>
