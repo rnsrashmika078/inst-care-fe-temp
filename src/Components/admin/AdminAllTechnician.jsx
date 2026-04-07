@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaEye, FaTrash } from "react-icons/fa";
+import { FaEye, FaTrash, FaTimes, FaCheck } from "react-icons/fa";
 import DefaultProfileImage from "../../assets/images/profile-image.jpeg";
 import ProfileForm from "./TechnicianProfile";
 
@@ -9,50 +9,11 @@ export default function AllTechnicianTable({ usersData }) {
   const [users, setUsers] = useState(initialUsers);
   const [selectedUser, setSelectedUser] = useState(null); // Consolidated view/edit state
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+
   const handleOpenModal = (user) => setSelectedUser({ ...user });
   const handleCloseModal = () => setSelectedUser(null);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setSelectedUser((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSave = async () => {
-    if (!selectedUser?.id) return;
-
-    try {
-      const endpoint = `http://localhost/instrument-care-back-end/public/admin/technicians/${selectedUser.id}`;
-
-      // Exclude attributes we shouldn't send for DB updates directly like this over PUT if unwanted
-      const { id, profile_image_url, ...dataToSend } = selectedUser;
-
-      const response = await fetch(endpoint, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSend),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setUsers((prev) =>
-          prev.map((u) => (u.id === selectedUser.id ? selectedUser : u))
-        );
-        handleCloseModal();
-        alert(result.message || "Technician updated successfully");
-      } else {
-        alert(result.error || "Failed to update technician");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong while updating the technician.");
-    }
-  };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this technician?")) return;
@@ -104,98 +65,112 @@ export default function AllTechnicianTable({ usersData }) {
     }
   };
 
-  const Input = ({ label, ...props }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
-      <input
-        {...props}
-        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 bg-white"
-      />
-    </div>
-  );
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      searchQuery === "" ||
+      Object.values(user).some((value) =>
+        String(value).toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
-  const TextArea = ({ label, ...props }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
-      <textarea
-        {...props}
-        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 bg-white resize-none"
-      />
-    </div>
-  );
+    const matchesStatus = statusFilter === "All" || user.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins min-h-[720px]">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold">All Technicians</h3>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+        <h3 className="font-bold text-lg">All Technicians</h3>
+
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+          <input
+            type="text"
+            placeholder="Search anything..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border border-gray-300 px-4 py-2 rounded-md outline-none focus:border-orange-500 w-full md:w-64 text-sm"
+          />
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="border border-gray-300 px-4 py-2 rounded-md outline-none focus:border-orange-500 text-sm bg-white min-w-[140px]"
+          >
+            <option value="All">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Approved">Approved</option>
+            <option value="Declined">Declined</option>
+          </select>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
-        {users.length === 0 ? (
-          <p className="text-gray-500 italic p-4 text-center">
-            No technicians found.
+        {filteredUsers.length === 0 ? (
+          <p className="text-gray-500 italic p-8 text-center bg-white/50 rounded-lg">
+            No technicians found matching your criteria.
           </p>
         ) : (
           <div className="max-h-[720px] overflow-y-auto">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
-                <tr className="border-b">
-                  <th className="p-2">TechnicianID</th>
-                  <th className="p-2">Full Name</th>
-                  <th className="p-2">Title</th>
-                  <th className="p-2">Email</th>
-                  <th className="p-2">Contact</th>
-                  <th className="p-2">Current Designation</th>
-                  <th className="p-2">Institute/Organization</th>
-                  <th className="p-2">Status</th>
-                  <th className="p-2 text-center">Action</th>
+                <tr className="border-b bg-gray-50/50 sticky top-0">
+                  <th className="p-3 font-semibold">TechnicianID</th>
+                  <th className="p-3 font-semibold">Full Name</th>
+                  <th className="p-3 font-semibold">Title</th>
+                  <th className="p-3 font-semibold">Email</th>
+                  <th className="p-3 font-semibold">Contact</th>
+                  <th className="p-3 font-semibold">Current Designation</th>
+                  <th className="p-3 font-semibold">Institute/Organization</th>
+                  <th className="p-3 font-semibold">Status</th>
+                  <th className="p-3 font-semibold text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map((user, i) => (
-                  <tr key={i} className="border-b hover:bg-white/50 transition">
-                    <td className="p-2 cursor-pointer" onClick={() => handleOpenModal(user)}>{user.id}</td>
-                    <td className="p-2 cursor-pointer" onClick={() => handleOpenModal(user)}>{user.full_name}</td>
-                    <td className="p-2">{user.title}</td>
-                    <td className="p-2">{user.email}</td>
-                    <td className="p-2">{user.personal_number}</td>
-                    <td className="p-2">{user.current_designation}</td>
-                    <td className="p-2">{user.institute_name}</td>
-                    <td className="p-2">
+                {filteredUsers.map((user, i) => (
+                  <tr key={i} className="border-b hover:bg-white/80 transition cursor-pointer">
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.id}</td>
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.full_name}</td>
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.title}</td>
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.email}</td>
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.personal_number}</td>
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.current_designation}</td>
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.institute_name}</td>
+                    <td className="p-3">
                       {user.status === "Submitted" ? (
                         <div className="flex gap-2 items-center">
-                          <span className="px-2 py-1 rounded bg-yellow-500 text-xs font-semibold text-white mr-1">{user.status}</span>
+                          <span className="px-2 py-1 rounded-full bg-yellow-500 text-xs font-semibold text-white mr-1">{user.status}</span>
                           <button
                             onClick={(e) => { e.stopPropagation(); handleStatusUpdate(user.id, "Approved"); }}
                             className="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition"
                           >
-                            Approve
+                            <FaCheck />
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); handleStatusUpdate(user.id, "Declined"); }}
                             className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 transition"
                           >
-                            Decline
+                            <FaTimes />
                           </button>
                         </div>
                       ) : (
-                        <span className={`px-2 py-1 rounded text-xs text-white ${user.status === 'Approved' ? 'bg-green-500' : user.status === 'Declined' ? 'bg-red-500' : 'bg-gray-500'}`}>
+                        <span className={`px-2 py-1.5 rounded-full text-xs font-medium text-white shadow-sm block text-center ${user.status === 'Approved' ? 'bg-green-500' : user.status === 'Declined' ? 'bg-red-500' : 'bg-gray-500'}`}>
                           {user.status}
                         </span>
                       )}
                     </td>
-                    <td className="p-2 flex gap-4 justify-center items-center">
+                    <td className="p-3 flex gap-4 justify-center items-center h-full mt-1.5">
                       <FaEye
-                        className="text-blue-600 cursor-pointer hover:text-blue-800 transition"
+                        className="text-blue-500 hover:text-blue-700 transition transform hover:scale-110"
                         title="View / Edit Details"
                         size={18}
-                        onClick={() => handleOpenModal(user)}
+                        onClick={(e) => { e.stopPropagation(); handleOpenModal(user); }}
                       />
                       <FaTrash
-                        className="text-red-600 cursor-pointer hover:text-red-800 transition"
+                        className="text-red-500 hover:text-red-700 transition transform hover:scale-110"
                         title="Delete Technician"
                         size={18}
-                        onClick={() => handleDelete(user.id)}
+                        onClick={(e) => { e.stopPropagation(); handleDelete(user.id); }}
                       />
                     </td>
                   </tr>
