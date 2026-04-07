@@ -58,7 +58,7 @@ export default function DashboardStats({ technicianId }) {
     };
 
     fetchJobCounts();
-  }, [technicianId]); // Re-run if technicianId prop changes
+  }, [technicianId]);
 
   if (loading) return <div className="text-center py-6">Loading stats...</div>;
   if (error) return <div className="text-center py-6 text-red-500">{error}</div>;

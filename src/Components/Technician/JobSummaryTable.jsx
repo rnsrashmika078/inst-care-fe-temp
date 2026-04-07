@@ -25,13 +25,12 @@ export default function JobSummaryTable() {
 
         const data = await response.json();
 
-        // Transform data to match the table structure: [Instrument, Owner, Start Date, End Date, Status]
         const transformedData = data.map((job) => [
           "SR/" + job.id,
           job.full_name,
           job.instrument_name,
-          job.created_at, // Assuming this is the start date
-          job.physical_address, // Assuming this is the end date (or you can adjust)
+          job.created_at,
+          job.physical_address,
           job.status,
         ]);
 

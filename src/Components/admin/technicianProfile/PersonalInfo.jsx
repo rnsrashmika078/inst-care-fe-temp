@@ -104,7 +104,7 @@ export default function PersonalInfo({ userId }) {
             form.append("supervisor_name", formData.supervisor_name);
             form.append("supervisor_Designation", formData.supervisor_Designation);
             form.append("supervisor_Email", formData.supervisor_Email);
-            form.append("supervisor_Contract_No", formData.supervisor_Contact_No);
+            form.append("supervisor_Contact_No", formData.supervisor_Contact_No);
             form.append("gender", formData.gender);
             form.append("title", formData.title);
             form.append("initials", formData.initials);

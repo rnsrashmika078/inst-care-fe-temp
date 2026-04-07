@@ -38,7 +38,6 @@ export default function ServiceRequestTable() {
           allRequests = data.requests;
         }
 
-        // ✅ Filter only pending requests
         const pendingRequests = allRequests.filter(
           (r) => r.status?.toLowerCase() === "pending"
         );
@@ -63,21 +62,6 @@ export default function ServiceRequestTable() {
     setSelectedRequest(null);
   };
 
-  // Function to get status badge color
-  const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case "pending":
-        return "bg-yellow-200 text-yellow-800";
-      case "completed":
-        return "bg-green-200 text-green-800";
-      case "in progress":
-        return "bg-blue-200 text-blue-800";
-      case "rejected":
-        return "bg-red-200 text-red-800";
-      default:
-        return "bg-gray-200 text-gray-800";
-    }
-  };
 
   return (
     <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 mb-6 font-poppins min-h-[288px]">
@@ -138,18 +122,14 @@ export default function ServiceRequestTable() {
         </div>
       )}
 
-      {/* Modal with Stylish Table */}
       {selectedRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Background */}
           <div
             className="absolute inset-0 bg-[#ffffff50] bg-opacity-50 backdrop-blur-sm transition-opacity"
             onClick={closeModal}
           />
 
-          {/* Modal */}
           <div className="bg-white rounded-3xl shadow-2xl w-11/12 max-w-4xl p-8 z-10 transform scale-95 opacity-0 animate-scale-fade">
-            {/* Header */}
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-3xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
                 Service Request Details
@@ -162,7 +142,6 @@ export default function ServiceRequestTable() {
               </button>
             </div>
 
-            {/* Details Table */}
             <div className="overflow-x-auto max-h-[70vh]">
               <table className="w-full text-left text-sm border border-gray-200 rounded-xl overflow-hidden">
                 <tbody>
@@ -235,7 +214,6 @@ export default function ServiceRequestTable() {
               </table>
             </div>
 
-            {/* Close Button */}
             <div className="mt-6 text-right">
               <button
                 onClick={closeModal}
@@ -248,7 +226,6 @@ export default function ServiceRequestTable() {
         </div>
       )}
 
-      {/* Tailwind Animation */}
       <style>
         {`
           @keyframes scale-fade {

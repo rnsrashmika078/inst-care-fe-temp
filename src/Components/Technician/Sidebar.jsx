@@ -10,11 +10,9 @@ export default function Sidebar() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        // Try to get user id (you already store this when logging in)
         const userId = localStorage.getItem("user_id");
-        if (!userId) return; // nothing to fetch
+        if (!userId) return;
 
-        // If you store a token on login, include it (optional)
         const token = localStorage.getItem("token");
 
         const res = await fetch(
@@ -31,18 +29,14 @@ export default function Sidebar() {
         );
 
         if (!res.ok) {
-          // failed to fetch profile: keep defaults
           console.warn("Failed to fetch sidebar profile:", res.status);
           return;
         }
 
         const data = await res.json();
-
-        // Update name and designation if provided
-        if (data.full_name) setFullName(data.full_name);
-        if (data.current_designation) setDesignation(data.current_designation);
-        if (data.profile_image) setImage(data.profile_image);
-        else if (data.company_designation) setDesignation(data.company_designation);
+        if (data.first_name) setFullName(data.first_name + " " + data.last_name);
+        if (data.designation) setDesignation(data.designation);
+        if (data.picture) setImage(data.picture);
 
       } catch (err) {
         console.error("Error loading profile for sidebar:", err);
@@ -54,7 +48,6 @@ export default function Sidebar() {
 
   return (
     <aside className="bg-[#ffffff80] text-black rounded-lg w-full md:w-64 flex-shrink-0 flex flex-col justify-between p-4 font-poppins">
-      {/* Profile Section */}
       <div className="flex flex-col items-center">
         <div className="w-20 h-20 rounded-full border-2 border-white flex items-center justify-center text-4xl mb-4 overflow-hidden bg-white">
           <img
@@ -69,7 +62,6 @@ export default function Sidebar() {
         <nav className="flex flex-col items-center space-y-4 w-full">
 
           <Link to="/tech/dashboard">
-            {/* <button className="bg-white/40 text-gray-800 hover:bg-white/80 font-bold px-4 py-2 rounded-md w-48"> */}
             <button className="bg-transparent border border-orange-200 text-orange-500 hover:bg-orange-200 hover:text-orange-700 font-semibold px-4 py-2 rounded-md w-48 transition">
               Dashboard
             </button>
@@ -90,7 +82,6 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      {/* Contact Section */}
       <div className="bg-orange-200 text-black rounded-lg p-4 text-sm mt-6">
         <p className="font-bold mb-2 text-center">Contact System Admin</p>
         <div className="flex items-center mb-2">

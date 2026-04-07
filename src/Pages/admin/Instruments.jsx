@@ -32,14 +32,7 @@ export default function All_Instruments() {
     <>
       <Navbar />
 
-      {/* Background Image Wrapper */}
-      <div
-        className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url(${BG})`,
-        }}
-      >
-        {/* Sidebar */}
+      <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
         <Admin_Sidebar />
 
         {/* Main Content */}
