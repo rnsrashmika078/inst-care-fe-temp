@@ -35,9 +35,9 @@ export default function Navbar() {
             method: "GET",
             headers: token
               ? {
-                  "Accept": "application/json",
-                  "Authorization": `Bearer ${token}`
-                }
+                "Accept": "application/json",
+                "Authorization": `Bearer ${token}`
+              }
               : { "Accept": "application/json" }
           }
         );
@@ -64,7 +64,7 @@ export default function Navbar() {
     <nav className="w-full bg-white sticky top-0 z-50">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-2 flex-wrap">
-          
+
           {/* Left Logos */}
           <div className="flex items-center space-x-2 flex-shrink-0">
             <img
@@ -86,16 +86,16 @@ export default function Navbar() {
 
           {/* Desktop Avatar + Logout */}
           <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
-            
-            <Link to="/tech/profile">
+
+            {/* <Link to="/tech/profile">
               <img
                 src={avatarSrc}
                 alt="Profile"
                 className="h-10 w-10 rounded-full object-cover cursor-pointer border border-gray-300 hover:scale-105 transition-transform"
               />
-            </Link>
+            </Link> */}
 
-            <button 
+            <button
               className="bg-orange-400 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-500 transition font-poppins"
               onClick={handleLogout}
             >
@@ -105,7 +105,7 @@ export default function Navbar() {
 
           {/* Mobile Menu */}
           <div className="md:hidden flex-shrink-0 flex items-center space-x-2">
-            
+
             <Link to="/tech/profile">
               <img
                 src={avatarSrc}

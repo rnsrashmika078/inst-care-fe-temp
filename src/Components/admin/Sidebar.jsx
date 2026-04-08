@@ -10,11 +10,9 @@ export default function Admin_Sidebar() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        // Try to get user id (you already store this when logging in)
         const userId = localStorage.getItem("user_id");
-        if (!userId) return; // nothing to fetch
+        if (!userId) return;
 
-        // If you store a token on login, include it (optional)
         const token = localStorage.getItem("token");
 
         const res = await fetch(
@@ -23,27 +21,23 @@ export default function Admin_Sidebar() {
             method: "GET",
             headers: token
               ? {
-                  "Accept": "application/json",
-                  "Authorization": `Bearer ${token}`
-                }
+                "Accept": "application/json",
+                "Authorization": `Bearer ${token}`
+              }
               : { "Accept": "application/json" },
           }
         );
 
         if (!res.ok) {
-          // failed to fetch profile: keep defaults
           console.warn("Failed to fetch sidebar profile:", res.status);
           return;
         }
 
         const data = await res.json();
 
-        // If backend returns a Cloudinary or other URL in profile_image_url, use it
         if (data.profile_image_url) {
           setAvatarSrc(data.profile_image_url);
         }
-
-        // Update name and designation if provided
         if (data.full_name) setFullName(data.full_name);
         if (data.current_designation) setDesignation(data.current_designation);
         else if (data.company_designation) setDesignation(data.company_designation);
@@ -58,7 +52,6 @@ export default function Admin_Sidebar() {
 
   return (
     <aside className="bg-[#ffffff80] text-black rounded-lg w-full md:w-64 flex-shrink-0 flex flex-col justify-between p-4 font-poppins">
-      {/* Profile Section */}
       <div className="flex flex-col items-center">
         <div className="w-20 h-20 rounded-full border-2 border-white flex items-center justify-center text-4xl mb-4">
           <img
@@ -72,35 +65,35 @@ export default function Admin_Sidebar() {
         <hr className="w-full border-gray-700 my-4" />
         <nav className="flex flex-col items-center space-y-4 w-full">
 
-            <Link to="/admin/dashboard">
-                <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
-                    Dashboard
-                </button>
-            </Link>
+          <Link to="/admin/dashboard">
+            <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
+              Dashboard
+            </button>
+          </Link>
 
-            <Link to="/admin/technicians">
-                <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
-                    Technicians
-                </button>
-            </Link>
+          <Link to="/admin/technicians">
+            <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
+              Technicians
+            </button>
+          </Link>
 
-            <Link to="/admin/owners">
+          {/* <Link to="/admin/owners">
                 <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
                     Owners
                 </button>
-            </Link>
+            </Link> */}
 
-            <Link to="/admin/instrument">
-                <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
-                    Instruments
-                </button>
-            </Link>
+          <Link to="/admin/instrument">
+            <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
+              Instruments
+            </button>
+          </Link>
 
-            <Link to="/admin/service-requests">
-                <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
-                    Service Requests
-                </button>
-            </Link>
+          <Link to="/admin/service-requests">
+            <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
+              Service Requests
+            </button>
+          </Link>
 
         </nav>
       </div>

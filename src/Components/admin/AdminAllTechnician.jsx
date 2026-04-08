@@ -130,11 +130,11 @@ export default function AllTechnicianTable({ usersData }) {
                 {filteredUsers.map((user, i) => (
                   <tr key={i} className="border-b hover:bg-white/80 transition cursor-pointer">
                     <td className="p-3" onClick={() => handleOpenModal(user)}>{user.id}</td>
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.full_name}</td>
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.first_name + " " + user.last_name}</td>
                     <td className="p-3" onClick={() => handleOpenModal(user)}>{user.title}</td>
                     <td className="p-3" onClick={() => handleOpenModal(user)}>{user.email}</td>
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.personal_number}</td>
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.current_designation}</td>
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.mobile_number}</td>
+                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.designation}</td>
                     <td className="p-3" onClick={() => handleOpenModal(user)}>{user.institute_name}</td>
                     <td className="p-3">
                       {user.status === "Submitted" ? (

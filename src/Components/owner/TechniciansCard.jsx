@@ -44,8 +44,9 @@ export default function TechniciansCard({ searchTerm }) {
   const filteredTechnicians = technicians.filter((tech) => {
     const term = (searchTerm || "").toLowerCase();
     return (
-      (tech.full_name || "").toLowerCase().includes(term) ||
-      (tech.current_designation || "").toLowerCase().includes(term) ||
+      (tech.first_name || "").toLowerCase().includes(term) ||
+      (tech.last_name || "").toLowerCase().includes(term) ||
+      (tech.designation || "").toLowerCase().includes(term) ||
       (tech.bio || "").toLowerCase().includes(term) ||
       (tech.institute_name || "").toLowerCase().includes(term) ||
       (tech.instruments || "").toLowerCase().includes(term)
@@ -60,8 +61,8 @@ export default function TechniciansCard({ searchTerm }) {
             filteredTechnicians.map((tech, index) => {
               // Use profile_image_url if available, otherwise default local image
               const imageUrl =
-                tech.profile_image !== null
-                  ? `http://localhost/instrument-care-back-end/public/${tech.profile_image}`
+                tech.picture !== null
+                  ? `http://localhost/instrument-care-back-end/public/${tech.picture}`
                   : DefaultProfileImage;
 
               return (
@@ -73,27 +74,24 @@ export default function TechniciansCard({ searchTerm }) {
                     <div className="rounded-2xl overflow-hidden mb-4">
                       <img
                         src={imageUrl}
-                        alt={tech.full_name || "No Name"}
+                        alt={tech.first_name + " " + tech.last_name || "No Name"}
                         className="w-full h-64 object-cover rounded-2xl"
                       />
                     </div>
 
                     <div className="flex items-center justify-between mt-4 text-sm text-white">
                       <div className="text-lg font-semibold flex items-center gap-1">
-                        {tech.full_name || "No Name"}
+                        {tech.first_name + " " + tech.last_name || "No Name"}
                         <CheckCircle className="w-4 h-4 text-green-500" />
                       </div>
                       <div className="text-xs font-semibold flex items-center gap-1">
-                        {tech.current_designation || "-"}
+                        {tech.designation || "-"}
                       </div>
                     </div>
 
                     <p className="text-gray-400 text-sm mt-1">{tech.bio || "-"}</p>
 
                     <div className="flex flex-col mt-4 text-sm text-gray-400 gap-2">
-                      {/* <div className="flex items-center gap-1">
-                        <Award className="w-4 h-4" /> {tech.certificate_name || "-"}
-                      </div> */}
                       <div className="flex items-center gap-1">
                         <Home className="w-4 h-4" /> {tech.institute_name || "-"}
                       </div>

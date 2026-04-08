@@ -21,17 +21,17 @@ export default function All_Service_Requests() {
         }
 
         const data = await response.json();
-
-        // ✅ KEEP EVERYTHING — ADD NOTHING REMOVED
-        const mappedData = data.map((req) => ({
-          ...req, // 🔥 THIS IS THE FIX — FULL RESPONSE OBJECT
-
-          // existing UI fields (unchanged)
-          requesterName: req.full_name,
-          instrument: req.instrument_name,
-          requestedOn: req.created_at?.split(' ')[0],
-          // notes: req.issue_description,
-        }));
+        
+        let mappedData = [];
+        if (Array.isArray(data)) {
+          mappedData = data.map((req) => ({
+            ...req,
+            requesterName: req.full_name || "N/A",
+            instrument: req.instrument_name || "N/A",
+            requestedOn: req.created_at ? req.created_at.split(' ')[0] : "N/A",
+            technicianName: req.first_name ? `${req.first_name} ${req.last_name || ''}`.trim() : "Unassigned",
+          }));
+        }
 
         setRequestsData(mappedData);
         setLoading(false);

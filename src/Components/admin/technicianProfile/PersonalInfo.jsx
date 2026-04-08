@@ -4,11 +4,12 @@ import profileImage from "../../../assets/images/profile-image.jpeg";
 export default function PersonalInfo({ userId }) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        fullName: "",
+        firstName: "",
+        lastName: "",
         nic: "",
         address: "",
-        officePhone: "",
-        mobilePhone: "",
+        mobileNumber: "",
+        phoneNumber: "",
         email: "",
         institute_name: "",
         designation: "",
@@ -16,6 +17,7 @@ export default function PersonalInfo({ userId }) {
         supervisor_Designation: "",
         supervisor_Email: "",
         supervisor_Contact_No: "",
+        picture: null,
         profileImage: null,
         profileImagePreview: null,
         gender: "",
@@ -31,22 +33,22 @@ export default function PersonalInfo({ userId }) {
                     `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`
                 );
                 const data = await res.json();
-                console.log("Fetched profile data:", data.gender);
                 setFormData((prev) => ({
                     ...prev,
-                    fullName: data.full_name || "",
+                    firstName: data.first_name || "",
+                    lastName: data.last_name || "",
                     nic: data.nic || "",
                     address: data.address || "",
-                    officePhone: data.office_phone || "",
-                    mobilePhone: data.personal_number || "",
+                    phoneNumber: data.phone_number || "",
+                    mobileNumber: data.mobile_number || "",
                     email: data.email || "",
                     institute_name: data.institute_name || "",
-                    designation: data.current_designation || "",
+                    designation: data.designation || "",
                     supervisor_name: data.supervisor_name || "",
                     supervisor_Designation: data.supervisor_designation || "",
                     supervisor_Email: data.supervisor_email || "",
                     supervisor_Contact_No: data.supervisor_contact_no || "",
-                    profileImagePreview: data.profile_image ? `http://localhost/instrument-care-back-end/public/${data.profile_image}` : null,
+                    picture: data.picture ? `http://localhost/instrument-care-back-end/public/${data.picture}` : null,
                     gender: data.gender || "",
                     title: data.title || "",
                     initials: data.name_with_initials || "",
@@ -93,14 +95,15 @@ export default function PersonalInfo({ userId }) {
 
             const form = new FormData();
 
-            form.append("fullName", formData.fullName);
+            form.append("firstName", formData.firstName);
+            form.append("lastName", formData.lastName);
             form.append("nic", formData.nic);
             form.append("address", formData.address);
-            form.append("officePhone", formData.officePhone);
-            form.append("personalNumber", formData.mobilePhone);
+            form.append("phoneNumber", formData.phoneNumber);
+            form.append("mobileNumber", formData.mobileNumber);
             form.append("email", formData.email);
             form.append("institute_name", formData.institute_name);
-            form.append("current_designation", formData.designation);
+            form.append("designation", formData.designation);
             form.append("supervisor_name", formData.supervisor_name);
             form.append("supervisor_Designation", formData.supervisor_Designation);
             form.append("supervisor_Email", formData.supervisor_Email);
@@ -111,7 +114,7 @@ export default function PersonalInfo({ userId }) {
             form.append("district", formData.district);
 
             if (formData.profileImage) {
-                form.append("profile_image", formData.profileImage);
+                form.append("picture", formData.profileImage);
             }
 
             const res = await fetch(
@@ -146,7 +149,7 @@ export default function PersonalInfo({ userId }) {
             </div>
             <div className="flex items-center gap-6 mb-6">
                 <img
-                    src={formData.profileImagePreview || profileImage}
+                    src={formData.profileImagePreview || formData.picture || profileImage}
                     alt="profile"
                     className="w-24 h-24 rounded-full object-cover border border-gray-300"
                 />
@@ -194,8 +197,8 @@ export default function PersonalInfo({ userId }) {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                     <input
                         type="text"
-                        name="fullName"
-                        value={formData.fullName}
+                        name="firstName"
+                        value={formData.firstName + " " + formData.lastName}
                         onChange={handleChange}
                         disabled
                         className="input w-full bg-gray-100 cursor-not-allowed"
@@ -227,6 +230,7 @@ export default function PersonalInfo({ userId }) {
                         <option value="Female">Female</option>
                     </select>
                 </div>
+
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
@@ -276,12 +280,13 @@ export default function PersonalInfo({ userId }) {
                     </select>
                 </div>
 
+                {/* Mobile Phone */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Phone</label>
                     <input
                         type="text"
-                        name="mobilePhone"
-                        value={formData.mobilePhone}
+                        name="mobileNumber"
+                        value={formData.mobileNumber}
                         onChange={handleChange}
                         className="input w-full"
                         maxLength="10"
@@ -289,6 +294,21 @@ export default function PersonalInfo({ userId }) {
                     />
                 </div>
 
+                {/* Office Phone */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Land Line Phone</label>
+                    <input
+                        type="text"
+                        name="phoneNumber"
+                        value={formData.phoneNumber}
+                        onChange={handleChange}
+                        className="input w-full"
+                        maxLength="10"
+                        placeholder="0XXXXXXXXX"
+                    />
+                </div>
+
+                {/* Email - Disabled */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input
@@ -316,6 +336,7 @@ export default function PersonalInfo({ userId }) {
                     />
                 </div>
 
+                {/* Designation */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Designation</label>
                     <input
@@ -327,23 +348,12 @@ export default function PersonalInfo({ userId }) {
                     />
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Office Phone</label>
-                    <input
-                        type="text"
-                        name="officePhone"
-                        value={formData.officePhone}
-                        onChange={handleChange}
-                        className="input w-full"
-                        maxLength="10"
-                        placeholder="0XXXXXXXXX"
-                    />
-                </div>
-
+                {/* Supervisor Details Header */}
                 <div className="md:col-span-2">
                     <h3 className="font-semibold text-lg text-gray-800 mt-6">Supervisor Details</h3>
                 </div>
 
+                {/* Supervisor Name */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Name</label>
                     <input
@@ -355,6 +365,7 @@ export default function PersonalInfo({ userId }) {
                     />
                 </div>
 
+                {/* Supervisor Designation */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Designation</label>
                     <input
@@ -366,6 +377,7 @@ export default function PersonalInfo({ userId }) {
                     />
                 </div>
 
+                {/* Supervisor Email */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Email</label>
                     <input
@@ -377,6 +389,7 @@ export default function PersonalInfo({ userId }) {
                     />
                 </div>
 
+                {/* Supervisor Contact Number */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Contact Number</label>
                     <input
@@ -388,6 +401,8 @@ export default function PersonalInfo({ userId }) {
                         maxLength={10}
                     />
                 </div>
+
+
 
             </div>
             <div className="mt-6 flex justify-end">

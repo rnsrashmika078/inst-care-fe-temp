@@ -14,11 +14,6 @@ export default function ViewProfile() {
   return (
     <>
       <Navbar />
-
-      {/* <div
-        className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${BG})` }}
-      > */}
       <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
         <div className="w-full bg-[#ffffff70] p-6 font-poppins rounded-md">
           <h1 className="text-2xl font-bold mb-6">Technical Expertise Profile</h1>

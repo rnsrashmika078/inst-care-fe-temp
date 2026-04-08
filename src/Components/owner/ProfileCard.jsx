@@ -90,7 +90,7 @@ export default function ProfileCard() {
   }, [id]);
 
   useEffect(() => {
-    const fetchInstrumentsCategories = async () => {
+    const fetchLaboratoryCategories = async () => {
       try {
         const response = await fetch(
           `http://localhost/instrument-care-back-end/public/service-request/${id}/laboratory-categories`,
@@ -113,7 +113,7 @@ export default function ProfileCard() {
     };
 
     if (id) {
-      fetchInstrumentsCategories();
+      fetchLaboratoryCategories();
     }
   }, [id]);
 
@@ -161,8 +161,8 @@ export default function ProfileCard() {
   }
 
   // Determine which profile image to show
-  const profileImageUrl = tech.profile_image !== null
-    ? `http://localhost/instrument-care-back-end/public/${tech.profile_image}`
+  const profileImageUrl = tech.picture !== null
+    ? `http://localhost/instrument-care-back-end/public/${tech.picture}`
     : DefaultProfileImage;
 
   // return (
@@ -314,15 +314,15 @@ export default function ProfileCard() {
       <div className="flex items-center gap-4 border-b pb-4">
         <img
           src={profileImageUrl}
-          alt={tech.full_name || "Profile"}
+          alt={tech.first_name + " " + tech.last_name || "Profile"}
           className="h-20 w-20 rounded-full object-cover border border-gray-300 hover:scale-105 transition"
         />
         <div>
           <h2 className="text-lg font-bold">
-            {tech.title} {tech.full_name || "N/A"}
+            {tech.title} {tech.first_name + " " + tech.last_name || "N/A"}
           </h2>
           <p className="text-sm text-gray-500">
-            {tech.current_designation || "-"}
+            {tech.designation || "-"}
           </p>
         </div>
       </div>
@@ -388,7 +388,7 @@ export default function ProfileCard() {
       <div className="bg-white rounded-lg p-4 shadow-sm">
         <h3 className="font-bold mb-2 text-gray-800">Institute</h3>
         <p className="text-sm text-gray-600">
-          {tech.current_designation || "-"} <br />
+          {tech.designation || "-"} <br />
           {tech.institute_name || "-"}
         </p>
       </div>

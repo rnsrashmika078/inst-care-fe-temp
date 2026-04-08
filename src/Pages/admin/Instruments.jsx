@@ -3,12 +3,10 @@ import Navbar from '../../Components/Technician/Navbar'
 import Admin_Sidebar from '../../Components/admin/Sidebar'
 import AllInstrument from '../../Components/admin/AdminAllInstrument';
 import Footer from '../../Components/Common/Footer'
-import BG from '../../assets/images/technician-dashboard-bg-4.jpg';
 
 export default function All_Instruments() {
   const [instruments, setInstruments] = useState([]);
 
-  // ✅ Fetch instruments from backend
   useEffect(() => {
     const fetchInstruments = async () => {
       try {
