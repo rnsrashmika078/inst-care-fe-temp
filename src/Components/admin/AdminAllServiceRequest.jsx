@@ -199,6 +199,9 @@ export default function AdminAllServiceRequest({ requestsData }) {
               className="border border-gray-300 px-3 py-2 rounded outline-none focus:border-blue-500 text-sm"
             />
           </div>
+
+          <label className="font-semibold text-gray-700 bg-white px-3 py-2 rounded-md border text-sm shadow-sm shrink-0">Records: {filteredRequests.length}</label>
+
         </div>
       </div>
 
