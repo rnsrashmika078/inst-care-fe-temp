@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaEye, FaTrash } from "react-icons/fa";
 
 export default function AdminAllServiceRequest({ requestsData }) {
+  const token = sessionStorage.getItem("token");
   const initialRequests = requestsData || [];
 
   const [requests, setRequests] = useState(initialRequests);
@@ -74,6 +75,7 @@ export default function AdminAllServiceRequest({ requestsData }) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify(selectedRequest),
         }
@@ -113,6 +115,10 @@ export default function AdminAllServiceRequest({ requestsData }) {
         `http://localhost/instrument-care-back-end/public/admin/service-request/${id}`,
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
         }
       );
 

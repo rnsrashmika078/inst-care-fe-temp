@@ -11,6 +11,8 @@ export default function ProfileCard() {
   const [workExperiences, setWorkExperiences] = useState([]);
   const [certificates, setCertificates] = useState([]);
 
+  const token = sessionStorage.getItem("token");
+
 
   useEffect(() => {
     const fetchTechnician = async () => {
@@ -19,7 +21,7 @@ export default function ProfileCard() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
+            "Authorization": `Bearer ${token}`
           }
         });
         if (!response.ok) throw new Error("Failed to fetch technician");
@@ -42,7 +44,7 @@ export default function ProfileCard() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`
+              "Authorization": `Bearer ${token}`
             }
           }
         );
@@ -70,7 +72,7 @@ export default function ProfileCard() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`
+              "Authorization": `Bearer ${token}`
             }
           }
         );
@@ -98,7 +100,7 @@ export default function ProfileCard() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`
+              "Authorization": `Bearer ${token}`
             }
           }
         );
@@ -121,7 +123,13 @@ export default function ProfileCard() {
     const fetchTechnicianWorkExperience = async () => {
       try {
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/work-experience/${id}`
+          `http://localhost/instrument-care-back-end/public/tech/work-experience/${id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         const result = await res.json();
         setWorkExperiences(result.data || []);
@@ -140,7 +148,13 @@ export default function ProfileCard() {
     const fetchTechnicianCertificates = async () => {
       try {
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/certificates/${id}`
+          `http://localhost/instrument-care-back-end/public/tech/certificates/${id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         const result = await res.json();
         console.log("From API:", result);
@@ -160,152 +174,11 @@ export default function ProfileCard() {
     return <div className="p-4">Loading profile...</div>;
   }
 
-  // Determine which profile image to show
+
   const profileImageUrl = tech.picture !== null
     ? `http://localhost/instrument-care-back-end/public/${tech.picture}`
     : DefaultProfileImage;
 
-  // return (
-  //   <div className="border rounded-md p-4 flex flex-col gap-4 font-poppins bg-[#ffffff80]">
-  //     {/* Profile Info */}
-  //     <div className="flex items-center gap-4">
-  //       <div className="border rounded-full flex items-center justify-center mb-2">
-  //         <img
-  //           src={profileImageUrl}
-  //           alt={tech.full_name || "Profile"}
-  //           className="h-20 w-20 rounded-full object-cover cursor-pointer border border-gray-300 hover:scale-105 transition-transform"
-  //         />
-  //       </div>
-  //       <div>
-  //         <h2 className="font-bold text-lg">{tech.title} {tech.full_name || "N/A"}</h2>
-  //         <p className="text-gray-500 text-sm">{tech.current_designation || "-"}</p>
-  //       </div>
-  //     </div>
-
-  //     {/* Technical Expertise */}
-  //     <div>
-  //       <h3 className="font-bold">Technical Expertise</h3>
-  //       <ul className="text-sm space-y-2">
-  //         <li className="flex items-start gap-2">
-  //           <span className="font-semibold text-gray-700">
-  //             Instruments Expertise:
-  //           </span>
-  //           <div className="flex flex-wrap gap-2">
-  //             {instruments.length > 0 ? (
-  //               instruments.map((instrument) => (
-  //                 <span
-  //                   key={instrument.id}
-  //                   className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold"
-  //                 >
-  //                   {instrument.instrument_name}
-  //                 </span>
-  //               ))
-  //             ) : (
-  //               <span className="text-gray-500 text-xs">N/A</span>
-  //             )}
-  //           </div>
-  //         </li>
-
-  //         <li className="flex items-start gap-2">
-  //           <span className="font-semibold text-gray-700">
-  //             Instruments Category:
-  //           </span>
-
-  //           <div className="flex flex-wrap gap-2">
-  //             {instrumentsCategories.length > 0 ? (
-  //               instrumentsCategories.map((instrumentCategory) => (
-  //                 <span
-  //                   key={instrumentCategory.id}
-  //                   className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold"
-  //                 >
-  //                   {instrumentCategory.name}
-  //                 </span>
-  //               ))
-  //             ) : (
-  //               <span className="text-gray-500 text-xs">N/A</span>
-  //             )}
-  //           </div>
-  //         </li>
-
-  //         <li className="flex items-start gap-2">
-  //           <span className="font-semibold text-gray-700">
-  //             Laboratory Category:
-  //           </span>
-  //           <div className="flex flex-wrap gap-2">
-  //             {laboratoryCategories.length > 0 ? (
-  //               laboratoryCategories.map((laboratoryCategory) => (
-  //                 <span
-  //                   key={laboratoryCategory.id}
-  //                   className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold"
-  //                 >
-  //                   {laboratoryCategory.name}
-  //                 </span>
-  //               ))
-  //             ) : (
-  //               <span className="text-gray-500 text-xs">N/A</span>
-  //             )}
-  //           </div>
-  //         </li>
-  //       </ul>
-  //     </div>
-  //     <hr />
-
-  //     {/* About */}
-  //     <div>
-  //       <h3 className="font-bold">About</h3>
-  //       <p className="text-sm text-gray-600">{tech.bio || "-"}</p>
-  //     </div>
-  //     <hr />
-
-  //     {/* Qualifications */}
-  //     <div>
-  //       <h3 className="font-bold">Certificates</h3>
-  //       <div className="flex flex-wrap gap-2">
-  //         {certificates.length > 0 ? (
-  //           certificates.map((certificate, i) => (
-  //             <span
-  //               key={i}
-  //               className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold"
-  //             >
-  //               {certificate.oem_company_name} ({certificate.certificate_name}) - {certificate.instrument_name} - {certificate.issue_date} - {certificate.expiry_date}
-  //             </span>
-  //           ))
-  //         ) : (
-  //           <span className="text-gray-500 text-xs">N/A</span>
-  //         )}
-  //       </div>
-  //     </div>
-  //     <hr />
-
-  //     <div>
-  //       <h3 className="font-bold">Institute Details</h3>
-  //       <ul className="text-sm text-gray-600 space-y-1">
-  //         <li className="font-semibold pl-5">{tech.current_designation || "-"}</li>
-  //         <li className="pl-5">{tech.institute_name || "-"}</li>
-  //       </ul>
-  //     </div>
-  //     <hr />
-
-  //     <div>
-  //       <h3 className="font-bold">Experiences</h3>
-  //       <div className="flex flex-wrap gap-2">
-  //         {workExperiences.length > 0 ? (
-  //           workExperiences.map((workExperience, i) => (
-  //             <span
-  //               key={i}
-  //               className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold"
-  //             >
-  //               {workExperience.organization_name} ({workExperience.position_title}) - {workExperience.start_date} to {workExperience.end_date}
-  //             </span>
-  //           ))
-  //         ) : (
-  //           <span className="text-gray-500 text-xs">N/A</span>
-  //         )}
-  //       </div>
-  //     </div>
-
-  //   </div>
-  // );
 
   return (
     <div className="bg-[#ffffff80] rounded-xl shadow-sm p-6 font-poppins flex flex-col gap-6">

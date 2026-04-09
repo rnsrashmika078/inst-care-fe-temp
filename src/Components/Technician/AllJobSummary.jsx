@@ -5,6 +5,8 @@ export default function AllJobSummary() {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
 
+  const token = sessionStorage.getItem("token");
+
   //for search
   const [search, setSearch] = useState("");
 
@@ -28,14 +30,21 @@ export default function AllJobSummary() {
   });
 
   useEffect(() => {
-    const techId = localStorage.getItem("technician_id");
+    const techId = sessionStorage.getItem("technician_id");
     if (!techId) {
-      console.error("Technician ID not found in localStorage");
+      console.error("Technician ID not found in sessionStorage");
       setLoading(false);
       return;
     }
 
-    fetch(`http://localhost/instrument-care-back-end/public/user/service-request/${techId}`)
+    fetch(`http://localhost/instrument-care-back-end/public/user/service-request/${techId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch job summary");
@@ -76,7 +85,7 @@ export default function AllJobSummary() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token") || ""}`
+            "Authorization": `Bearer ${sessionStorage.getItem("token") || ""}`
           },
           body: JSON.stringify({ status: "Completed" })
         }

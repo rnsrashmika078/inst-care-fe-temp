@@ -24,10 +24,10 @@ export default function Navbar() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const userId = localStorage.getItem("user_id");
+        const userId = sessionStorage.getItem("user_id");
         if (!userId) return;
 
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         const res = await fetch(
           `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,

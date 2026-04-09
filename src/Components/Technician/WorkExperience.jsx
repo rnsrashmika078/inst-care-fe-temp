@@ -1,19 +1,28 @@
 import { useState, useEffect } from "react";
 
 export default function WorkExperience() {
-    const userId = localStorage.getItem("user_id");
+    const userId = sessionStorage.getItem("user_id");
     const [tech_id, setTechId] = useState(null);
 
     const [oldExperience, setOldExperience] = useState([]);
     const [experience, setExperience] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const token = sessionStorage.getItem("token");
+
     useEffect(() => {
         fetchTechnicianID();
     }, []);
 
     const fetchTechnicianID = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`);
+        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
         const data = await res.json();
         setTechId(data.id || null);
     };
@@ -26,7 +35,14 @@ export default function WorkExperience() {
 
     const fetchTechnicianWorkExperience = async () => {
         try {
-            const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/work-experience/${tech_id}`);
+            const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/work-experience/${tech_id}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             const data = await res.json();
             setOldExperience(data.data || []);
         } catch (err) {
@@ -66,7 +82,10 @@ export default function WorkExperience() {
                 `http://localhost/instrument-care-back-end/public/tech/profile/work/${tech_id}`,
                 {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
                     body: JSON.stringify({ work_experience: experience })
                 }
             );

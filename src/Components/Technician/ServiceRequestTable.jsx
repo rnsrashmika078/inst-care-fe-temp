@@ -7,10 +7,12 @@ export default function ServiceRequestTable() {
   const [error, setError] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
 
+  const token = sessionStorage.getItem("token");
+
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const techId = localStorage.getItem("technician_id");
+        const techId = sessionStorage.getItem("technician_id");
         if (!techId) {
           setError("Technician ID not found in local storage.");
           setLoading(false);
@@ -22,7 +24,7 @@ export default function ServiceRequestTable() {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -52,7 +54,7 @@ export default function ServiceRequestTable() {
     };
 
     fetchRequests();
-  }, []);
+  }, [token]);
 
   const handleRowClick = (request) => {
     setSelectedRequest(request);

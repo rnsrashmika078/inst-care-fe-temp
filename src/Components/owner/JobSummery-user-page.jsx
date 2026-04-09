@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Menu, X, Star } from "lucide-react";
 
 export default function JobSummaryTable_UserPage() {
+  const token = sessionStorage.getItem("token");
   const { id: techId } = useParams(); // Get technician ID from URL
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +38,12 @@ export default function JobSummaryTable_UserPage() {
 
     const fetchServiceRequests = async () => {
       try {
-        const response = await fetch(`http://localhost/instrument-care-back-end/public/user/service-request/${techId}`);
+        const response = await fetch(`http://localhost/instrument-care-back-end/public/user/service-request/${techId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
         if (!response.ok) throw new Error("No data found or server error");
         const data = await response.json();
         // console.log("THis is data", data);

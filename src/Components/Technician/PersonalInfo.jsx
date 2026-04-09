@@ -26,13 +26,22 @@ export default function PersonalInfo() {
     district: "",
   });
 
-  const userId = localStorage.getItem("user_id");
+  const userId = sessionStorage.getItem("user_id");
+  const token = sessionStorage.getItem("token");
+  console.log("token in PersonalInfo:", token);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`
+          `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
         );
         const data = await res.json();
         setFormData((prev) => ({
@@ -124,6 +133,9 @@ export default function PersonalInfo() {
         {
           method: "POST",
           body: form,
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
         }
       );
 

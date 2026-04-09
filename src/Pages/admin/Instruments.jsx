@@ -6,11 +6,19 @@ import Footer from '../../Components/Common/Footer'
 
 export default function All_Instruments() {
   const [instruments, setInstruments] = useState([]);
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     const fetchInstruments = async () => {
       try {
-        const response = await fetch('http://localhost/instrument-care-back-end/public/admin/instruments');
+        const response = await fetch('http://localhost/instrument-care-back-end/public/admin/instruments',
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
+        );
         const result = await response.json();
 
         if (result.success && Array.isArray(result.data)) {
@@ -24,7 +32,7 @@ export default function All_Instruments() {
     };
 
     fetchInstruments();
-  }, []);
+  }, [token]);
 
   return (
     <>

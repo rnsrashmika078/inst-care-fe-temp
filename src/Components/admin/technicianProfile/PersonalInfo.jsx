@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import profileImage from "../../../assets/images/profile-image.jpeg";
 
 export default function PersonalInfo({ userId }) {
+    const token = sessionStorage.getItem("token");
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         firstName: "",
@@ -30,7 +31,13 @@ export default function PersonalInfo({ userId }) {
         const fetchProfile = async () => {
             try {
                 const res = await fetch(
-                    `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`
+                    `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        }
+                    }
                 );
                 const data = await res.json();
                 setFormData((prev) => ({
@@ -121,6 +128,9 @@ export default function PersonalInfo({ userId }) {
                 `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
                 {
                     method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    },
                     body: form,
                 }
             );

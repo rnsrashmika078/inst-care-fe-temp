@@ -38,7 +38,7 @@ export default function EditProfileForm() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const userId = localStorage.getItem("user_id");
+        const userId = sessionStorage.getItem("user_id");
         if (!userId) return;
 
         const res = await fetch(
@@ -119,7 +119,7 @@ export default function EditProfileForm() {
     try {
       setLoading(true); // ⬅ start loading
 
-      const userId = localStorage.getItem("user_id");
+      const userId = sessionStorage.getItem("user_id");
       if (!userId) {
         alert("User not found.");
         setLoading(false);

@@ -4,6 +4,7 @@ import DefaultProfileImage from "../../assets/images/profile-image.jpeg";
 import ProfileForm from "./TechnicianProfile";
 
 export default function AllTechnicianTable({ usersData }) {
+  const token = sessionStorage.getItem("token");
   const initialUsers = usersData || [];
 
   const [users, setUsers] = useState(initialUsers);
@@ -21,6 +22,10 @@ export default function AllTechnicianTable({ usersData }) {
     try {
       const response = await fetch(`http://localhost/instrument-care-back-end/public/admin/technicians/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
       });
 
       const result = await response.json();
@@ -45,6 +50,7 @@ export default function AllTechnicianTable({ usersData }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ status: newStatus }),
       });

@@ -9,7 +9,7 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const userId = localStorage.getItem("user_id");
+    const userId = sessionStorage.getItem("user_id");
     setIsLoggedIn(!!userId);
   }, []);
 

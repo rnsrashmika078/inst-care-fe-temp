@@ -6,13 +6,21 @@ import Footer from '../../Components/Common/Footer'
 import BG from '../../assets/images/technician-dashboard-bg-4.jpg';
 
 export default function All_Technicians() {
+  const token = sessionStorage.getItem("token");
   const [technicians, setTechnicians] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTechnicians = async () => {
       try {
-        const response = await fetch("http://localhost/instrument-care-back-end/public/admin/technicians");
+        const response = await fetch("http://localhost/instrument-care-back-end/public/admin/technicians",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
+        );
         const data = await response.json();
         console.log(data)
         // Directly set the response since it contains only technicians

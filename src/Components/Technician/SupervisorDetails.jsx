@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function SupervisorDetails() {
-    const userId = localStorage.getItem("user_id");
+    const userId = sessionStorage.getItem("user_id");
     const [supervisor, setSupervisor] = useState({
         name: "",
         designation: "",

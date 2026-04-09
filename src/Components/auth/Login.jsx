@@ -36,10 +36,11 @@ export default function LoginPage() {
 
         setError(""); // clear error if success
 
-        localStorage.setItem("isLoggedIn", "true");     //  mark logged-in
-        localStorage.setItem("role", String(result.role));
-        localStorage.setItem("user_id", String(result.id));
-        localStorage.setItem("technician_id", String(result.technician_id))
+        sessionStorage.setItem("isLoggedIn", "true");     //  mark logged-in
+        sessionStorage.setItem("role", String(result.role));
+        sessionStorage.setItem("user_id", String(result.id));
+        sessionStorage.setItem("technician_id", String(result.technician_id));
+        sessionStorage.setItem("token", result.token);
 
         if (result.role === 8 || result.role === 9 || result.role === 7 || result.role === 6 || result.role === 5 || result.role === 4 || result.role === 3 || result.role === 2) {
           navigate("/user/dashboard");

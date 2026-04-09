@@ -23,9 +23,9 @@ export default function Accept_Service_Request() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const techId = localStorage.getItem("technician_id");
+        const techId = sessionStorage.getItem("technician_id");
         if (!techId) {
-          console.error("Technician ID not found in localStorage");
+          console.error("Technician ID not found in sessionStorage");
           setLoading(false);
           return;
         }

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 export default function ServiceRequestForm({ onBack = () => { }, onSend = () => { } }) {
   const { id: technicianId } = useParams();
+  const token = sessionStorage.getItem("token");
   const [instruments, setInstruments] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -47,7 +48,7 @@ export default function ServiceRequestForm({ onBack = () => { }, onSend = () => 
       return;
     }
 
-    const userId = localStorage.getItem("user_id");
+    const userId = sessionStorage.getItem("user_id");
     if (!userId) {
       alert("User ID not found. Please log in again.");
       return;
@@ -69,7 +70,7 @@ export default function ServiceRequestForm({ onBack = () => { }, onSend = () => 
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
         }
@@ -94,7 +95,7 @@ export default function ServiceRequestForm({ onBack = () => { }, onSend = () => 
           {
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`
+              "Authorization": `Bearer ${token}`
             }
           }
         );

@@ -5,18 +5,26 @@ export default function JobSummaryTable() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const token = sessionStorage.getItem("token");
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const techId = localStorage.getItem("technician_id");
+        const techId = sessionStorage.getItem("technician_id");
         if (!techId) {
-          console.error("Technician ID not found in localStorage");
+          console.error("Technician ID not found in sessionStorage");
           setLoading(false);
           return;
         }
 
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/user/service-request/${techId}`
+          `http://localhost/instrument-care-back-end/public/user/service-request/${techId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         if (!response.ok) {

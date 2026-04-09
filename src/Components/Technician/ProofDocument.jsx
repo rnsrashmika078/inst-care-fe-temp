@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 
 export default function ProofDocument() {
 
-    const userId = localStorage.getItem("user_id");
+    const userId = sessionStorage.getItem("user_id");
+    const token = sessionStorage.getItem("token");
 
     const [tech_id, setTechId] = useState(null);
 
@@ -17,7 +18,13 @@ export default function ProofDocument() {
 
     const fetchTechnicianID = async () => {
         const res = await fetch(
-            `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`
+            `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
         );
 
         const data = await res.json();
@@ -32,7 +39,14 @@ export default function ProofDocument() {
 
     const fetchDocument = async () => {
         try {
-            const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/document/${tech_id}`);
+            const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/document/${tech_id}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             const data = await res.json();
 
             console.log("📄 Document data:", data);
@@ -63,7 +77,11 @@ export default function ProofDocument() {
                 `http://localhost/instrument-care-back-end/public/tech/profile/document/${tech_id}`,
                 {
                     method: "POST",
-                    body: formData
+                    body: formData,
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
             const result = await res.json();
@@ -102,10 +120,10 @@ export default function ProofDocument() {
                         accept=".pdf,.jpg,.jpeg,.png"
                         onChange={handleFileChange}
                     />
-            </div>
+                </div>
             )}
             {/* Upload new document */}
-            
+
             <div className="flex justify-end">
                 <button
                     type="button"

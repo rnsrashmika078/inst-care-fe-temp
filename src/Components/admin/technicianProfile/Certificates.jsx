@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function Certificates({ userId }) {
+    const token = sessionStorage.getItem("token");
     const [tech_id, setTechId] = useState(null);
 
     const [oldCertificates, setOldCertificates] = useState([]);
@@ -12,7 +13,14 @@ export default function Certificates({ userId }) {
     }, []);
 
     const fetchTechnicianID = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`);
+        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
         const data = await res.json();
         setTechId(data.id || null);
     };
@@ -26,7 +34,13 @@ export default function Certificates({ userId }) {
     const fetchCertificates = async () => {
         try {
             const res = await fetch(
-                `http://localhost/instrument-care-back-end/public/tech/certificates/${tech_id}`
+                `http://localhost/instrument-care-back-end/public/tech/certificates/${tech_id}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
             );
             const data = await res.json();
             setOldCertificates(data.data || []);
@@ -90,6 +104,10 @@ export default function Certificates({ userId }) {
                 `http://localhost/instrument-care-back-end/public/tech/profile/certificates/${tech_id}`,
                 {
                     method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
                     body: formData
                 }
             );

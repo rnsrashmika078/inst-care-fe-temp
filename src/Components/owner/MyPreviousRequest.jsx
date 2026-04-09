@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 export default function MyPreviousRequestHistoryTable() {
+  const token = sessionStorage.getItem("token");
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -35,7 +36,7 @@ export default function MyPreviousRequestHistoryTable() {
     const fetchServiceRequests = async () => {
       setLoading(true);
       try {
-        const userId = localStorage.getItem("user_id");
+        const userId = sessionStorage.getItem("user_id");
         if (!userId) throw new Error("User not logged in");
 
         const response = await fetch(
@@ -44,7 +45,7 @@ export default function MyPreviousRequestHistoryTable() {
             method: "POST", // POST request to send user_id
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+              "Authorization": `Bearer ${token}`,
             },
             body: JSON.stringify({ user_id: userId }),
           }

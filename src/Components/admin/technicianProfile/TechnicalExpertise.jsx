@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 
 export default function TechnicalExpertise({ userId }) {
+    const token = sessionStorage.getItem("token");
     const [tech_id, setTechId] = useState(null);
 
     const [labCategories, setLabCategories] = useState([]);
@@ -40,39 +41,81 @@ export default function TechnicalExpertise({ userId }) {
     }, [tech_id]);
 
     const fetchTechnicianID = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`);
+        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
         const data = await res.json();
         setTechId(data.id || null);
     };
 
 
     const fetchLaboratoryCategories = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/laboratory-categories`);
+        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/laboratory-categories`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
         const data = await res.json();
         setLabCategories(data.laboratoryCategories || []);
     };
 
     const fetchInstrumentCategories = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/instrument-categories`);
+        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/instrument-categories`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
         const data = await res.json();
         setInstrumentCategories(data.instrumentsCategories || []);
     };
 
     const fetchInstruments = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/instruments`);
+        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/instruments`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
         const data = await res.json();
         setInstruments(data.instruments || []);
     };
 
     const fetchNewInstruments = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/new-instruments`);
+        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/new-instruments`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
         const data = await res.json();
         setNewInstruments(data.newInstruments || []);
     };
 
     const fetchData = async () => {
         try {
-            const response = await fetch("http://localhost/instrument-care-back-end/public/tech/laboratory-categories");
+            const response = await fetch("http://localhost/instrument-care-back-end/public/tech/laboratory-categories",
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
 
             if (!response.ok) throw new Error("Failed to fetch");
 
@@ -91,7 +134,14 @@ export default function TechnicalExpertise({ userId }) {
 
     const fetchInstrumentCategoryData = async () => {
         try {
-            const response = await fetch("http://localhost/instrument-care-back-end/public/tech/instrument-categories");
+            const response = await fetch("http://localhost/instrument-care-back-end/public/tech/instrument-categories",
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
 
             if (!response.ok) throw new Error("Failed to fetch");
 
@@ -110,7 +160,14 @@ export default function TechnicalExpertise({ userId }) {
 
     const fetchInstrumentData = async () => {
         try {
-            const response = await fetch("http://localhost/instrument-care-back-end/public/tech/instruments");
+            const response = await fetch("http://localhost/instrument-care-back-end/public/tech/instruments",
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
 
             if (!response.ok) throw new Error("Failed to fetch");
 
@@ -211,7 +268,10 @@ export default function TechnicalExpertise({ userId }) {
                 `http://localhost/instrument-care-back-end/public/tech/profile/expertise/${tech_id}`,
                 {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
                     body: JSON.stringify(payload)
                 }
             );

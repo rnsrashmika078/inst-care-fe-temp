@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 export default function DashboardStats({ technicianId }) {
+
+  const token = sessionStorage.getItem("token");
   const [stats, setStats] = useState([
     { label: "Total Services", value: 0 },
     { label: "Pending Services", value: 0 },
@@ -10,8 +12,8 @@ export default function DashboardStats({ technicianId }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Use technicianId from prop or fallback to localStorage
-    const id = technicianId || localStorage.getItem("technician_id");
+    // Use technicianId from prop or fallback to sessionStorage
+    const id = technicianId || sessionStorage.getItem("technician_id");
 
     if (!id) {
       setError("Technician ID not found");
@@ -29,7 +31,7 @@ export default function DashboardStats({ technicianId }) {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );

@@ -7,14 +7,21 @@ import Footer from '../../Components/Common/Footer';
 import BG from '../../assets/images/technician-dashboard-bg-4.jpg';
 
 export default function Admin_Dashboard() {
-  // ✅ State for line chart data
   const [chartData, setChartData] = useState([]);
+  const token = sessionStorage.getItem("token");
 
   // 🔥 Fetch line chart data from backend
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await fetch('http://localhost/instrument-care-back-end/public/admin/line-chart');
+        const response = await fetch('http://localhost/instrument-care-back-end/public/admin/line-chart',
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
+        );
         const data = await response.json();
 
         // ✅ Set backend response to chartData
@@ -25,20 +32,13 @@ export default function Admin_Dashboard() {
     };
 
     fetchChartData();
-  }, []);
+  }, [token]);
 
   return (
     <>
       <Navbar />
 
-      {/* Background Image Wrapper */}
-      <div
-        className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url(${BG})`,
-        }}
-      >
-        {/* Sidebar */}
+      <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
         <Admin_Sidebar />
 
         {/* Main Content */}

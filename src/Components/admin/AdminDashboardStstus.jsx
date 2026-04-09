@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { UsersIcon, WrenchScrewdriverIcon, CubeIcon, ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 
 export default function AdminDashboardStats({ technicianId }) {
+  const token = sessionStorage.getItem("token");
   const [stats, setStats] = useState([
     { label: "Owners", value: 0, icon: UsersIcon, color: "from-orange-400 to-orange-300" },
     { label: "Technicians", value: 0, icon: WrenchScrewdriverIcon, color: "from-orange-400 to-orange-300" },
@@ -13,7 +14,14 @@ export default function AdminDashboardStats({ technicianId }) {
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
-        const response = await fetch("http://localhost/instrument-care-back-end/public/admin/dashboard");
+        const response = await fetch("http://localhost/instrument-care-back-end/public/admin/dashboard",
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
+        );
         const data = await response.json();
 
         // ✅ Update all dashboard values from backend response

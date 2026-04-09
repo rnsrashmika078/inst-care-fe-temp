@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function ProofDocument({ userId }) {
-
+    const token = sessionStorage.getItem("token");
     const [tech_id, setTechId] = useState(null);
 
     const [documentFile, setDocumentFile] = useState(null);
@@ -15,7 +15,13 @@ export default function ProofDocument({ userId }) {
 
     const fetchTechnicianID = async () => {
         const res = await fetch(
-            `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`
+            `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }
         );
 
         const data = await res.json();
@@ -30,7 +36,14 @@ export default function ProofDocument({ userId }) {
 
     const fetchDocument = async () => {
         try {
-            const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/document/${tech_id}`);
+            const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/document/${tech_id}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
             const data = await res.json();
 
             console.log("📄 Document data:", data);
@@ -61,6 +74,10 @@ export default function ProofDocument({ userId }) {
                 `http://localhost/instrument-care-back-end/public/tech/profile/document/${tech_id}`,
                 {
                     method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
                     body: formData
                 }
             );

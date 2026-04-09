@@ -8,12 +8,19 @@ import BG from '../../assets/images/technician-dashboard-bg-4.jpg';
 export default function All_Service_Requests() {
   const [requestsData, setRequestsData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     const fetchRequests = async () => {
       try {
         const response = await fetch(
-          'http://localhost/instrument-care-back-end/public/admin/service-requests'
+          'http://localhost/instrument-care-back-end/public/admin/service-requests',
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
         );
 
         if (!response.ok) {
@@ -21,7 +28,7 @@ export default function All_Service_Requests() {
         }
 
         const data = await response.json();
-        
+
         let mappedData = [];
         if (Array.isArray(data)) {
           mappedData = data.map((req) => ({
@@ -42,7 +49,7 @@ export default function All_Service_Requests() {
     };
 
     fetchRequests();
-  }, []);
+  }, [token]);
 
   return (
     <>

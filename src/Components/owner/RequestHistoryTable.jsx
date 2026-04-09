@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 export default function RequestHistoryTable() {
   const { id: techId } = useParams(); // Technician ID
+  const token = sessionStorage.getItem("token");
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -43,7 +44,7 @@ export default function RequestHistoryTable() {
     const fetchServiceRequests = async () => {
       setLoading(true);
       try {
-        const userId = localStorage.getItem("user_id"); // ✅ get logged-in user ID
+        const userId = sessionStorage.getItem("user_id"); // ✅ get logged-in user ID
         if (!userId) throw new Error("User not logged in");
 
         const response = await fetch(
@@ -52,7 +53,7 @@ export default function RequestHistoryTable() {
             method: "POST", // POST request to send user_id
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+              "Authorization": `Bearer ${token}`,
             },
             body: JSON.stringify({ user_id: userId }), // ✅ send user_id in body
           }
@@ -107,7 +108,7 @@ export default function RequestHistoryTable() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify({ rate: rating, review: reviewText }),
         }

@@ -1,23 +1,31 @@
 import { useState, useEffect } from "react";
 
 export default function Certificates() {
-    const userId = localStorage.getItem("user_id");
-    const [tech_id,setTechId] = useState(null);
+    const userId = sessionStorage.getItem("user_id");
+    const token = sessionStorage.getItem("token");
+    const [tech_id, setTechId] = useState(null);
 
     const [oldCertificates, setOldCertificates] = useState([]);
     const [certificates, setCertificates] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchTechnicianID();
-    },[]);
+    }, []);
 
-    const fetchTechnicianID = async ()=>{
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`);
+    const fetchTechnicianID = async () => {
+        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
         const data = await res.json();
         setTechId(data.id || null);
     };
-     
+
     useEffect(() => {
         if (tech_id) {
             fetchCertificates();
@@ -27,7 +35,13 @@ export default function Certificates() {
     const fetchCertificates = async () => {
         try {
             const res = await fetch(
-                `http://localhost/instrument-care-back-end/public/tech/certificates/${tech_id }`
+                `http://localhost/instrument-care-back-end/public/tech/certificates/${tech_id}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
             const data = await res.json();
             setOldCertificates(data.data || []);
@@ -71,7 +85,7 @@ export default function Certificates() {
         try {
             setLoading(true);
             console.log("📤 Sending certificates:", certificates);
-            
+
             const formData = new FormData();
             formData.append("tech_id", tech_id);
 
@@ -91,7 +105,11 @@ export default function Certificates() {
                 `http://localhost/instrument-care-back-end/public/tech/profile/certificates/${tech_id}`,
                 {
                     method: "POST",
-                    body: formData
+                    body: formData,
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
 
@@ -118,48 +136,48 @@ export default function Certificates() {
             <h3 className="font-semibold text-lg mb-3">Certificates</h3>
 
             <div className="space-y-3">
-            {oldCertificates.map((cert, i) => (
-                <div
-                key={i}
-                className="border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition"
-                >
-                <p className="font-semibold text-gray-800">
-                    {cert.certificate_name}
-                </p>
-
-                <p className="text-sm text-gray-600">
-                    Company Name: {cert.oem_company_name}
-                </p>
-
-                <p className="text-sm text-gray-600">
-                    Instrument Name: {cert.instrument_name}
-                </p>
-
-                <p className="text-sm text-gray-500">
-                    Certificate No: {cert.certificate_number}
-                </p>
-
-                <p className="text-xs text-gray-500">
-                    Issued: {cert.issue_date} | Expiry: {cert.expiry_date}
-                </p>
-
-                {cert.certificate_file && (
-                    <a
-                    href={`http://localhost/instrument-care-back-end/public/${cert.certificate_file}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 text-sm underline mt-1 inline-block"
+                {oldCertificates.map((cert, i) => (
+                    <div
+                        key={i}
+                        className="border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition"
                     >
-                    View Certificate
-                    </a>
-                )}
-                </div>
-            ))}
+                        <p className="font-semibold text-gray-800">
+                            {cert.certificate_name}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                            Company Name: {cert.oem_company_name}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                            Instrument Name: {cert.instrument_name}
+                        </p>
+
+                        <p className="text-sm text-gray-500">
+                            Certificate No: {cert.certificate_number}
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+                            Issued: {cert.issue_date} | Expiry: {cert.expiry_date}
+                        </p>
+
+                        {cert.certificate_file && (
+                            <a
+                                href={`http://localhost/instrument-care-back-end/public/${cert.certificate_file}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 text-sm underline mt-1 inline-block"
+                            >
+                                View Certificate
+                            </a>
+                        )}
+                    </div>
+                ))}
             </div>
 
             {certificates.map((cert, i) => (
                 <div key={i} className="grid grid-cols-2 gap-4 border p-4 rounded">
-                    
+
                     <input
                         name="oem_company_name"
                         value={cert.oem_company_name}

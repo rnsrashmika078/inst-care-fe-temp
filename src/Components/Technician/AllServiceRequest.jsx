@@ -6,7 +6,7 @@ export default function AllServiceRequestTable() {
   const [error, setError] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
 
-  // Search and Filter states
+  const token = sessionStorage.getItem("token");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [startDate, setStartDate] = useState("");
@@ -15,7 +15,7 @@ export default function AllServiceRequestTable() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const techId = localStorage.getItem("technician_id");
+        const techId = sessionStorage.getItem("technician_id");
         if (!techId) {
           setError("Technician ID not found in local storage.");
           setLoading(false);
@@ -27,7 +27,7 @@ export default function AllServiceRequestTable() {
           {
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+              "Authorization": `Bearer ${token}`,
             },
           }
         );
