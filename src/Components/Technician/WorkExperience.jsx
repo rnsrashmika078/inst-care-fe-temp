@@ -118,7 +118,7 @@ export default function WorkExperience() {
                 {oldExperience.map((exp, i) => (
                     <div
                         key={i}
-                        className="border rounded-lg p-3 bg-gray-50 hover:bg-gray-100 transition"
+                        className="border rounded-lg p-3 bg-white hover:bg-gray-100 transition"
                     >
                         <p className="font-medium text-gray-800">{exp.organization_name}</p>
 

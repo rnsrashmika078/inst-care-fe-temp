@@ -15,6 +15,7 @@ export default function AllTechnicianTable({ usersData }) {
   const [genderFilter, setGenderFilter] = useState("All");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [districtFilter, setDistrictFilter] = useState("All");
 
   const handleOpenModal = (user) => setSelectedUser({ ...user });
   const handleCloseModal = () => setSelectedUser(null);
@@ -83,6 +84,7 @@ export default function AllTechnicianTable({ usersData }) {
 
     const matchesStatus = statusFilter === "All" || user.status === statusFilter;
     const matchGender = genderFilter === "All" || user.gender === genderFilter;
+    const matchDistrict = districtFilter === "All" || user.district === districtFilter;
 
     let matchesDate = true;
     if (fromDate || toDate) {
@@ -106,7 +108,7 @@ export default function AllTechnicianTable({ usersData }) {
       }
     }
 
-    return matchesSearch && matchesStatus && matchGender && matchesDate;
+    return matchesSearch && matchesStatus && matchGender && matchDistrict && matchesDate;
   });
 
   const handleExportCSV = () => {
@@ -125,6 +127,7 @@ export default function AllTechnicianTable({ usersData }) {
       "Title",
       "Designation",
       "Institute",
+      "District",
       "Status",
       "Registration Date"
     ];
@@ -142,6 +145,7 @@ export default function AllTechnicianTable({ usersData }) {
         `"${(user.title || "").replace(/"/g, '""')}"`,
         `"${(user.designation || "").replace(/"/g, '""')}"`,
         `"${(user.institute_name || "").replace(/"/g, '""')}"`,
+        `"${(user.district || "").replace(/"/g, '""')}"`,
         `"${(user.status || "")}"`,
         `"${(user.created_at || "")}"`
       ];
@@ -151,7 +155,7 @@ export default function AllTechnicianTable({ usersData }) {
     const csvString = csvRows.join("\n");
     const blob = new Blob([csvString], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement("a");
     link.href = url;
     link.download = `technicians_report_${new Date().toISOString().split("T")[0]}.csv`;
@@ -196,6 +200,39 @@ export default function AllTechnicianTable({ usersData }) {
             <option value="Male">Male</option>
             <option value="Female">Female</option>
             <option value="Other">Other</option>
+          </select>
+
+          <select
+            value={districtFilter}
+            onChange={(e) => setDistrictFilter(e.target.value)}
+            className="border border-gray-300 px-4 py-2 rounded-md outline-none focus:border-orange-500 text-sm bg-white min-w-[140px] shrink-0"
+          >
+            <option value="All">All Districts</option>
+            <option value="Ampara">Ampara</option>
+            <option value="Anuradhapura">Anuradhapura</option>
+            <option value="Badulla">Badulla</option>
+            <option value="Batticaloa">Batticaloa</option>
+            <option value="Colombo">Colombo</option>
+            <option value="Galle">Galle</option>
+            <option value="Gampaha">Gampaha</option>
+            <option value="Hambantota">Hambantota</option>
+            <option value="Jaffna">Jaffna</option>
+            <option value="Kalutara">Kalutara</option>
+            <option value="Kandy">Kandy</option>
+            <option value="Kegalle">Kegalle</option>
+            <option value="Kilinochchi">Kilinochchi</option>
+            <option value="Kurunegala">Kurunegala</option>
+            <option value="Mannar">Mannar</option>
+            <option value="Matale">Matale</option>
+            <option value="Matara">Matara</option>
+            <option value="Monaragala">Monaragala</option>
+            <option value="Mullaitivu">Mullaitivu</option>
+            <option value="Nuwara Eliya">Nuwara Eliya</option>
+            <option value="Polonnaruwa">Polonnaruwa</option>
+            <option value="Puttalam">Puttalam</option>
+            <option value="Ratnapura">Ratnapura</option>
+            <option value="Trincomalee">Trincomalee</option>
+            <option value="Vavuniya">Vavuniya</option>
           </select>
 
           <div className="flex items-center gap-2 shrink-0">

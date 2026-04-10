@@ -139,7 +139,7 @@ export default function Certificates() {
                 {oldCertificates.map((cert, i) => (
                     <div
                         key={i}
-                        className="border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition"
+                        className="border rounded-lg p-4 bg-white hover:bg-gray-100 transition"
                     >
                         <p className="font-semibold text-gray-800">
                             {cert.certificate_name}
