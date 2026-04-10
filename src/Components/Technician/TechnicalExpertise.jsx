@@ -278,7 +278,6 @@ export default function TechnicalExpertise() {
     const updateTechnicalExpertise = async () => {
         try {
             setLoading(true);
-            console.log(tech_id);
             const payload = {
                 tech_id,
                 laboratory_categories: selectedCategories.map(c => c?.value),
@@ -287,13 +286,16 @@ export default function TechnicalExpertise() {
                 new_instruments: selectedNewInstruments
             };
 
+            console.log(payload);
             const res = await fetch(
                 `http://localhost/instrument-care-back-end/public/tech/profile/expertise/${tech_id}`,
                 {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                    Authorization: `Bearer ${token}`,
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`   // ✅ CORRECT
+                    },
+                    body: JSON.stringify(payload)
                 }
             );
 

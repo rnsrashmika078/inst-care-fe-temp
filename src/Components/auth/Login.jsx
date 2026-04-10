@@ -28,9 +28,9 @@ export default function LoginPage() {
         body: JSON.stringify(loginData),
       });
 
-      console.log("Login data:", loginData);
+      // console.log("Login data:", loginData);
       const result = await response.json();
-      console.log("Login Response:", result);
+      // console.log("Login Response:", result);
 
       if (result.message === "Login successful") {
 

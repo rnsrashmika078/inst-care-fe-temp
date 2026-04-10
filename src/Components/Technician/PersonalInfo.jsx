@@ -28,7 +28,6 @@ export default function PersonalInfo() {
 
   const userId = sessionStorage.getItem("user_id");
   const token = sessionStorage.getItem("token");
-  console.log("token in PersonalInfo:", token);
 
   useEffect(() => {
     const fetchProfile = async () => {

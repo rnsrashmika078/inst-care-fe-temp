@@ -49,7 +49,6 @@ export default function ProofDocument() {
             );
             const data = await res.json();
 
-            console.log("📄 Document data:", data);
 
             if (data.proof) {
                 setDocumentPreview(`http://localhost/instrument-care-back-end/public/${data.proof}`);
