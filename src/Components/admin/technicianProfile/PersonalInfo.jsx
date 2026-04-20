@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../../utils/api';
 import React, { useState, useEffect } from "react";
 import profileImage from "../../../assets/images/profile-image.jpeg";
 
@@ -30,7 +31,7 @@ export default function PersonalInfo({ userId }) {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await fetch(
+                const res = await fetchWithAuth(
                     `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
                     {
                         headers: {
@@ -124,7 +125,7 @@ export default function PersonalInfo({ userId }) {
                 form.append("picture", formData.profileImage);
             }
 
-            const res = await fetch(
+            const res = await fetchWithAuth(
                 `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
                 {
                     method: "POST",

@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../../utils/api';
 import { useEffect, useState } from "react";
 import Select from "react-select";
 
@@ -41,7 +42,7 @@ export default function TechnicalExpertise({ userId }) {
     }, [tech_id]);
 
     const fetchTechnicianID = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+        const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -55,7 +56,7 @@ export default function TechnicalExpertise({ userId }) {
 
 
     const fetchLaboratoryCategories = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/laboratory-categories`,
+        const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/laboratory-categories`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -68,7 +69,7 @@ export default function TechnicalExpertise({ userId }) {
     };
 
     const fetchInstrumentCategories = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/instrument-categories`,
+        const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/instrument-categories`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -81,7 +82,7 @@ export default function TechnicalExpertise({ userId }) {
     };
 
     const fetchInstruments = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/instruments`,
+        const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/instruments`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -94,7 +95,7 @@ export default function TechnicalExpertise({ userId }) {
     };
 
     const fetchNewInstruments = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/new-instruments`,
+        const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/service-request/${tech_id}/new-instruments`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -108,7 +109,7 @@ export default function TechnicalExpertise({ userId }) {
 
     const fetchData = async () => {
         try {
-            const response = await fetch("http://localhost/instrument-care-back-end/public/tech/laboratory-categories",
+            const response = await fetchWithAuth("http://localhost/instrument-care-back-end/public/tech/laboratory-categories",
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -134,7 +135,7 @@ export default function TechnicalExpertise({ userId }) {
 
     const fetchInstrumentCategoryData = async () => {
         try {
-            const response = await fetch("http://localhost/instrument-care-back-end/public/tech/instrument-categories",
+            const response = await fetchWithAuth("http://localhost/instrument-care-back-end/public/tech/instrument-categories",
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -160,7 +161,7 @@ export default function TechnicalExpertise({ userId }) {
 
     const fetchInstrumentData = async () => {
         try {
-            const response = await fetch("http://localhost/instrument-care-back-end/public/tech/instruments",
+            const response = await fetchWithAuth("http://localhost/instrument-care-back-end/public/tech/instruments",
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -264,7 +265,7 @@ export default function TechnicalExpertise({ userId }) {
                 new_instruments: selectedNewInstruments
             };
 
-            const res = await fetch(
+            const res = await fetchWithAuth(
                 `http://localhost/instrument-care-back-end/public/tech/profile/expertise/${tech_id}`,
                 {
                     method: "PUT",

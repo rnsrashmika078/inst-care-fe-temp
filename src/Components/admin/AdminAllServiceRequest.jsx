@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../utils/api';
 import React, { useState } from "react";
 import { FaEye, FaTrash } from "react-icons/fa";
 
@@ -69,7 +70,7 @@ export default function AdminAllServiceRequest({ requestsData }) {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `http://localhost/instrument-care-back-end/public/admin/service-request/${selectedRequest.id}`,
         {
           method: "PUT",
@@ -116,7 +117,7 @@ export default function AdminAllServiceRequest({ requestsData }) {
     if (!confirmed) return;
 
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `http://localhost/instrument-care-back-end/public/admin/service-request/${id}`,
         {
           method: "DELETE",

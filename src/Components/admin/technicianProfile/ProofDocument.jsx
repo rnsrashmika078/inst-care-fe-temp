@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../../utils/api';
 import { useState, useEffect } from "react";
 
 export default function ProofDocument({ userId }) {
@@ -14,7 +15,7 @@ export default function ProofDocument({ userId }) {
     }, []);
 
     const fetchTechnicianID = async () => {
-        const res = await fetch(
+        const res = await fetchWithAuth(
             `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
             {
                 headers: {
@@ -36,7 +37,7 @@ export default function ProofDocument({ userId }) {
 
     const fetchDocument = async () => {
         try {
-            const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/document/${tech_id}`,
+            const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/tech/document/${tech_id}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -70,7 +71,7 @@ export default function ProofDocument({ userId }) {
             const formData = new FormData();
             formData.append("document", documentFile);
             formData.append("tech_id", tech_id);
-            const res = await fetch(
+            const res = await fetchWithAuth(
                 `http://localhost/instrument-care-back-end/public/tech/profile/document/${tech_id}`,
                 {
                     method: "POST",

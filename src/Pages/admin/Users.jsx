@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../../Components/utils/api';
 import React, { useEffect, useState } from "react";
 import Navbar from "../../Components/Technician/Navbar";
 import Admin_Sidebar from "../../Components/admin/Sidebar";
@@ -14,7 +15,7 @@ export default function All_Users() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(
+        const response = await fetchWithAuth(
           "http://localhost/instrument-care-back-end/public/admin/users"
         );
 

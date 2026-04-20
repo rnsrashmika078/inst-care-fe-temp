@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../utils/api';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import profileImage from '../../assets/images/profile-image.jpeg';
@@ -18,7 +19,7 @@ export default function Admin_Sidebar() {
         const token = sessionStorage.getItem("token");
 
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+          `http://localhost/instrument-care-back-end/public/admin/profile/${userId}`,
           {
             method: "GET",
             headers: token
@@ -40,9 +41,8 @@ export default function Admin_Sidebar() {
         if (data.profile_image_url) {
           setAvatarSrc(data.profile_image_url);
         }
-        if (data.full_name) setFullName(data.full_name);
-        if (data.current_designation) setDesignation(data.current_designation);
-        else if (data.company_designation) setDesignation(data.company_designation);
+        if (data.first_name) setFullName(data.first_name + " " + data.last_name);
+        if (data.designation) setDesignation(data.designation);
 
       } catch (err) {
         console.error("Error loading profile for sidebar:", err);

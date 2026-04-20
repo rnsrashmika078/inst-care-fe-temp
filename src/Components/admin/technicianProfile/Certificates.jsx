@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../../utils/api';
 import { useState, useEffect } from "react";
 
 export default function Certificates({ userId }) {
@@ -13,7 +14,7 @@ export default function Certificates({ userId }) {
     }, []);
 
     const fetchTechnicianID = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+        const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -33,7 +34,7 @@ export default function Certificates({ userId }) {
 
     const fetchCertificates = async () => {
         try {
-            const res = await fetch(
+            const res = await fetchWithAuth(
                 `http://localhost/instrument-care-back-end/public/tech/certificates/${tech_id}`,
                 {
                     headers: {
@@ -100,7 +101,7 @@ export default function Certificates({ userId }) {
                 }
             });
 
-            const res = await fetch(
+            const res = await fetchWithAuth(
                 `http://localhost/instrument-care-back-end/public/tech/profile/certificates/${tech_id}`,
                 {
                     method: "POST",

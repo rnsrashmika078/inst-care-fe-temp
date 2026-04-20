@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../../Components/utils/api';
 import React, { useEffect, useState } from 'react'
 import Navbar from '../../Components/Technician/Navbar'
 import Admin_Sidebar from '../../Components/admin/Sidebar'
@@ -13,7 +14,7 @@ export default function All_Technicians() {
   useEffect(() => {
     const fetchTechnicians = async () => {
       try {
-        const response = await fetch("http://localhost/instrument-care-back-end/public/admin/technicians",
+        const response = await fetchWithAuth("http://localhost/instrument-care-back-end/public/admin/technicians",
           {
             headers: {
               "Content-Type": "application/json",

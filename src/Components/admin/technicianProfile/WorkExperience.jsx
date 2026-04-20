@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../../utils/api';
 import { useState, useEffect } from "react";
 
 export default function WorkExperience({ userId }) {
@@ -13,7 +14,7 @@ export default function WorkExperience({ userId }) {
     }, []);
 
     const fetchTechnicianID = async () => {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+        const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -33,7 +34,7 @@ export default function WorkExperience({ userId }) {
 
     const fetchTechnicianWorkExperience = async () => {
         try {
-            const res = await fetch(`http://localhost/instrument-care-back-end/public/tech/work-experience/${tech_id}`,
+            const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/tech/work-experience/${tech_id}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -75,7 +76,7 @@ export default function WorkExperience({ userId }) {
             setLoading(true);
             console.log("📤 Sending work experiences:", experience);
 
-            const res = await fetch(
+            const res = await fetchWithAuth(
                 `http://localhost/instrument-care-back-end/public/tech/profile/work/${tech_id}`,
                 {
                     method: "PUT",

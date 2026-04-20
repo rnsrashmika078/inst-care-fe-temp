@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../../Components/utils/api';
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../Components/Technician/Navbar';
 import Admin_Sidebar from '../../Components/admin/Sidebar';
@@ -14,7 +15,7 @@ export default function Admin_Dashboard() {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await fetch('http://localhost/instrument-care-back-end/public/admin/line-chart',
+        const response = await fetchWithAuth('http://localhost/instrument-care-back-end/public/admin/line-chart',
           {
             headers: {
               "Content-Type": "application/json",

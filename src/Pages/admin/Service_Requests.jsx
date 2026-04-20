@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../../Components/utils/api';
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../Components/Technician/Navbar';
 import Admin_Sidebar from '../../Components/admin/Sidebar';
@@ -13,7 +14,7 @@ export default function All_Service_Requests() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch(
+        const response = await fetchWithAuth(
           'http://localhost/instrument-care-back-end/public/admin/service-requests',
           {
             headers: {
