@@ -84,6 +84,11 @@ export default function AdminAllServiceRequest({ requestsData }) {
       const result = await response.json();
       console.log(result);
 
+      if (result.success) {
+        alert("Service request updated successfully");
+      }
+
+
       if (!response.ok) {
         alert(result.error || "Failed to update service request");
         return;

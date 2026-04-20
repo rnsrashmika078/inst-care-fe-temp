@@ -45,8 +45,8 @@ export default function TechnicianRegisterPage() {
         alert(result.message || "Registration failed. Please try again.");
       }
     } catch (err) {
-        console.error("Registration failed:", err);
-        alert("Something went wrong. Please try again later.");
+      console.error("Registration failed:", err);
+      alert("Something went wrong. Please try again later.");
     }
   };
 
@@ -60,7 +60,7 @@ export default function TechnicianRegisterPage() {
 
       {/* Main Container */}
       <div className="relative h-150 z-10 w-full max-w-6xl flex flex-col md:flex-row bg-gray-50 bg-opacity-90 shadow-2xl rounded-none md:rounded-2xl overflow-hidden transform -translate-y-[5vh]">
-        
+
         {/* Orange Side */}
         <div
           className="hidden md:flex w-1/2 flex-col justify-center items-center px-8 lg:px-12 text-white"

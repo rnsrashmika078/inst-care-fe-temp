@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { FaEye, FaTrash, FaTimes, FaCheck, FaFileCsv } from "react-icons/fa";
+import { FaEye, FaTrash, FaTimes, FaCheck, FaFileCsv, FaUserPlus } from "react-icons/fa";
 import DefaultProfileImage from "../../assets/images/profile-image.jpeg";
 import ProfileForm from "./TechnicianProfile";
+// import Register from "../auth/Technician-Registration"
+import Register from "./AddTechnician";
 
 export default function AllTechnicianTable({ usersData }) {
   const token = sessionStorage.getItem("token");
@@ -16,6 +18,8 @@ export default function AllTechnicianTable({ usersData }) {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [districtFilter, setDistrictFilter] = useState("All");
+
+  const [showRegister, setShowRegister] = useState(false);
 
   const handleOpenModal = (user) => setSelectedUser({ ...user });
   const handleCloseModal = () => setSelectedUser(null);
@@ -165,6 +169,10 @@ export default function AllTechnicianTable({ usersData }) {
     URL.revokeObjectURL(url);
   };
 
+  const handleAddTechnician = () => {
+    setShowRegister(true);
+  };
+
   return (
     <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins min-h-[720px]">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
@@ -263,6 +271,14 @@ export default function AllTechnicianTable({ usersData }) {
           >
             <FaFileCsv size={16} />
             Export CSV
+          </button>
+
+          <button
+            onClick={handleAddTechnician}
+            className="flex items-center gap-2 px-4 py-2 bg-orange-400 text-white font-medium rounded-md text-sm hover:bg-orange-700 transition shrink-0 shadow-sm"
+          >
+            <FaUserPlus size={16} />
+            Add Technician
           </button>
         </div>
       </div>
@@ -367,6 +383,26 @@ export default function AllTechnicianTable({ usersData }) {
               </button>
 
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {showRegister && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto px-4 py-8 flex justify-center">
+          <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl relative mb-auto flex flex-col">
+
+            <button
+              onClick={() => setShowRegister(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-light z-10 transition-colors bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm"
+              title="Close"
+            >
+              &times;
+            </button>
+
+            <Register />
+
+
 
           </div>
         </div>
