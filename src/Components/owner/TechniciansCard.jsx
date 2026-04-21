@@ -9,6 +9,7 @@ import {
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import DefaultProfileImage from "../../assets/images/profile-image.jpeg";
+import { fetchWithAuth } from "../utils/api";
 
 export default function TechniciansCard({ searchTerm }) {
   const [technicians, setTechnicians] = useState([]);
@@ -16,7 +17,7 @@ export default function TechniciansCard({ searchTerm }) {
   useEffect(() => {
     const fetchTechnicians = async () => {
       try {
-        const response = await fetch(
+        const response = await fetchWithAuth(
           "http://localhost/instrument-care-back-end/public/user/dashboard/approved",
           {
             method: "GET",

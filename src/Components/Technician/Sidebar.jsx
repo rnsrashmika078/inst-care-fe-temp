@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import profileImage from "../../assets/images/profile-image.jpeg";
+import { fetchWithAuth } from "../utils/api";
 
 export default function Sidebar() {
   const [fullName, setFullName] = useState("Untitled Technician");
@@ -15,7 +16,7 @@ export default function Sidebar() {
 
         const token = sessionStorage.getItem("token");
 
-        const res = await fetch(
+        const res = await fetchWithAuth(
           `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
           {
             method: "GET",

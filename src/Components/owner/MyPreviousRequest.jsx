@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { fetchWithAuth } from "../utils/api";
 
 export default function MyPreviousRequestHistoryTable() {
   const token = sessionStorage.getItem("token");
@@ -39,7 +40,7 @@ export default function MyPreviousRequestHistoryTable() {
         const userId = sessionStorage.getItem("user_id");
         if (!userId) throw new Error("User not logged in");
 
-        const response = await fetch(
+        const response = await fetchWithAuth(
           `http://localhost/instrument-care-back-end/public/user/my-requests`,
           {
             method: "POST", // POST request to send user_id

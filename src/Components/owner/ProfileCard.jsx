@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfileImage from '../../assets/images/profile-image.jpeg';
+import { fetchWithAuth } from "../utils/api";
 
 export default function ProfileCard() {
   const { id } = useParams(); // get technician id from URL
@@ -17,7 +18,7 @@ export default function ProfileCard() {
   useEffect(() => {
     const fetchTechnician = async () => {
       try {
-        const response = await fetch(`http://localhost/instrument-care-back-end/public/user/dashboard/${id}`, {
+        const response = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/user/dashboard/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
