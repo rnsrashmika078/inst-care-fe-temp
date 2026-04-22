@@ -3,6 +3,7 @@ import Navbar from '../../Components/owner/Navbar';
 import Footer from '../../Components/Common/Footer';
 import TechniciansCard from '../../Components/owner/TechniciansCard';
 import TechnicianHeader from '../../Components/owner/Technician-Hero-Section';
+import TechnicianTable from '../../Components/owner/TechnicianTable';
 
 export default function User_Dashboard() {
   const [searchTerm, setSearchTerm] = useState(""); // central search state
@@ -11,7 +12,8 @@ export default function User_Dashboard() {
     <>
       <Navbar />
       <TechnicianHeader searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <TechniciansCard searchTerm={searchTerm} />
+      <TechnicianTable searchTerm={searchTerm} />
+      <TechniciansCard />
       <Footer />
     </>
   );

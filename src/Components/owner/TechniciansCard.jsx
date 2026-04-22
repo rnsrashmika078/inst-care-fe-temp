@@ -6,13 +6,15 @@ import {
   SquareArrowOutUpRight,
   Microscope,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import DefaultProfileImage from "../../assets/images/profile-image.jpeg";
 import { fetchWithAuth } from "../utils/api";
 
-export default function TechniciansCard({ searchTerm }) {
+export default function TechniciansCard() {
   const [technicians, setTechnicians] = useState([]);
+  const navigate = useNavigate();
+  const userId = sessionStorage.getItem("user_id");
 
   useEffect(() => {
     const fetchTechnicians = async () => {
@@ -41,25 +43,46 @@ export default function TechniciansCard({ searchTerm }) {
     fetchTechnicians();
   }, []);
 
-  // Filter technicians
-  const filteredTechnicians = technicians.filter((tech) => {
-    const term = (searchTerm || "").toLowerCase();
-    return (
-      (tech.first_name || "").toLowerCase().includes(term) ||
-      (tech.last_name || "").toLowerCase().includes(term) ||
-      (tech.designation || "").toLowerCase().includes(term) ||
-      (tech.bio || "").toLowerCase().includes(term) ||
-      (tech.institute_name || "").toLowerCase().includes(term) ||
-      (tech.instruments || "").toLowerCase().includes(term)
-    );
-  });
+  const handleViewProfile = async (tech_user_id, tech_id) => {
+    console.log("tech_id", tech_id);
+
+    const payload = {
+      client_id: userId,
+      technician_id: tech_user_id,
+      search_term: null,
+    };
+
+    console.log("Payload to send:", payload);
+
+    try {
+      const response = await fetch(`http://localhost/instrument-care-back-end/public/user/dashboard/search`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(payload)
+      })
+
+      const result = await response.json();
+      console.log(result);
+      navigate(`/user/view-profile/${tech_id}`);
+    }
+    catch (error) {
+      console.error("Error navigating to profile:", error);
+    }
+
+  };
+
+
 
   return (
     <section className="bg-white py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Recently Joined Technicians</h2>
         <div className="grid gap-4 sm:grid-cols-4 lg:grid-cols-4">
-          {filteredTechnicians.length > 0 ? (
-            filteredTechnicians.map((tech, index) => {
+          {technicians.length > 0 ? (
+            technicians.map((tech, index) => {
               // Use profile_image_url if available, otherwise default local image
               const imageUrl =
                 tech.picture !== null
@@ -103,11 +126,13 @@ export default function TechniciansCard({ searchTerm }) {
                   </div>
 
                   <div className="mt-5 flex gap-2">
-                    <Link to={`/user/view-profile/${tech.id}`}>
-                      <button className="flex-1 bg-orange-300 text-black font-semibold text-sm py-2 p-3 rounded-full flex items-center justify-center gap-1 hover:bg-gray-100 transition">
-                        View Profile <SquareArrowOutUpRight className="w-3 h-3" />
-                      </button>
-                    </Link>
+                    {/* <Link to={`/user/view-profile/${tech.id}`}> */}
+                    <button className="flex-1 bg-orange-300 text-black font-semibold text-sm py-2 p-3 rounded-full flex items-center justify-center gap-1 hover:bg-gray-100 transition"
+                      onClick={() => handleViewProfile(tech.user_id, tech.id)}
+                    >
+                      View Profile <SquareArrowOutUpRight className="w-3 h-3" />
+                    </button>
+                    {/* </Link> */}
 
                     <Link to={`/user/service-request/${tech.id}`}>
                       <button className="flex-1 bg-gray-800 text-white font-semibold text-sm py-2 p-2 rounded-full flex items-center justify-center gap-1 hover:bg-gray-700 transition">
