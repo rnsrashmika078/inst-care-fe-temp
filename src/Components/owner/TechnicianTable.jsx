@@ -54,7 +54,7 @@ export default function TechnicianTable({ searchTerm }) {
         const payload = {
             client_id: userId,
             technician_id: tech_user_id,
-            search_term: searchTerm || "",
+            search_term: searchTerm || null,
         };
 
         console.log("Payload to send:", payload);

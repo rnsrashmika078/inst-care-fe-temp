@@ -6,6 +6,8 @@ import AdminDashboardStats from '../../Components/admin/AdminDashboardStstus';
 import AdminDashboardLineChart from '../../Components/admin/AdminServiceRequestLineChart';
 import Footer from '../../Components/Common/Footer';
 import BG from '../../assets/images/technician-dashboard-bg-4.jpg';
+import AdminDashboardTechnicianViewStats from '../../Components/admin/AdminDashboardTechnicianViewStats';
+import SearchTrendsChart from '../../Components/admin/SearchTrendCharts';
 
 export default function Admin_Dashboard() {
   const [chartData, setChartData] = useState([]);
@@ -47,6 +49,8 @@ export default function Admin_Dashboard() {
           <h2 className="text-xl font-bold mb-4">Admin Dashboard</h2>
           <AdminDashboardStats />
           <AdminDashboardLineChart data={chartData} />
+          <AdminDashboardTechnicianViewStats />
+          <SearchTrendsChart />
         </main>
       </div>
 
