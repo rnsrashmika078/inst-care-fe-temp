@@ -1,13 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-    CartesianGrid,
-    ResponsiveContainer,
-} from "recharts";
 
 export default function AdminDashboardTechnicianViewStats() {
     const [data, setData] = useState([]);
@@ -19,12 +10,13 @@ export default function AdminDashboardTechnicianViewStats() {
 
     const fetchTopTechnicians = async () => {
         try {
-            const res = await fetch("http://localhost/instrument-care-back-end/public/admin/technician-view-count",
+            const res = await fetch(
+                "http://localhost/instrument-care-back-end/public/admin/technician-view-count",
                 {
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
 
@@ -35,45 +27,45 @@ export default function AdminDashboardTechnicianViewStats() {
         }
     };
 
-    const CustomTooltip = ({ active, payload }) => {
-        if (active && payload && payload.length) {
-            const data = payload[0].payload;
-
-            return (
-                <div className="bg-white p-3 border rounded shadow text-sm">
-                    <p><span className="font-semibold">Technician ID:</span> {data.id}</p>
-                    <p><span className="font-semibold">Name:</span> {data.technician_name}</p>
-                    <p><span className="font-semibold">Views:</span> {data.views}</p>
-                </div>
-            );
-        }
-        return null;
-    };
+    // Get max value to scale bars
+    const maxViews = Math.max(...data.map((d) => d.views), 1);
 
     return (
-        <div className="bg-white rounded-xl shadow p-5 mt-5">
-            <h3 className="text-lg font-bold mb-4 text-gray-800">
-                Top 10 Most Viewed Technicians
+        <div className="bg-white rounded-xl shadow p-5 mt-5 font-poppins">
+            <h3 className="text-lg font-bold mb-6 text-gray-800">
+                Top Most Viewed Technicians
             </h3>
 
-            <ResponsiveContainer width="100%" height={400} >
-                <BarChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
+            <div className="space-y-4">
+                {data.map((tech) => {
+                    const widthPercent = (tech.views / maxViews) * 100;
 
-                    <XAxis
-                        dataKey="technician_name"
-                        angle={-20}
-                        textAnchor="end"
-                        interval={0}
-                    />
+                    return (
+                        <div key={tech.id} className="flex flex-col gap-1">
 
-                    <YAxis />
+                            {/* Name + count */}
+                            <div className="flex justify-between text-sm text-gray-700">
+                                <span className="font-semibold">
+                                    {tech.technician_name}
+                                </span>
+                                <span className="text-gray-500">
+                                    {tech.views} views
+                                </span>
+                            </div>
 
-                    <Tooltip content={<CustomTooltip />} />
+                            {/* Bar */}
+                            <div className="w-full bg-gray-200 rounded-full h-3 relative">
+                                <div
+                                    className="bg-orange-400 h-3 rounded-full transition-all duration-500"
+                                    style={{ width: `${widthPercent}%` }}
+                                    title={`ID: ${tech.id} | ${tech.views} views`}
+                                ></div>
+                            </div>
 
-                    <Bar dataKey="views" radius={[6, 6, 0, 0]} />
-                </BarChart>
-            </ResponsiveContainer>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }

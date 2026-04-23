@@ -30,7 +30,7 @@ export default function Navbar() {
         const token = sessionStorage.getItem("token");
 
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+          `http://localhost/instrument-care-back-end/public/admin/profile/${userId}`,
           {
             method: "GET",
             headers: token

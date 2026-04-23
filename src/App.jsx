@@ -30,6 +30,7 @@ import All_Service_Requests from './Pages/admin/Service_Requests';
 import All_Technicians from './Pages/admin/Technicians';
 import All_Users from './Pages/admin/Users';
 import UserRegistration from './Pages/Auth/User-Registration'
+import View_Statistics from './Pages/admin/View_Statistics';
 
 // 🔹 import ProtectedRoute
 import ProtectedRoute from './Components/auth/ProtectedRoute';
@@ -97,6 +98,15 @@ export default function App() {
           element={
             <ProtectedRoute allow={[1]}>
               <All_Users />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/statistics"
+          element={
+            <ProtectedRoute allow={[1]}>
+              <View_Statistics />
             </ProtectedRoute>
           }
         />

@@ -97,6 +97,12 @@ export default function Admin_Sidebar() {
             </button>
           </Link>
 
+
+          <Link to="/admin/statistics">
+            <button className="bg-orange-300/40 text-gray-800 hover:bg-orange-400/80 font-bold px-4 py-2 rounded-md w-48">
+              Statistics
+            </button>
+          </Link>
         </nav>
       </div>
 

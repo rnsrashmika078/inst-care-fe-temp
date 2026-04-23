@@ -11,7 +11,7 @@ import {
 
 export default function AdminDashboardLineChart({ data }) {
   return (
-    <div className="bg-[#ffffff80] p-4 rounded-lg shadow-md font-poppins">
+    <div className="bg-white p-4 rounded-lg shadow-md font-poppins">
       <h2 className="text-lg font-bold mb-4">Service Requests Overview</h2>
 
       <div className="w-full h-120">
