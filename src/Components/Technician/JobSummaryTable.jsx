@@ -58,13 +58,49 @@ export default function JobSummaryTable() {
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-bold">Job Summary</h3>
         <Link to="/tech/all-job-summary">
-          <button className="bg-orange-600 text-white px-4 py-1 rounded-md text-sm hover:bg-orange-400">
+          <button className="bg-orange-600 text-white px-4 py-1 rounded-md text-xs lg:text-sm hover:bg-orange-400">
             View all
           </button>
         </Link>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="sm:hidden space-y-3 max-h-[188px] overflow-y-auto">
+        {jobs.map((row, i) => (
+          <div
+            key={i}
+            className="bg-white rounded-xl p-4 shadow border hover:bg-orange-50 transition"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <span className="font-bold text-orange-600 text-xs lg:text-sm">{row[0]}</span>
+              <span
+                className={`text-xs font-semibold
+            ${row[5] === "Completed" ? "text-green-500" :
+                    row[5] === "Rejected" ? "text-red-500" :
+                      row[5] === "Pending" ? "text-yellow-500" :
+                        row[5] === "In Progress" ? "text-blue-500" : ""}
+          `}
+              >
+                {row[5]}
+              </span>
+            </div>
+
+            <div className="text-xs lg:text-sm text-gray-700">
+              <p><strong>Client:</strong> {row[1]}</p>
+              <p><strong>Instrument:</strong> {row[2]}</p>
+              <p>
+                <strong>Date:</strong>{" "}
+                {new Date(row[3]).toLocaleDateString()}
+              </p>
+              <p className="truncate">
+                <strong>Location:</strong> {row[4]}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* <div className="overflow-x-auto"> */}
+      <div className="hidden sm:block overflow-x-auto">
         {loading ? (
           <p className="text-gray-500 italic p-4 text-center">Loading...</p>
         ) : jobs.length === 0 ? (
@@ -74,14 +110,15 @@ export default function JobSummaryTable() {
         ) : (
           <div className="max-h-[188px] overflow-y-auto">
             <table className="w-full text-left text-sm border-collapse">
-              <thead>
+              {/* <thead> */}
+              <thead className="sticky top-0 bg-white">
                 <tr className="border-b">
-                  <th className="p-2">Request ID</th>
-                  <th className="p-2">Client Name</th>
-                  <th className="p-2">Instrument Name</th>
-                  <th className="p-2">Request Date</th>
-                  <th className="p-2">Location</th>
-                  <th className="p-2">Status</th>
+                  <th className="p-2 text-xs sm:text-sm">Request ID</th>
+                  <th className="p-2 text-xs sm:text-sm">Client Name</th>
+                  <th className="p-2 text-xs sm:text-sm">Instrument Name</th>
+                  <th className="p-2 text-xs sm:text-sm">Request Date</th>
+                  <th className="p-2 text-xs sm:text-sm">Location</th>
+                  <th className="p-2 text-xs sm:text-sm">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,7 +127,7 @@ export default function JobSummaryTable() {
                     {row.map((cell, j) => (
                       <td
                         key={j}
-                        className={`p-2 ${cell === "Pass"
+                        className={`p-2 text-xs sm:text-sm truncate max-w-[140px] ${cell === "Pass"
                           ? "text-green-500 font-bold"
                           : cell === "Rejected"
                             ? "text-red-500 font-bold"
