@@ -10,14 +10,14 @@ import { doFrontendLogout /* or logoutWithBackend */ } from "../auth/Logout";
 export default function Navbar() {
 
   const navigate = useNavigate();
-  
-    const handleLogout = async () => {
-      // EITHER: await logoutWithBackend();   // if you have an API
-      doFrontendLogout();                     // frontend-only
-  
-      // use replace so the Back button won't jump into a protected page
-      navigate("/", { replace: true });
-    };
+
+  const handleLogout = async () => {
+    // EITHER: await logoutWithBackend();   // if you have an API
+    doFrontendLogout();                     // frontend-only
+
+    // use replace so the Back button won't jump into a protected page
+    navigate("/", { replace: true });
+  };
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -30,7 +30,9 @@ export default function Navbar() {
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-2 flex-wrap">
           {/* Left: Logos */}
-          <div className="flex items-center space-x-2 flex-shrink-0">
+          <div 
+            onClick={() => navigate("/user/dashboard")}
+            className="flex items-center space-x-2 flex-shrink-0">
             <img
               src={NationalLogo}
               alt="National Logo"
@@ -50,41 +52,41 @@ export default function Navbar() {
 
           {/* Desktop profile picture & logout */}
           <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
-            
+
 
             {/* Profile picture clickable */}
-              <img
+            {/* <img
                 src={profileImage}
                 alt="Profile"
                 className="h-10 w-10 rounded-full object-cover cursor-pointer border border-gray-300 hover:scale-105 transition-transform"
-              />
+              /> */}
 
             {/* All Service Requests */}
-              <Link to="/user/my-request">
-                <button className="bg-orange-200 text-orange-600 px-4 py-2 rounded-md font-medium hover:bg-orange-300 transition font-poppins cursor-pointer">
-                  My Request
-                </button>
-              </Link>
+            <Link to="/user/my-request">
+              <button className="bg-orange-200 text-orange-600 px-4 py-2 rounded-md font-medium hover:bg-orange-300 transition font-poppins cursor-pointer">
+                My Request
+              </button>
+            </Link>
 
             {/* Log out button */}
 
-              <button
-                className="bg-orange-400 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-500 transition font-poppins cursor-pointer"
-                onClick={handleLogout}
-              >
-                  Log Out
-              </button>
+            <button
+              className="bg-orange-400 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-500 transition font-poppins cursor-pointer"
+              onClick={handleLogout}
+            >
+              Log Out
+            </button>
 
           </div>
 
           {/* Mobile menu icon */}
           <div className="md:hidden flex-shrink-0 flex items-center space-x-2">
             {/* Mobile profile picture clickable */}
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="h-9 w-9 rounded-full object-cover cursor-pointer border border-gray-300 hover:scale-105 transition-transform"
-              />
+            <img
+              src={profileImage}
+              alt="Profile"
+              className="h-9 w-9 rounded-full object-cover cursor-pointer border border-gray-300 hover:scale-105 transition-transform"
+            />
 
             {/* Hamburger menu */}
             <button
@@ -99,7 +101,7 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {menuOpen && (
           <div className="md:hidden flex flex-col space-y-4 pb-4 pt-2 border-t border-gray-200">
-            {navLinks.map((link) => (
+            {/* {navLinks.map((link) => (
               <Link
                 key={link}
                 to={link === "Home" ? "/" : `/${link.toLowerCase()}`}
@@ -108,17 +110,22 @@ export default function Navbar() {
               >
                 {link}
               </Link>
-            ))}
+            ))} */}
 
-            {/* Mobile logout button */}
-            <Link to="/auth/tech-registration">
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="w-full bg-orange-400 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-500 transition font-poppins"
-              >
-                Log Out
+            {/* My Request button — was missing on mobile */}
+            <Link to="/user/my-request" onClick={() => setMenuOpen(false)}>
+              <button className="w-full bg-orange-200 text-orange-600 px-4 py-2 rounded-md font-medium hover:bg-orange-300 transition font-poppins">
+                My Request
               </button>
             </Link>
+
+            {/* Mobile logout button */}
+            <button
+              onClick={() => { handleLogout(); setMenuOpen(false); }}
+              className="w-full bg-orange-400 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-500 transition font-poppins"
+            >
+              Log Out
+            </button>
           </div>
         )}
       </div>

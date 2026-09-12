@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../config";
 import Navbar from '../../Components/Technician/Navbar';
 import Sidebar from '../../Components/Technician/Sidebar';
 import ServiceRequestTable_Request from "../../Components/Technician/ServiceRequestTable-Request";
@@ -11,18 +12,26 @@ export default function Service_Request() {
   const [requestData, setRequestData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const token = sessionStorage.getItem("token");
+
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const techId = localStorage.getItem("technician_id");
+        const techId = sessionStorage.getItem("technician_id");
         if (!techId) {
-          console.error("Technician ID not found in localStorage");
+          console.error("Technician ID not found in sessionStorage");
           setLoading(false);
           return;
         }
 
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/user/service-request/${techId}`
+          `${API_BASE}/user/service-request/${techId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         if (!response.ok) {

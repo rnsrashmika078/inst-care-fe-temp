@@ -10,17 +10,17 @@ export default function MyRequest() {
   return (
     <>
       <Navbar />
-        <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
-            <div className="w-full bg-[#ffffff70] p-6 font-poppins rounded-md">
-                <h1 className="text-2xl font-bold mb-6">All My Previous Requests</h1>
+      <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
+        <div className="w-full bg-[#ffffff70] p-6 font-poppins rounded-md">
+          <h1 className="text-2xl font-bold mb-6">All My Requests</h1>
 
-                <div className="">             
-                    <div className="">
-                        <MyPreviousRequestHistoryTable />
-                    </div>
-                </div>
+          <div className="">
+            <div className="">
+              <MyPreviousRequestHistoryTable />
             </div>
+          </div>
         </div>
+      </div>
       <Footer />
     </>
   );

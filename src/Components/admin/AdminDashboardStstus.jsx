@@ -1,7 +1,10 @@
+import { fetchWithAuth } from '../utils/api';
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../config";
 import { UsersIcon, WrenchScrewdriverIcon, CubeIcon, ClipboardDocumentCheckIcon } from "@heroicons/react/24/outline";
 
 export default function AdminDashboardStats({ technicianId }) {
+  const token = sessionStorage.getItem("token");
   const [stats, setStats] = useState([
     { label: "Owners", value: 0, icon: UsersIcon, color: "from-orange-400 to-orange-300" },
     { label: "Technicians", value: 0, icon: WrenchScrewdriverIcon, color: "from-orange-400 to-orange-300" },
@@ -13,7 +16,14 @@ export default function AdminDashboardStats({ technicianId }) {
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
-        const response = await fetch("http://localhost/instrument-care-back-end/public/admin/dashboard");
+        const response = await fetch(`${API_BASE}/admin/dashboard`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
+        );
         const data = await response.json();
 
         // ✅ Update all dashboard values from backend response
@@ -47,19 +57,21 @@ export default function AdminDashboardStats({ technicianId }) {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md1:grid-cols-4 gap-6 mb-6 font-poppins">
+    <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat, i) => {
         const Icon = stat.icon;
         return (
           <div
             key={i}
-            className={`bg-gradient-to-r ${stat.color} rounded-xl p-6 flex flex-col items-center justify-center shadow-2xl transform hover:scale-105 transition-transform duration-300`}
+            className="flex min-h-[148px] flex-col justify-center rounded-[1.5rem] border border-orange-100 bg-orange-50 p-5 text-gray-800 transition hover:border-orange-200"
           >
-            <div className="flex items-center justify-center mb-3 rounded-full p-3 w-16 h-16 bg-white/20">
-              <Icon className="w-8 h-8 text-black" />
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-500 text-white">
+              <Icon className="h-6 w-6" />
             </div>
-            <div className="text-4xl font-bold text-white mb-1">{stat.value}</div>
-            <div className="text-lg text-white font-medium">{stat.label}</div>
+            <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+            <div className="mt-1 text-sm font-medium uppercase tracking-[0.18em] text-orange-600">
+              {stat.label}
+            </div>
           </div>
         );
       })}

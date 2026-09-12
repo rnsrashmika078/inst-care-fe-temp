@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { API_BASE } from "../../config";
 
 export default function SupervisorDetails() {
-    const userId = localStorage.getItem("user_id");
+    const userId = sessionStorage.getItem("user_id");
     const [supervisor, setSupervisor] = useState({
         name: "",
         designation: "",
@@ -18,7 +19,7 @@ export default function SupervisorDetails() {
     const fetchSupervisorDetails = async () => {
         try {
             const res = await fetch(
-                `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`
+                `${API_BASE}/tech/profile/${userId}`
             );
             const data = await res.json();
             setSupervisor({
@@ -40,7 +41,7 @@ export default function SupervisorDetails() {
         try {
             setLoading(true);
             const res = await fetch(
-                `http://localhost/instrument-care-back-end/public/tech/supervisor/${userId}`,
+                `${API_BASE}/tech/supervisor/${userId}`,
                 {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },

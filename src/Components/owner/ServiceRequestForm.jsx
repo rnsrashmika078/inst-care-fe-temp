@@ -1,10 +1,64 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../config";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
-export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {} }) {
+export default function ServiceRequestForm({
+  onBack = () => {},
+  onSend = () => {},
+}) {
   const { id: technicianId } = useParams();
+  const token = sessionStorage.getItem("token");
   const [instruments, setInstruments] = useState([]);
+  const userId = sessionStorage.getItem("user_id");
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!userId || !token) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/user/profile/${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch user profile (${res.status})`);
+        }
+
+        const data = await res.json();
+        console.log("User profile:", data);
+
+        setFormData((prev) => ({
+          ...prev,
+          full_name:
+            data.full_name ||
+            `${data.first_name || ""} ${data.last_name || ""}`.trim() ||
+            "",
+          email: data.email || "",
+          physical_address: data.physical_address || data.address || "",
+          contact_number:
+            data.contact_number ||
+            data.mobile_number ||
+            data.phone_number ||
+            "",
+          institute_name: data.institute_name || "",
+          institute_address:
+            data.institute_address ||
+            data.institute_address_line ||
+            data.address ||
+            "",
+        }));
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+      }
+    };
+
+    fetchUserProfile();
+  }, [userId, token]);
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
@@ -23,7 +77,7 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
     issue_description: "",
   });
 
-  const [loading, setLoading] = useState(false); // ✅ loading state
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -47,7 +101,7 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
       return;
     }
 
-    const userId = localStorage.getItem("user_id");
+    const userId = sessionStorage.getItem("user_id");
     if (!userId) {
       alert("User ID not found. Please log in again.");
       return;
@@ -58,59 +112,58 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
       technician_id: technicianId,
       user_id: userId,
     };
-  console.log("🚀 Sending service request payload:", JSON.stringify(payload, null, 2));
+    console.log(
+      "🚀 Sending service request payload:",
+      JSON.stringify(payload, null, 2),
+    );
 
     try {
       setLoading(true); // ✅ start loading
 
-      const response = await fetch(
-        "http://localhost/instrument-care-back-end/public/user/service-request",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(payload),
-        }
-        
-      );
+      const response = await fetch(`${API_BASE}/user/service-request`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
       const data = await response.json();
       onSend(data); // ✅ callback with response
+      alert("DONE");
     } catch (error) {
-      console.error(":", error);
-      alert("Something went wrong. Please try again.");
+      toast.success("Service Request sent successfully!");
     } finally {
-      setLoading(false); // ✅ stop loading
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-  const fetchInstruments = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost/instrument-care-back-end/public/service-request/${technicianId}/instruments`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-          }
-        }
-      );
+    const fetchInstruments = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE}/service-request/${technicianId}/instruments`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
 
-      if (!response.ok) throw new Error("Failed to fetch instruments");
+        if (!response.ok) throw new Error("Failed to fetch instruments");
 
-      const data = await response.json();
+        const data = await response.json();
 
-      setInstruments(data.instruments || []);
-    } catch (error) {
-      console.error("Error fetching instruments:", error);
-    }
-  };
+        setInstruments(data.instruments || []);
+      } catch (error) {
+        console.error("Error fetching instruments:", error);
+      }
+    };
 
-  fetchInstruments();
-}, [technicianId]);
+    fetchInstruments();
+  }, [technicianId]);
 
   return (
     <div className="w-full mx-auto bg-[#ffffff70] p-6 rounded-md shadow">
@@ -120,14 +173,22 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
           <h2 className="text-lg font-semibold mb-4">Personal Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { label: "Full Name", name: "full_name", placeholder: "Avishka Shehan Jayasiri" },
-              { label: "Email Address", name: "email", placeholder: "example@example.com" },
-              { label: "Physical Address", name: "physical_address", placeholder: "Main Road, Pitipana, Homagama" },
-              { label: "Contact Number", name: "contact_number", placeholder: "+94 71 23 45 678" },
+              { label: "Full Name", name: "full_name", placeholder: "" },
+              { label: "Email Address", name: "email", placeholder: "" },
+              {
+                label: "Physical Address",
+                name: "physical_address",
+                placeholder: "",
+              },
+              {
+                label: "Contact Number",
+                name: "contact_number",
+                placeholder: "07XXXXXXXX",
+              },
             ].map((field) => (
               <div key={field.name}>
                 <label className="block font-semibold mb-1">
-                  {field.label} <span className="text-red-500">*</span>
+                  {field.label} <span className="text-red-500"></span>
                 </label>
                 <input
                   type={field.name === "email" ? "email" : "text"}
@@ -150,12 +211,20 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
           <h2 className="text-lg font-semibold mb-4">Institute Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { label: "Name", name: "institute_name", placeholder: "National Science Foundation" },
-              { label: "Address", name: "institute_address", placeholder: "46/b De Mel Road, Colombo 07" },
+              {
+                label: "Institute Name",
+                name: "institute_name",
+                placeholder: "",
+              },
+              {
+                label: "Institute Address",
+                name: "institute_address",
+                placeholder: "",
+              },
             ].map((field) => (
               <div key={field.name}>
                 <label className="block font-semibold mb-1">
-                  {field.label} <span className="text-red-500">*</span>
+                  {field.label} <span className="text-red-500"></span>
                 </label>
                 <input
                   type="text"
@@ -178,19 +247,51 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
           <h2 className="text-lg font-semibold mb-4">Instrument Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { label: "Name", name: "instrument_name", placeholder: "Microscope" },
-              { label: "Brand", name: "instrument_brand", placeholder: "" },
-              { label: "Model", name: "instrument_model", placeholder: "" },
-              { label: "Manufacturer", name: "instrument_manufacturer", placeholder: "" },
-              { label: "Manufactured Year", name: "manufactured_year", placeholder: "" },
-              { label: "Type of product testing", name: "product_testing_type", placeholder: "" },
-              { label: "Testing parameter", name: "testing_parameter", placeholder: "" },
-              { label: "Consumption Period", name: "consumption_period", placeholder: "" },
+              {
+                label: "Instrument Name",
+                name: "instrument_name",
+                placeholder: "",
+              },
+              {
+                label: "Instrument Brand",
+                name: "instrument_brand",
+                placeholder: "Ex: Hanna Instruments",
+              },
+              {
+                label: "Instrument Model",
+                name: "instrument_model",
+                placeholder: "Ex: HI9813-5",
+              },
+              {
+                label: "Instrument Manufacturer",
+                name: "instrument_manufacturer",
+                placeholder: "Ex: Hanna Instruments",
+              },
+              {
+                label: "Manufactured Year",
+                name: "manufactured_year",
+                placeholder: "Ex: 2026",
+              },
+              {
+                label: "Type of product testing",
+                name: "product_testing_type",
+                placeholder: "Ex: Water Quality Testing",
+              },
+              {
+                label: "Testing parameter",
+                name: "testing_parameter",
+                placeholder: "Ex: pH, EC, TDS",
+              },
+              {
+                label: "Consumption Period",
+                name: "consumption_period",
+                placeholder: "Ex: 1 Year",
+              },
             ].map((field) => (
               <div key={field.name}>
                 <label className="block font-semibold mb-1">
-                  {field.label} <span className="text-red-500">*</span>
-                </label>  
+                  {field.label} <span className="text-red-500"></span>
+                </label>
                 {/* <input
                   type="text"
                   name={field.name}
@@ -208,10 +309,13 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
                     onChange={handleChange}
                     required
                   >
-                    {/* <option value="">Select Instrument</option> */}
+                    <option value="">Select Instrument</option>
 
                     {instruments.map((instrument) => (
-                      <option key={instrument.instrument_id} value={instrument.intrument_id}>
+                      <option
+                        key={instrument.instrument_id}
+                        value={instrument.intrument_id}
+                      >
                         {instrument.instrument_name}
                       </option>
                     ))}
@@ -233,12 +337,12 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
 
           <div className="mt-4">
             <label className="block font-semibold mb-1">
-              Description About Issue <span className="text-red-500">*</span>
+              Description About Issue <span className="text-red-500"></span>
             </label>
             <textarea
               rows="4"
               name="issue_description"
-              placeholder="Need to clean the lens"
+              placeholder="Ex: Need to repair the instrument"
               className="w-full border rounded px-3 py-2"
               value={formData.issue_description}
               onChange={handleChange}
@@ -251,7 +355,10 @@ export default function ServiceRequestForm({ onBack = () => {}, onSend = () => {
         <div className="flex flex-col md:flex-row gap-4 mt-6">
           <button
             type="reset"
-            onClick={onBack}
+            onClick={() => {
+              toast.success("Form Cleared!");
+              onBack();
+            }}
             className="w-full md:w-1/2 border rounded py-2 font-semibold hover:bg-gray-100 hover:cursor-pointer"
           >
             Clear Details

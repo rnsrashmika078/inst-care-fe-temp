@@ -1,6 +1,6 @@
 export const doFrontendLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("role");
-  localStorage.removeItem("user_id");
-  localStorage.removeItem("technician_id");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("role");
+  sessionStorage.removeItem("user_id");
+  sessionStorage.removeItem("technician_id");
 };

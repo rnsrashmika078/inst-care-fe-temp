@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Bg from "../../assets/images/hero-bg-5.jpg";
+import { API_BASE } from "../../config";
 
 export default function NewUserRegistration() {
   const [formData, setFormData] = useState({
@@ -12,28 +13,32 @@ export default function NewUserRegistration() {
     address: "",
     institute_id: "",
     other_institute: "",
-    faculty: "",
-    department: "",
+    faculty_id: "",
+    department_id: "",
     designation: "",
     phone_number: "",
     mobile_number: "",
     email: "",
     password: "",
     confirm_password: "",
+    technician: 0
   });
 
-  const [institutes, setInstitutes] = useState([]); // ✅ existing
+  const [institutes, setInstitutes] = useState([]);
+  const [faculties, setFaculties] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [designations, setDesignations] = useState([]); // ✅ NEW
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isTechnician, setIsTechnician] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.body.style.overflow = "auto";
 
     // ✅ FETCH INSTITUTES
-    fetch("http://localhost/instrument-care-back-end/public/api/instutes")
+    fetch(`${API_BASE}/institutes`)
       .then((res) => res.json())
       .then((data) => {
         setInstitutes(data);
@@ -43,7 +48,7 @@ export default function NewUserRegistration() {
       });
 
     // ✅ FETCH DESIGNATIONS
-    fetch("http://localhost/instrument-care-back-end/public/api/designations")
+    fetch(`${API_BASE}/designations`)
       .then((res) => res.json())
       .then((data) => {
         setDesignations(data);
@@ -53,8 +58,41 @@ export default function NewUserRegistration() {
       });
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (name === "institute_id" && value !== "" && value !== "other") {
+      try {
+        const res = await fetch(`${API_BASE}/faculties/${value}`);
+        const data = await res.json();
+        setFaculties(data);
+
+      } catch (err) {
+        console.error("Failed to fetch faculties", err);
+        setFaculties([]);
+      }
+    }
+
+    if (name === "institute_id" && value === "other") {
+      setFaculties([]);
+    }
+
+    if (name === "faculty_id" && value !== "" && value !== "other") {
+      try {
+        const res = await fetch(`${API_BASE}/departments/${value}`);
+        const data = await res.json();
+        setDepartments(data);
+
+      } catch (err) {
+        console.error("Failed to fetch departments", err);
+        setDepartments([]);
+      }
+    }
+
+    if (name === "faculty_id" && value === "other") {
+      setDepartments([]);
+    }
   };
 
   const handleRegister = async () => {
@@ -65,7 +103,7 @@ export default function NewUserRegistration() {
     console.log("Request Body:", formData);
     try {
       const response = await fetch(
-        "http://localhost/instrument-care-back-end/public/api/register-user",
+        `${API_BASE}/register-user`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -88,17 +126,14 @@ export default function NewUserRegistration() {
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center px-2 sm:px-4">
-      {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ backgroundImage: `url(${Bg})` }}
       ></div>
 
-      {/* Main Container */}
       <div className="relative z-10 w-full max-w-6xl bg-gray-50 bg-opacity-95 shadow-2xl rounded-xl overflow-hidden">
         <div className="flex flex-col md:flex-row">
 
-          {/* LEFT PANEL */}
           <div className="w-full md:w-1/2 p-5 sm:p-8 md:p-12">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center md:text-left">
               Register Here
@@ -149,13 +184,12 @@ export default function NewUserRegistration() {
             </div>
           </div>
 
-          {/* RIGHT PANEL */}
+
           <div className="w-full md:w-1/2 p-5 sm:p-8 md:p-12 bg-gray-50">
             <h2 className="text-2xl sm:text-3xl font-bold mb-6 invisible">
               Register Here
             </h2>
 
-            {/* ✅ DYNAMIC INSTITUTE DROPDOWN */}
             <select
               name="institute_id"
               className="input"
@@ -172,16 +206,32 @@ export default function NewUserRegistration() {
 
             <input name="other_institute" placeholder="Other Institute" className="input" onChange={handleChange} />
 
-            <select name="faculty" className="input" onChange={handleChange}>
+            <select name="faculty_id" className="input" onChange={handleChange}>
               <option value="">Faculty (Universities only)</option>
-              <option>Science</option>
-              <option>Engineering</option>
-              <option>Medicine</option>
+              {
+                faculties.length > 0 ? (
+                  faculties.map((fac) => (
+                    <option key={fac.faculty_id} value={fac.faculty_id}>{fac.faculty_name}</option>
+                  ))
+                ) : (
+                  <option disabled>No faculties found</option>
+                )
+              }
             </select>
 
-            <input name="department" placeholder="Department / Division" className="input" onChange={handleChange} />
+            <select name="department_id" className="input" onChange={handleChange}>
+              <option value="">Department / Division</option>
+              {
+                departments.length > 0 ? (
+                  departments.map((dep) => (
+                    <option key={dep.department_id} value={dep.department_id}>{dep.department_name}</option>
+                  ))
+                ) : (
+                  <option disabled>No departments found</option>
+                )
+              }
+            </select>
 
-            {/* ✅ DYNAMIC DESIGNATION DROPDOWN */}
             <select name="designation" className="input" onChange={handleChange}>
               <option value="">Designation</option>
               {designations.map((des) => (
@@ -193,10 +243,19 @@ export default function NewUserRegistration() {
 
             <input name="phone_number" placeholder="Phone Number" className="input" onChange={handleChange} />
             <input name="mobile_number" placeholder="Mobile Number" className="input" onChange={handleChange} />
+            <label className="flex items-center gap-2 mb-4">
+              <input
+                type="checkbox"
+                checked={isTechnician}
+                onChange={(e) => setIsTechnician(e.target.checked)}
+              />
+              Are you a Technician?
+            </label>
           </div>
         </div>
 
-        {/* ACTION SECTION */}
+
+
         <div className="w-full px-5 sm:px-8 md:px-12 py-6 bg-gray-50 flex flex-col items-center gap-3">
           {error && (
             <div className="w-full sm:w-1/2 p-3 text-sm text-red-700 bg-red-100 border border-red-400 rounded-md text-center">

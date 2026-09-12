@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProfileImage from "../../assets/images/profile-image.jpeg";
+import { API_BASE } from "../../config";
 
 export default function RecentTechniciansSection() {
   const [technicians, setTechnicians] = useState([]);
@@ -17,7 +18,7 @@ export default function RecentTechniciansSection() {
     const fetchTechnicians = async () => {
       try {
         const response = await fetch(
-          "http://localhost/instrument-care-back-end/public/user/dashboard"
+          `${API_BASE}/user/dashboard`
         );
         const data = await response.json();
 

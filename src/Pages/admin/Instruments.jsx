@@ -1,18 +1,26 @@
+import { fetchWithAuth } from '../../Components/utils/api';
 import React, { useEffect, useState } from 'react'
 import Navbar from '../../Components/Technician/Navbar'
 import Admin_Sidebar from '../../Components/admin/Sidebar'
 import AllInstrument from '../../Components/admin/AdminAllInstrument';
-import Footer from '../../Components/Common/Footer'
-import BG from '../../assets/images/technician-dashboard-bg-4.jpg';
+import Footer from '../../Components/Common/Footer';
+import { API_BASE } from '../../config';
 
 export default function All_Instruments() {
   const [instruments, setInstruments] = useState([]);
+  const token = sessionStorage.getItem("token");
 
-  // ✅ Fetch instruments from backend
   useEffect(() => {
     const fetchInstruments = async () => {
       try {
-        const response = await fetch('http://localhost/instrument-care-back-end/public/admin/instruments');
+        const response = await fetchWithAuth(`${API_BASE}/admin/instruments`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
+        );
         const result = await response.json();
 
         if (result.success && Array.isArray(result.data)) {
@@ -26,20 +34,13 @@ export default function All_Instruments() {
     };
 
     fetchInstruments();
-  }, []);
+  }, [token]);
 
   return (
     <>
       <Navbar />
 
-      {/* Background Image Wrapper */}
-      <div
-        className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url(${BG})`,
-        }}
-      >
-        {/* Sidebar */}
+      <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
         <Admin_Sidebar />
 
         {/* Main Content */}

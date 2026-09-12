@@ -15,7 +15,7 @@ export default function TechnicianHeader() {
   const navigate = useNavigate();
     
       const handleFindTechnician = () => {
-        const userId = localStorage.getItem("user_id");
+        const userId = sessionStorage.getItem("user_id");
         if (userId) {
           navigate("/user/dashboard");
         } else {

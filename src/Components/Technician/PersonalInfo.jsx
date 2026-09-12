@@ -1,16 +1,16 @@
-  import React, { useState, useEffect } from "react";
-// import { uploadToCloudinary } from "../utils/cloudinary";
+import React, { useState, useEffect } from "react";
 import profileImage from "../../assets/images/profile-image.jpeg";
+import { API_BASE } from "../../config";
 
 export default function PersonalInfo() {
-  // State management
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     nic: "",
     address: "",
-    officePhone: "",
-    mobilePhone: "",
+    mobileNumber: "",
+    phoneNumber: "",
     email: "",
     institute_name: "",
     designation: "",
@@ -18,6 +18,7 @@ export default function PersonalInfo() {
     supervisor_Designation: "",
     supervisor_Email: "",
     supervisor_Contact_No: "",
+    picture: null,
     profileImage: null,
     profileImagePreview: null,
     gender: "",
@@ -26,39 +27,45 @@ export default function PersonalInfo() {
     district: "",
   });
 
-  const userId = localStorage.getItem("user_id");
+  const userId = sessionStorage.getItem("user_id");
+  const token = sessionStorage.getItem("token");
 
-  // Fetch profile data on component mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`
+          `${API_BASE}/tech/profile/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            }
+          }
         );
         const data = await res.json();
-        console.log("Fetched profile data:", data.gender);
         setFormData((prev) => ({
           ...prev,
-          fullName: data.full_name || "",
+          firstName: data.first_name || "",
+          lastName: data.last_name || "",
           nic: data.nic || "",
           address: data.address || "",
-          officePhone: data.office_phone || "",
-          mobilePhone: data.personal_number || "",
+          phoneNumber: data.phone_number || "",
+          mobileNumber: data.mobile_number || "",
           email: data.email || "",
           institute_name: data.institute_name || "",
-          designation: data.current_designation || "",
+          designation: data.designation || "",
           supervisor_name: data.supervisor_name || "",
           supervisor_Designation: data.supervisor_designation || "",
           supervisor_Email: data.supervisor_email || "",
           supervisor_Contact_No: data.supervisor_contact_no || "",
-          // profileImagePreview: data.profile_image_url || null,
-          profileImagePreview: data.profile_image ? `http://localhost/instrument-care-back-end/public/${data.profile_image}`: null,
+          picture: data.picture ? `${API_BASE}/${data.picture}` : null,
           gender: data.gender || "",
           title: data.title || "",
           initials: data.name_with_initials || "",
           district: data.district || "",
         }));
-        
+
       } catch (err) {
         console.error("Failed to fetch profile", err);
       }
@@ -67,7 +74,6 @@ export default function PersonalInfo() {
     fetchProfile();
   }, [userId]);
 
-  // Handle input field changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -75,7 +81,6 @@ export default function PersonalInfo() {
     });
   };
 
-  // Handle image file selection
   const handleImageChange = (e) => {
     const file = e.target.files[0];
 
@@ -96,69 +101,69 @@ export default function PersonalInfo() {
 
 
   const handleSubmit = async () => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const form = new FormData();
+      const form = new FormData();
 
-    form.append("fullName", formData.fullName);
-    form.append("nic", formData.nic);
-    form.append("address", formData.address);
-    form.append("officePhone", formData.officePhone);
-    form.append("personalNumber", formData.mobilePhone);
-    form.append("email", formData.email);
-    form.append("institute_name", formData.institute_name);
-    form.append("current_designation", formData.designation);
-    form.append("supervisor_name", formData.supervisor_name);
-    form.append("supervisor_Designation", formData.supervisor_Designation);
-    form.append("supervisor_Email", formData.supervisor_Email);
-    form.append("supervisor_Contract_No", formData.supervisor_Contact_No);
-    form.append("gender", formData.gender);
-    form.append("title", formData.title);
-    form.append("initials", formData.initials);
-    form.append("district", formData.district);
+      form.append("firstName", formData.firstName);
+      form.append("lastName", formData.lastName);
+      form.append("nic", formData.nic);
+      form.append("address", formData.address);
+      form.append("phoneNumber", formData.phoneNumber);
+      form.append("mobileNumber", formData.mobileNumber);
+      form.append("email", formData.email);
+      form.append("institute_name", formData.institute_name);
+      form.append("designation", formData.designation);
+      form.append("supervisor_name", formData.supervisor_name);
+      form.append("supervisor_Designation", formData.supervisor_Designation);
+      form.append("supervisor_Email", formData.supervisor_Email);
+      form.append("supervisor_Contact_No", formData.supervisor_Contact_No);
+      form.append("gender", formData.gender);
+      form.append("title", formData.title);
+      form.append("initials", formData.initials);
+      form.append("district", formData.district);
 
-    // Append image file
-    if (formData.profileImage) {
-      form.append("profile_image", formData.profileImage);
-    }
-
-    const res = await fetch(
-      `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
-      {
-        method: "POST", // ⚠️ better for file upload
-        body: form,
+      if (formData.profileImage) {
+        form.append("picture", formData.profileImage);
       }
-    );
 
-    const result = await res.json();
+      const res = await fetch(
+        `${API_BASE}/tech/profile/${userId}`,
+        {
+          method: "POST",
+          body: form,
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        }
+      );
 
-    if (res.ok) {
-      alert("Profile updated successfully");
-    } else {
-      alert(result.error || "Update failed");
-      console.error("❌ API Error:", result);
+      const result = await res.json();
+
+      if (res.ok) {
+        alert("Profile updated successfully");
+      } else {
+        alert(result.error || "Update failed");
+        console.error("❌ API Error:", result);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Error updating profile");
+    } finally {
+      setLoading(false);
     }
-
-  } catch (err) {
-    console.error(err);
-    alert("Error updating profile");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="bg-[#ffffff80] shadow-md rounded-xl p-6">
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold">Personal Information</h2>
       </div>
-
-      {/* Profile Image Section */}
-      <div className="flex items-center gap-6 mb-6">
+      {/* <div className="flex items-center gap-6 mb-6">
         <img
-          src={formData.profileImagePreview || profileImage}
+          src={formData.profileImagePreview || formData.picture || profileImage}
           alt="profile"
           className="w-24 h-24 rounded-full object-cover border border-gray-300"
         />
@@ -171,12 +176,29 @@ export default function PersonalInfo() {
           />
           <p className="text-sm text-gray-500">Upload profile image</p>
         </div>
+      </div> */}
+      <div className="flex items-center gap-6 mb-6">
+        <img
+          src={formData.profileImagePreview || formData.picture || profileImage}
+          alt="profile"
+          className="w-24 h-24 rounded-full object-cover border border-gray-300"
+        />
+        <div>
+          <label className="cursor-pointer bg-orange-100 text-orange-700 px-3 py-1 rounded-md text-sm hover:bg-orange-200 inline-block">
+            Choose File
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </label>
+          <p className="text-sm text-gray-500 mt-1">Upload profile image</p>
+        </div>
       </div>
 
-      {/* Form Fields Grid */}
       <div className="grid md:grid-cols-2 gap-6">
-        
-        {/* Title */}
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
           <select
@@ -192,7 +214,6 @@ export default function PersonalInfo() {
           </select>
         </div>
 
-        {/* Initials */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Name with Initials</label>
           <input
@@ -205,20 +226,18 @@ export default function PersonalInfo() {
           />
         </div>
 
-        {/* Full Name - Disabled */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
           <input
             type="text"
-            name="fullName"
-            value={formData.fullName}
+            name="firstName"
+            value={formData.firstName + " " + formData.lastName}
             onChange={handleChange}
             disabled
             className="input w-full bg-gray-100 cursor-not-allowed"
           />
         </div>
 
-        {/* NIC Number */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">NIC Number</label>
           <input
@@ -231,7 +250,6 @@ export default function PersonalInfo() {
           />
         </div>
 
-        {/* Gender */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
           <select
@@ -247,7 +265,6 @@ export default function PersonalInfo() {
         </div>
 
 
-        {/* Address */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
           <input
@@ -259,7 +276,6 @@ export default function PersonalInfo() {
           />
         </div>
 
-        {/* District */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">District</label>
           <select
@@ -290,7 +306,7 @@ export default function PersonalInfo() {
             <option value="Mullaitivu">Mullaitivu</option>
             <option value="Nuwara Eliya">Nuwara Eliya</option>
             <option value="Polonnaruwa">Polonnaruwa</option>
-            <option value="Puttalam">Puttalam</option>  
+            <option value="Puttalam">Puttalam</option>
             <option value="Ratnapura">Ratnapura</option>
             <option value="Trincomalee">Trincomalee</option>
             <option value="Vavuniya">Vavuniya</option>
@@ -302,12 +318,26 @@ export default function PersonalInfo() {
           <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Phone</label>
           <input
             type="text"
-            name="mobilePhone"
-            value={formData.mobilePhone}
+            name="mobileNumber"
+            value={formData.mobileNumber}
             onChange={handleChange}
             className="input w-full"
             maxLength="10"
             placeholder="07XXXXXXXX"
+          />
+        </div>
+
+        {/* Office Phone */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Land Line Phone</label>
+          <input
+            type="text"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            className="input w-full"
+            maxLength="10"
+            placeholder="0XXXXXXXXX"
           />
         </div>
 
@@ -328,7 +358,6 @@ export default function PersonalInfo() {
           <h3 className="font-semibold text-lg text-gray-800 mt-6">Institute Details</h3>
         </div>
 
-        {/* Institute Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Institute Name</label>
           <input
@@ -352,20 +381,6 @@ export default function PersonalInfo() {
           />
         </div>
 
-        {/* Office Phone */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Office Phone</label>
-          <input
-            type="text"
-            name="officePhone"
-            value={formData.officePhone}
-            onChange={handleChange}
-            className="input w-full"
-            maxLength="10"
-            placeholder="0XXXXXXXXX"
-          />
-        </div>
-
         {/* Supervisor Details Header */}
         <div className="md:col-span-2">
           <h3 className="font-semibold text-lg text-gray-800 mt-6">Supervisor Details</h3>
@@ -373,7 +388,7 @@ export default function PersonalInfo() {
 
         {/* Supervisor Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
           <input
             type="text"
             name="supervisor_name"
@@ -385,7 +400,7 @@ export default function PersonalInfo() {
 
         {/* Supervisor Designation */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Designation</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Designation</label>
           <input
             type="text"
             name="supervisor_Designation"
@@ -397,7 +412,7 @@ export default function PersonalInfo() {
 
         {/* Supervisor Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Email</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
           <input
             type="email"
             name="supervisor_Email"
@@ -409,7 +424,7 @@ export default function PersonalInfo() {
 
         {/* Supervisor Contact Number */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Contact Number</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
           <input
             type="text"
             name="supervisor_Contact_No"
@@ -418,12 +433,12 @@ export default function PersonalInfo() {
             className="input w-full"
             maxLength={10}
           />
-      </div>
+        </div>
 
-      
-      
-    </div>
-    <div className="mt-6 flex justify-end">
+
+
+      </div>
+      <div className="mt-6 flex justify-end">
         <button
           onClick={handleSubmit}
           disabled={loading}

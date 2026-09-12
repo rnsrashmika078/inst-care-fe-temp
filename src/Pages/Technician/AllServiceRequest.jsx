@@ -16,7 +16,7 @@ export default function AllServiceRequestPage() {
         <Sidebar />
 
         {/* Main Content */}
-        <main className="flex-1 bg-[#ffffff80] rounded-lg p-4">
+        <main className="flex-1 bg-[#ffffff80] rounded-lg p-4 pt-14 md:pt-4">
           <AllServiceRequestTable />
         </main>
       </div>

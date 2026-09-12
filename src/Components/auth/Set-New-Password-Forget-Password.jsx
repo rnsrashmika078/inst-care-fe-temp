@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Bg from "../../assets/images/hero-bg-5.jpg";
 import ForgotImg from "../../assets/images/set-new-password.png";
+import { API_BASE } from "../../config";
 
 export default function SetNewPassword_ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -39,7 +40,7 @@ export default function SetNewPassword_ForgotPassword() {
 
     try {
       const response = await fetch(
-        "http://localhost/instrument-care-back-end/public/api/reset-password",
+        `${API_BASE}/api/reset-password`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

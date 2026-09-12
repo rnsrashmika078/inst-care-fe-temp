@@ -1,9 +1,12 @@
+import { fetchWithAuth } from '../../Components/utils/api';
 import React, { useEffect, useState } from "react";
 import Navbar from "../../Components/Technician/Navbar";
 import Admin_Sidebar from "../../Components/admin/Sidebar";
 import AllOwnerTable from "../../Components/admin/AdminAllOwners";
 import Footer from "../../Components/Common/Footer";
 import BG from "../../assets/images/technician-dashboard-bg-4.jpg";
+import { API_BASE } from "../../config";
+
 
 export default function All_Users() {
   const [users, setUsers] = useState([]);
@@ -14,8 +17,8 @@ export default function All_Users() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(
-          "http://localhost/instrument-care-back-end/public/admin/users"
+        const response = await fetchWithAuth(
+          `${API_BASE}/admin/users`
         );
 
         if (!response.ok) {

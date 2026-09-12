@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Bg from '../../assets/images/hero-bg-5.jpg';
+import { API_BASE } from "../../config";
 
 export default function LoginPage() {
   const [loginData, setLoginData] = useState({
-    username: "", 
+    username: "",
     password: "",
   });
   const [error, setError] = useState(""); // 🔹 error state
@@ -22,30 +23,31 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost/instrument-care-back-end/public/api/login", {
+      const response = await fetch(`${API_BASE}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),
       });
 
-      console.log("Login data:", loginData);
+      // console.log("Login data:", loginData);
       const result = await response.json();
-      console.log("Login Response:", result);
+      // console.log("Login Response:", result);
 
       if (result.message === "Login successful") {
-        
+
         setError(""); // clear error if success
 
-        localStorage.setItem("isLoggedIn", "true");     //  mark logged-in
-        localStorage.setItem("role", String(result.role));
-        localStorage.setItem("user_id", String(result.id));
-        localStorage.setItem("technician_id",String(result.technician_id))
-        
-        if (result.role === 8) {
+        sessionStorage.setItem("isLoggedIn", "true");     //  mark logged-in
+        sessionStorage.setItem("role", String(result.role));
+        sessionStorage.setItem("user_id", String(result.id));
+        sessionStorage.setItem("technician_id", String(result.technician_id));
+        sessionStorage.setItem("token", result.token);
+
+        if (result.role === 8 || result.role === 9 || result.role === 7 || result.role === 6 || result.role === 5 || result.role === 4 || result.role === 3 || result.role === 2) {
           navigate("/user/dashboard");
         } else if (result.role === 10) {
           navigate("/tech/dashboard");
-        } else if (result.role === 1){
+        } else if (result.role === 1) {
           navigate("/admin/dashboard");
         } else {
           setError("Unauthorized role!");
@@ -70,7 +72,7 @@ export default function LoginPage() {
 
       {/* Main Login Container */}
       <div className="relative z-10 w-full max-w-6xl flex flex-col md:flex-row bg-gray-50 bg-opacity-90 shadow-2xl rounded-none md:rounded-2xl overflow-hidden transform -translate-y-[5vh]">
-        
+
         {/* Left Panel - Sign In */}
         <div className="w-full md:w-1/2 flex flex-col justify-center px-6 py-6 sm:px-10 md:px-16 md:py-12">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center md:text-left">
@@ -109,6 +111,7 @@ export default function LoginPage() {
             onChange={(e) =>
               setLoginData({ ...loginData, username: e.target.value })
             }
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           />
           <div className="relative mb-4">
             <input
@@ -119,6 +122,7 @@ export default function LoginPage() {
               onChange={(e) =>
                 setLoginData({ ...loginData, password: e.target.value })
               }
+              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
             />
             <button
               type="button"

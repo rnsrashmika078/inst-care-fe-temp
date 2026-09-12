@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../config";
 import { useLocation } from "react-router-dom";
 import Navbar from "../../Components/Technician/Navbar";
 import Sidebar from "../../Components/Technician/Sidebar";
@@ -23,15 +24,15 @@ export default function Accept_Service_Request() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const techId = localStorage.getItem("technician_id");
+        const techId = sessionStorage.getItem("technician_id");
         if (!techId) {
-          console.error("Technician ID not found in localStorage");
+          console.error("Technician ID not found in sessionStorage");
           setLoading(false);
           return;
         }
 
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/user/service-request/${techId}`
+          `${API_BASE}/user/service-request/${techId}`
         );
 
         if (!response.ok) throw new Error("Failed to fetch service requests");
@@ -64,20 +65,6 @@ export default function Accept_Service_Request() {
         <main className="flex-1 bg-[#ffffff80] rounded-lg p-4">
           <h2 className="text-xl font-bold mb-4">Accept Service Request</h2>
 
-          {/* <ServiceRequestTable_Request
-            data={requestData}
-            onView={setSelectedRequest}
-          />
-
-          {selectedRequest && (
-            <>
-              <br />
-              <ServiceRequestDetails details={selectedRequest} />
-            </>
-          )}
-
-          <br /> */}
-
           {!showSuccess ? (
             <ServiceRequestAccept
               initialFormData={{
@@ -87,12 +74,12 @@ export default function Accept_Service_Request() {
                   "Dear Customer, your service request has been accepted and is now in progress.",
                 request_id: request_id || null,
               }}
-              onSend={handleEmailSuccess} // ✅ triggered on success
+              onSend={handleEmailSuccess} 
             />
           ) : (
             <ServiceRequestSuccess
               onBack={() => setShowSuccess(false)}
-              responseData={emailResponse} // ✅ show backend message dynamically
+              responseData={emailResponse} 
             />
           )}
 

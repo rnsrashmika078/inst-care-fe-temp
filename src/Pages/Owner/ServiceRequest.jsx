@@ -16,23 +16,17 @@ export default function ServiceRequest() {
     <>
       <Navbar />
 
-      {/* Full Page Layout */}
       <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
         <div className="w-full  bg-[#ffffff70] p-6 font-poppins rounded-md">
-          {/* Title */}
           <h1 className="text-2xl font-bold mb-6">Service Request</h1>
 
-          {/* Tabs */}
           <Tabs />
 
-          {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 mt-4">
-            {/* Profile Left Side */}
             <div className="lg:col-span-1">
               <ProfileCard />
             </div>
 
-            {/* Right Side */}
             <div className="lg:col-span-2 flex flex-col">
               {!showSuccess ? (
                 <ServiceRequestForm onSend={() => setShowSuccess(true)} />
@@ -40,11 +34,11 @@ export default function ServiceRequest() {
                 <ServiceRequestSuccess onBack={() => setShowSuccess(false)} />
               )}
 
-                {/* <ServiceRequestForm /> */}
+              {/* <ServiceRequestForm /> */}
             </div>
           </div>
         </div>
-      
+
       </div>
       <Footer />
     </>
