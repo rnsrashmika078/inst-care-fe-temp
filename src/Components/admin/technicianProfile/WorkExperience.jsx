@@ -1,5 +1,6 @@
 import { fetchWithAuth } from '../../utils/api';
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { API_BASE } from "../../../config";
 
 export default function WorkExperience({ userId }) {
@@ -93,15 +94,15 @@ export default function WorkExperience({ userId }) {
             console.log("📥 Response:", result);
 
             if (res.ok) {
-                alert("✅ Work Experience updated successfully!");
+                toast.success("✅ Work Experience updated successfully!");
                 fetchTechnicianWorkExperience();
             } else {
                 console.error("❌ API Error:", result);
-                alert("Failed to update Work Experience");
+                toast.error("Failed to update Work Experience");
             }
         } catch (err) {
             console.error("❌ Error updating Work Experience:", err);
-            alert("Error updating Work Experience");
+            toast.error("Error updating Work Experience");
         } finally {
             setLoading(false);
         }

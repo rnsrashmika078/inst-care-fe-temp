@@ -13,6 +13,7 @@ import DefaultProfileImage from "../../assets/images/profile-image.jpeg";
 import ProfileForm from "./TechnicianProfile";
 // import Register from "../auth/Technician-Registration"
 import Register from "./AddTechnician";
+import { toast } from "react-toastify";
 
 export default function AllTechnicianTable({ usersData }) {
   const token = sessionStorage.getItem("token");
@@ -50,13 +51,13 @@ export default function AllTechnicianTable({ usersData }) {
 
       if (response.ok) {
         setUsers((prev) => prev.filter((u) => u.id !== id));
-        alert(result.message || "Technician deleted successfully");
+        toast.success(result.message || "Technician deleted successfully");
       } else {
-        alert(result.error || "Failed to delete technician");
+        toast.error(result.error || "Failed to delete technician");
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong while deleting the technician.");
+      toast.error("Something went wrong while deleting the technician.");
     }
   };
 
@@ -87,13 +88,15 @@ export default function AllTechnicianTable({ usersData }) {
         setUsers((prev) =>
           prev.map((u) => (u.id === id ? { ...u, status: newStatus } : u)),
         );
-        alert(result.message || `Technician status updated to ${newStatus}`);
+        toast.success(
+          result.message || `Technician status updated to ${newStatus}`,
+        );
       } else {
-        alert(result.error || "Failed to update technician status");
+        toast.error(result.error || "Failed to update technician status");
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong while updating the status.");
+      toast.error("Something went wrong while updating the status.");
     }
   };
 
@@ -143,7 +146,7 @@ export default function AllTechnicianTable({ usersData }) {
 
   const handleExportCSV = () => {
     if (filteredUsers.length === 0) {
-      alert("No records to export.");
+      toast.warn("No records to export.");
       return;
     }
 

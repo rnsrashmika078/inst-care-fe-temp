@@ -2,6 +2,7 @@ import { fetchWithAuth } from '../utils/api';
 import { API_BASE } from "../../config";
 import React, { useState } from "react";
 import { FaEye, FaTrash } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function AdminAllServiceRequest({ requestsData }) {
   const token = sessionStorage.getItem("token");
@@ -87,12 +88,12 @@ export default function AdminAllServiceRequest({ requestsData }) {
       console.log(result);
 
       if (result.success) {
-        alert("Service request updated successfully");
+        toast.success("Service request updated successfully");
       }
 
 
       if (!response.ok) {
-        alert(result.error || "Failed to update service request");
+        toast.error(result.error || "Failed to update service request");
         return;
       }
 
@@ -106,7 +107,7 @@ export default function AdminAllServiceRequest({ requestsData }) {
       handleCloseModal();
     } catch (error) {
       console.error("Update error:", error);
-      alert("Something went wrong while updating");
+      toast.error("Something went wrong while updating");
     }
   };
 
@@ -133,14 +134,14 @@ export default function AdminAllServiceRequest({ requestsData }) {
       console.log(result);
 
       if (!response.ok) {
-        alert(result.error || "Failed to delete service request");
+        toast.error(result.error || "Failed to delete service request");
         return;
       }
 
       setRequests((prev) => prev.filter((req) => req.id !== id));
     } catch (error) {
       console.error("Delete error:", error);
-      alert("Something went wrong while deleting");
+      toast.error("Something went wrong while deleting");
     }
   };
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
+import { toast } from "react-toastify";
 import { API_BASE } from "../../config";
 
 export default function TechnicalExpertise() {
@@ -328,14 +329,14 @@ export default function TechnicalExpertise() {
 
       const result = await res.json();
       if (res.ok) {
-        alert("Technical expertise updated successfully");
+        toast.success("Technical expertise updated successfully");
       } else {
         console.error("Update error", result);
-        alert("Failed to update expertise");
+        toast.error("Failed to update expertise");
       }
     } catch (err) {
       console.error(err);
-      alert("Error updating expertise");
+      toast.error("Error updating expertise");
     } finally {
       setLoading(false);
     }

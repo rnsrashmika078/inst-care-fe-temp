@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Bg from '../../assets/images/hero-bg-5.jpg';
 import { API_BASE } from "../../config";
+import { toast } from "react-toastify";
 
 export default function TechnicianRegisterPage() {
   const navigate = useNavigate();
@@ -43,11 +44,11 @@ export default function TechnicianRegisterPage() {
       if (result.message === "User registered successfully. Verification email sent.") {
         navigate("/auth/verify-email", { state: { userId: result.user_id, email: formData.email } });
       } else {
-        alert(result.message || "Registration failed. Please try again.");
+        toast.error(result.message || "Registration failed. Please try again.");
       }
     } catch (err) {
       console.error("Registration failed:", err);
-      alert("Something went wrong. Please try again later.");
+      toast.error("Something went wrong. Please try again later.");
     }
   };
 

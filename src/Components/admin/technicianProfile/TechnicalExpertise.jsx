@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
+import { toast } from "react-toastify";
 import { API_BASE } from "../../../config";
 
 export default function TechnicalExpertise({ userId }) {
@@ -284,7 +285,7 @@ export default function TechnicalExpertise({ userId }) {
       setLoading(true);
 
       if (!tech_id || !token) {
-        alert("Technician profile is not loaded yet.");
+        toast.warn("Technician profile is not loaded yet.");
         return;
       }
 
@@ -317,14 +318,14 @@ export default function TechnicalExpertise({ userId }) {
       }
 
       if (res.ok) {
-        alert("Technical expertise updated successfully");
+        toast.success("Technical expertise updated successfully");
       } else {
         console.error("Update error", result);
-        alert(result.message || result.error || "Failed to update expertise");
+        toast.error(result.message || result.error || "Failed to update expertise");
       }
     } catch (err) {
       console.error(err);
-      alert("Error updating expertise");
+      toast.error("Error updating expertise");
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import profileImage from "../../../assets/images/profile-image.jpeg";
+import { toast } from "react-toastify";
 import { API_BASE } from '../../../config';
 
 export default function PersonalInfo({ userId }) {
@@ -147,15 +148,15 @@ export default function PersonalInfo({ userId }) {
             const result = await res.json();
 
             if (res.ok) {
-                alert("Profile updated successfully");
+                toast.success("Profile updated successfully");
             } else {
-                alert(result.error || "Update failed");
+                toast.error(result.error || "Update failed");
                 console.error("❌ API Error:", result);
             }
 
         } catch (err) {
             console.error(err);
-            alert("Error updating profile");
+            toast.error("Error updating profile");
         } finally {
             setLoading(false);
         }

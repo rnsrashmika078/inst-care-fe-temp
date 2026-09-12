@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_BASE } from "../../config";
+import { toast } from "react-toastify";
 
 export default function SupervisorDetails() {
     const userId = sessionStorage.getItem("user_id");
@@ -55,13 +56,13 @@ export default function SupervisorDetails() {
             );
 
             if (res.ok) {
-                alert("Supervisor Details updated successfully!");
+                toast.success("Supervisor Details updated successfully!");
             } else {
-                alert("Failed to update Supervisor Details");
+                toast.error("Failed to update Supervisor Details");
             }
         } catch (err) {
             console.error("Error updating Supervisor Details:", err);
-            alert("Error updating Supervisor Details");
+            toast.error("Error updating Supervisor Details");
         } finally {
             setLoading(false);
         }

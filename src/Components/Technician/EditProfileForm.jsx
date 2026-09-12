@@ -4,6 +4,7 @@ import ProfileFormLeft from "./ProfileFormLeft";
 import ProfileFormRight from "./ProfileFormRight";
 import { uploadToCloudinary } from "../utils/cloudinary";
 import { API_BASE } from "../../config";
+import { toast } from "react-toastify";
 
 export default function EditProfileForm() {
   const [loading, setLoading] = useState(false); // ⬅ added loading state
@@ -122,7 +123,7 @@ export default function EditProfileForm() {
 
       const userId = sessionStorage.getItem("user_id");
       if (!userId) {
-        alert("User not found.");
+        toast.error("User not found.");
         setLoading(false);
         return;
       }
@@ -134,7 +135,7 @@ export default function EditProfileForm() {
           profileImageUrl = await uploadToCloudinary(formData.profileImage);
         } catch (err) {
           console.error("Cloudinary upload failed", err);
-          alert("Failed to upload image. Try again.");
+          toast.error("Failed to upload image. Try again.");
           setLoading(false);
           return;
         }
@@ -160,17 +161,18 @@ export default function EditProfileForm() {
       try {
         result = JSON.parse(text);
       } catch {
-        alert("Invalid server response");
+        toast.error("Invalid server response");
         setLoading(false);
         return;
       }
 
-      if (res.ok) alert(result.message || "Profile updated successfully!");
-      else alert(result.error || "Failed to update profile");
+      if (res.ok)
+        toast.success(result.message || "Profile updated successfully!");
+      else toast.error(result.error || "Failed to update profile");
 
     } catch (err) {
       console.error(err);
-      alert("Error updating profile. Please try again.");
+      toast.error("Error updating profile. Please try again.");
     }
 
     setLoading(false); // ⬅ stop loading
