@@ -153,7 +153,7 @@ export default function TechnicalExpertise() {
         label: item.name,
       }));
 
-      setOptions(formattedOptions);
+      setOptions(ensureOther(formattedOptions));
     } catch (error) {
       console.error(error);
     }
@@ -177,7 +177,7 @@ export default function TechnicalExpertise() {
         label: item.name,
       }));
 
-      setInstrCatOptions(formattedOptions);
+      setInstrCatOptions(ensureOther(formattedOptions));
     } catch (error) {
       console.error(error);
     }
@@ -201,7 +201,7 @@ export default function TechnicalExpertise() {
         label: item.instrument_name,
       }));
 
-      setInstrumentOptions(formattedOptions);
+      setInstrumentOptions(ensureOther(formattedOptions));
     } catch (error) {
       console.error(error);
     }
@@ -244,15 +244,18 @@ export default function TechnicalExpertise() {
     return ["other", "others"].includes(String(label).trim().toLowerCase());
   };
 
+  const ensureOther = (opts) => {
+    const hasOther = opts.some((o) => isOtherOption(o));
+    return hasOther ? opts : [...opts, { value: "other", label: "Other" }];
+  };
+
   const handleChange = (selected, index) => {
     const updated = [...selectedCategories];
     updated[index] = selected;
     setSelectedCategories(updated);
 
-    if (selected && isOtherOption(selected)) {
-      setSelectedLabCategory("Others");
-    } else {
-      setSelectedLabCategory("");
+    if (!selected || !isOtherOption(selected)) {
+      setCustomLabValues((prev) => ({ ...prev, [index]: "" }));
     }
   };
 
@@ -261,10 +264,8 @@ export default function TechnicalExpertise() {
     updated[index] = selected;
     setSelectedInstrumentCategories(updated);
 
-    if (selected && isOtherOption(selected)) {
-      setSelectedInstrumentCategory("Others");
-    } else {
-      setSelectedInstrumentCategory("");
+    if (!selected || !isOtherOption(selected)) {
+      setCustomInstrCatValues((prev) => ({ ...prev, [index]: "" }));
     }
   };
 
@@ -272,6 +273,10 @@ export default function TechnicalExpertise() {
     const updated = [...selectedInstruments];
     updated[index] = selected; // save selected option at correct index
     setSelectedInstruments(updated);
+
+    if (!selected || !isOtherOption(selected)) {
+      setCustomInstrumentValues((prev) => ({ ...prev, [index]: "" }));
+    }
   };
 
   const addManualInstrument = () => {
@@ -313,11 +318,27 @@ export default function TechnicalExpertise() {
       setLoading(true);
       const payload = {
         tech_id,
-        laboratory_categories: selectedCategories.map((c) => c?.value),
-        instrument_categories: selectedInstrumentCategories.map(
-          (c) => c?.value,
-        ),
-        instruments: selectedInstruments.map((c) => c?.value),
+        laboratory_categories: selectedCategories
+          .map((c, i) =>
+            isOtherOption(c)
+              ? (customLabValues[i] || "").trim()
+              : c?.value,
+          )
+          .filter((v) => v),
+        instrument_categories: selectedInstrumentCategories
+          .map((c, i) =>
+            isOtherOption(c)
+              ? (customInstrCatValues[i] || "").trim()
+              : c?.value,
+          )
+          .filter((v) => v),
+        instruments: selectedInstruments
+          .map((c, i) =>
+            isOtherOption(c)
+              ? (customInstrumentValues[i] || "").trim()
+              : c?.value,
+          )
+          .filter((v) => v),
         new_instruments: selectedNewInstruments,
       };
 
@@ -345,17 +366,10 @@ export default function TechnicalExpertise() {
     }
   };
 
-  //   custom fields (others selection)
-  //   categories
-  const [selectedLabCategory, setSelectedLabCategory] = useState("");
-  const [selectedInstrumentCategory, setSelectedInstrumentCategory] =
-    useState("");
-
-  //   updated categories value
-  //   lab
-  const [customLabCategoryValue, setCustomLabCategoryValue] = useState("");
-  const [customInstrumentCategoryValue, setCustomInstrumentCategoryValue] =
-    useState("");
+  //   custom values per row (Others selection)
+  const [customLabValues, setCustomLabValues] = useState({});
+  const [customInstrCatValues, setCustomInstrCatValues] = useState({});
+  const [customInstrumentValues, setCustomInstrumentValues] = useState({});
 
   /* STEP NAVIGATION */
   const stepValid = () => {
@@ -396,28 +410,25 @@ export default function TechnicalExpertise() {
             <Select
               options={options}
               value={selectedCategories[i] || null}
-              onChange={(selected) => {
-                handleChange(selected, i);
-                if (selected && isOtherOption(selected)) {
-                  setCustomLabCategoryValue("");
-                } else {
-                  setCustomLabCategoryValue("");
-                }
-              }}
+              onChange={(selected) => handleChange(selected, i)}
               isSearchable
             />
-            {selectedLabCategory === "Others" && (
+            {isOtherOption(selectedCategories[i]) && (
               <input
-                value={customLabCategoryValue}
-                onChange={(e) => setCustomLabCategoryValue(e.target.value)}
+                value={customLabValues[i] || ""}
+                onChange={(e) =>
+                  setCustomLabValues((prev) => ({
+                    ...prev,
+                    [i]: e.target.value,
+                  }))
+                }
                 className="bg-white border mt-2 border-gray-300 p-2 rounded-md w-full"
                 placeholder="Enter Custom Laboratory Category"
-              ></input>
+              />
             )}
             <button
               type="button"
               onClick={() => {
-                setSelectedLabCategory(null);
                 removeDropdown(i);
               }}
               className="text-red-500 hover:text-red-600 text-sm mt-1.5 flex items-center gap-1"
@@ -484,30 +495,25 @@ export default function TechnicalExpertise() {
             <Select
               options={instrCatOptions}
               value={selectedInstrumentCategories[i] || null}
-              onChange={(selected) => {
-                handleInstrumentCategoryChange(selected, i);
-                if (selected && isOtherOption(selected)) {
-                  setCustomInstrumentCategoryValue("");
-                } else {
-                  setCustomInstrumentCategoryValue("");
-                }
-              }}
+              onChange={(selected) => handleInstrumentCategoryChange(selected, i)}
               isSearchable
             />
-            {selectedInstrumentCategory === "Others" && (
+            {isOtherOption(selectedInstrumentCategories[i]) && (
               <input
-                value={customInstrumentCategoryValue}
+                value={customInstrCatValues[i] || ""}
                 onChange={(e) =>
-                  setCustomInstrumentCategoryValue(e.target.value)
+                  setCustomInstrCatValues((prev) => ({
+                    ...prev,
+                    [i]: e.target.value,
+                  }))
                 }
                 className="bg-white border mt-2 border-gray-300 p-2 rounded-md w-full"
-                placeholder="Enter Custom Laboratory Category"
-              ></input>
+                placeholder="Enter Custom Instrument Category"
+              />
             )}
             <button
               type="button"
               onClick={() => {
-                setCustomInstrumentCategoryValue(null);
                 removeDropdownInstCat(i);
               }}
               className="text-red-500 hover:text-red-600 text-sm mt-1.5 flex items-center gap-1"
@@ -575,6 +581,19 @@ export default function TechnicalExpertise() {
               onChange={(selected) => handleInstrumentChange(selected, i)}
               isSearchable
             />
+            {isOtherOption(selectedInstruments[i]) && (
+              <input
+                value={customInstrumentValues[i] || ""}
+                onChange={(e) =>
+                  setCustomInstrumentValues((prev) => ({
+                    ...prev,
+                    [i]: e.target.value,
+                  }))
+                }
+                className="bg-white border mt-2 border-gray-300 p-2 rounded-md w-full"
+                placeholder="Enter Custom Instrument Name"
+              />
+            )}
             <button
               type="button"
               onClick={() => removeDropdownInstrument(i)}
@@ -774,7 +793,8 @@ export default function TechnicalExpertise() {
         <div className="flex-1">{stepContent()}</div>
 
         {/* Right Side: Recently Added Instruments Panel */}
-        <div className="w-full lg:w-[350px] shrink-0">
+        
+        {/* <div className="w-full lg:w-[350px] shrink-0">
           <div className="bg-gradient-to-br from-orange-50/50 to-white shadow-sm border border-orange-100 rounded-xl p-5 sticky top-6">
             <div className="flex items-center gap-3 mb-3">
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-orange-600 ring-4 ring-orange-50">
@@ -834,7 +854,7 @@ export default function TechnicalExpertise() {
               )}
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* NEXT / BACK / UPDATE BUTTONS */}
