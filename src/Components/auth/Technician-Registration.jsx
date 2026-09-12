@@ -15,6 +15,7 @@ export default function TechnicianRegisterPage() {
     password: "",
     confirmPassword: "",
   });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -35,9 +36,21 @@ export default function TechnicianRegisterPage() {
       // ✅ Navigate to verify-email page with user_id
       if (result.message === "User registered successfully. Verification email sent.") {
         navigate("/auth/verify-email", { state: { userId: result.user_id, email: formData.email } });
-      } else {
-        toast.error(result.message || "Registration failed. Please try again.");
+        return;
       }
+
+      toast.error(result.message || "Registration failed. Please try again.");
+
+      // Build per-field validation errors to show under the inputs
+      const normalized = {};
+      if (result.errors && typeof result.errors === "object") {
+        Object.entries(result.errors).forEach(([key, messages]) => {
+          normalized[key] = Array.isArray(messages) ? messages : [String(messages)];
+        });
+      } else if (result.error === "EMAIL_ALREADY_EXISTS") {
+        normalized.email = [result.message];
+      }
+      setFieldErrors(normalized);
     } catch (err) {
       console.error("Registration failed:", err);
       toast.error("Something went wrong. Please try again later.");
@@ -45,7 +58,24 @@ export default function TechnicianRegisterPage() {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFieldErrors((prev) => {
+      if (!prev[name]) return prev;
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
+  };
+
+  const renderFieldError = (fieldName) => {
+    const messages = fieldErrors[fieldName];
+    if (!messages || messages.length === 0) return null;
+    return (
+      <div className="text-[12.5px] text-[#dc2626] mt-1.5 font-bold">
+        {messages.join(" ")}
+      </div>
+    );
   };
 
   return (
@@ -105,6 +135,7 @@ export default function TechnicianRegisterPage() {
                 onChange={handleChange}
                 className="w-full h-12 px-3.5 rounded-[9px] border-[1.5px] border-[#e5e7eb] bg-white text-[14.5px] text-[#111827] placeholder:text-[#9ca3af] placeholder:text-sm focus:outline-none focus:border-[#ee9310] focus:ring-[3.5px] focus:ring-[rgba(238,147,16,0.22)] transition-all duration-200"
               />
+              {renderFieldError("first_name")}
             </div>
 
             <div className="mb-[18px]">
@@ -119,6 +150,7 @@ export default function TechnicianRegisterPage() {
                 onChange={handleChange}
                 className="w-full h-12 px-3.5 rounded-[9px] border-[1.5px] border-[#e5e7eb] bg-white text-[14.5px] text-[#111827] placeholder:text-[#9ca3af] placeholder:text-sm focus:outline-none focus:border-[#ee9310] focus:ring-[3.5px] focus:ring-[rgba(238,147,16,0.22)] transition-all duration-200"
               />
+              {renderFieldError("last_name")}
             </div>
           </div>
 
@@ -134,6 +166,7 @@ export default function TechnicianRegisterPage() {
               onChange={handleChange}
               className="w-full h-12 px-3.5 rounded-[9px] border-[1.5px] border-[#e5e7eb] bg-white text-[14.5px] text-[#111827] placeholder:text-[#9ca3af] placeholder:text-sm focus:outline-none focus:border-[#ee9310] focus:ring-[3.5px] focus:ring-[rgba(238,147,16,0.22)] transition-all duration-200"
             />
+            {renderFieldError("mobile_number")}
           </div>
 
           {/* Section 2: Account Credentials */}
@@ -159,6 +192,7 @@ export default function TechnicianRegisterPage() {
               onChange={handleChange}
               className="w-full h-12 px-3.5 rounded-[9px] border-[1.5px] border-[#e5e7eb] bg-white text-[14.5px] text-[#111827] placeholder:text-[#9ca3af] placeholder:text-sm focus:outline-none focus:border-[#ee9310] focus:ring-[3.5px] focus:ring-[rgba(238,147,16,0.22)] transition-all duration-200"
             />
+            {renderFieldError("email")}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
@@ -184,6 +218,7 @@ export default function TechnicianRegisterPage() {
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
+              {renderFieldError("password")}
             </div>
 
             <div className="mb-[18px]">
@@ -212,6 +247,7 @@ export default function TechnicianRegisterPage() {
                   )}
                 </button>
               </div>
+              {renderFieldError("confirmPassword")}
             </div>
           </div>
 
