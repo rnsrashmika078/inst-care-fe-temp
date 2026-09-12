@@ -47,7 +47,11 @@ export default function Navbar() {
 
   const navLinks = [
     { label: "Home", to: "/" },
-    { label: "Product Category", to: `${CI_BASE}/eproductView`, external: true },
+    {
+      label: "Product Category",
+      to: `${CI_BASE}/eproductView`,
+      external: true,
+    },
     { label: "Institutes", to: `${CI_BASE}/einstituteView`, external: true },
     { label: "Laboratories", to: `${CI_BASE}/elaboratories`, external: true },
     { label: "Contact", to: "/contact" },
@@ -62,7 +66,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     ["isLoggedIn", "role", "user_id", "technician_id", "token"].forEach((key) =>
-      sessionStorage.removeItem(key)
+      sessionStorage.removeItem(key),
     );
     setIsLoggedIn(false);
     setDropdownOpen(false);
@@ -80,10 +84,15 @@ export default function Navbar() {
         (mobile ? "text-center py-3 text-[16px] w-full " : "text-[17px] ");
       const linkClass =
         base +
-        (active ? " text-[#ea580c] font-semibold bg-[#FFF7EC]" : " text-[#374151] font-medium");
+        (active
+          ? " text-[#ea580c] font-semibold bg-[#FFF7EC]"
+          : " text-[#374151] font-medium");
 
       const content = (
-        <span className="inline-flex items-center" style={{ letterSpacing: "0.2px" }}>
+        <span
+          className="inline-flex items-center"
+          style={{ letterSpacing: "0.2px" }}
+        >
           {link.label}
         </span>
       );
@@ -144,7 +153,14 @@ export default function Navbar() {
             }
           >
             <span className="truncate">My Account</span>
-            <ChevronDown size={16} className={dropdownOpen ? "rotate-180 transition-transform" : "transition-transform"} />
+            <ChevronDown
+              size={16}
+              className={
+                dropdownOpen
+                  ? "rotate-180 transition-transform"
+                  : "transition-transform"
+              }
+            />
           </button>
 
           {dropdownOpen && (
@@ -176,7 +192,11 @@ export default function Navbar() {
         <Link to="/auth/login" className={loginBtnClass}>
           Login / Register
         </Link>
-        <Link to="/auth/tech-registration" className={techRegisterBtnClass} title="Register as a technician / instrument specialist">
+        <Link
+          to="/auth/tech-registration"
+          className={techRegisterBtnClass}
+          title="Register as a technician / instrument specialist"
+        >
           Register as Technician
         </Link>
       </>
@@ -193,8 +213,16 @@ export default function Navbar() {
       >
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <img src={NationalLogo} alt="National Logo" className="h-12 md:h-14 w-auto object-contain" />
-          <img src={NsfLogo} alt="NSF Logo" className="h-12 md:h-14 w-auto object-contain" />
+          <img
+            src={NationalLogo}
+            alt="National Logo"
+            className="h-12 md:h-14 w-auto object-contain"
+          />
+          <img
+            src={NsfLogo}
+            alt="NSF Logo"
+            className="h-12 md:h-14 w-auto object-contain"
+          />
         </Link>
 
         {/* Toggler */}
@@ -211,10 +239,7 @@ export default function Navbar() {
         {/* Desktop: center links + actions */}
         <div className="hidden lg:flex flex-1 items-center justify-between ml-8">
           <div className="flex items-center gap-7 mx-auto">{renderLinks()}</div>
-          <div className="flex items-center gap-2">
-            {renderExplore()}
-            {renderActions()}
-          </div>
+          <div className="flex items-center gap-2">{renderActions()}</div>
         </div>
       </div>
 
@@ -223,9 +248,6 @@ export default function Navbar() {
         <div className="lg:hidden w-full border-t border-[#f1f5f9] mt-2 px-3 pb-3 pt-3 flex flex-col items-stretch gap-2 overflow-x-hidden">
           <div className="flex flex-col items-stretch">{renderLinks(true)}</div>
           <div className="mt-1 flex flex-col items-stretch gap-2.5">
-            <a href={`${CI_BASE}/homedashboard`} className={dashboardBtnClass + " w-full"} style={{ fontSize: 16 }}>
-              Explore
-            </a>
             {isLoggedIn ? (
               <div className="relative">
                 {dropdownOpen && (
@@ -274,7 +296,10 @@ export default function Navbar() {
                 <Link to="/auth/login" className={loginBtnClass + " w-full"}>
                   Login / Register
                 </Link>
-                <Link to="/auth/tech-registration" className={techRegisterBtnClass + " w-full"}>
+                <Link
+                  to="/auth/tech-registration"
+                  className={techRegisterBtnClass + " w-full"}
+                >
                   Register as Technician
                 </Link>
               </>
