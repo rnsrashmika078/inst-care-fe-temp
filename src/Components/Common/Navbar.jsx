@@ -16,6 +16,14 @@ const techRegisterBtnClass =
   "rounded-lg border border-[#EE9310] bg-[#FFF7EC] text-[#C96F00] " +
   "hover:bg-[#EE9310] hover:text-white transition-all duration-300";
 
+const dashboardBtnClass =
+  "inline-flex items-center justify-center uppercase whitespace-nowrap " +
+  "text-[13px] font-semibold tracking-[0.5px] w-[125px] h-[43px] px-[18px] " +
+  "rounded-lg border-none bg-[#EE9310] text-white " +
+  "hover:bg-[#d88106] transition-all duration-300";
+
+const CI_BASE = "http://localhost/instrument";
+
 export default function Navbar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -39,8 +47,9 @@ export default function Navbar() {
 
   const navLinks = [
     { label: "Home", to: "/" },
-    { label: "About", to: "/about" },
-    { label: "Technician", to: "/technician" },
+    { label: "Product Category", to: `${CI_BASE}/eproductView`, external: true },
+    { label: "Institutes", to: `${CI_BASE}/einstituteView`, external: true },
+    { label: "Laboratories", to: `${CI_BASE}/elaboratories`, external: true },
     { label: "Contact", to: "/contact" },
   ];
 
@@ -64,28 +73,52 @@ export default function Navbar() {
   const renderLinks = (mobile = false) =>
     navLinks.map((link) => {
       const active =
-        link.to === "/" ? pathname === "/" : pathname.startsWith(link.to);
+        !link.external &&
+        (link.to === "/" ? pathname === "/" : pathname.startsWith(link.to));
       const base =
         "rounded-md transition-colors duration-200 hover:text-[#ea580c] " +
         (mobile ? "text-center py-3 text-[16px] w-full " : "text-[17px] ");
+      const linkClass =
+        base +
+        (active ? " text-[#ea580c] font-semibold bg-[#FFF7EC]" : " text-[#374151] font-medium");
+
+      const content = (
+        <span className="inline-flex items-center" style={{ letterSpacing: "0.2px" }}>
+          {link.label}
+        </span>
+      );
+
       return (
-        <div key={link.to} className={mobile ? "w-full" : ""}>
-          <Link
-            to={link.to}
-            onClick={() => {
-              if (mobile) setMenuOpen(false);
-            }}
-            className={
-              base +
-              (active ? " text-[#ea580c] font-semibold bg-[#FFF7EC]" : " text-[#374151] font-medium")
-            }
-            style={{ letterSpacing: "0.2px" }}
-          >
-            {link.label}
-          </Link>
+        <div key={link.label} className={mobile ? "w-full" : ""}>
+          {link.external ? (
+            <a href={link.to} className={linkClass}>
+              {content}
+            </a>
+          ) : (
+            <Link
+              to={link.to}
+              onClick={() => {
+                if (mobile) setMenuOpen(false);
+              }}
+              className={linkClass}
+            >
+              {content}
+            </Link>
+          )}
         </div>
       );
     });
+
+  const renderExplore = () => (
+    <a
+      href={`${CI_BASE}/homedashboard`}
+      className={dashboardBtnClass}
+      role="button"
+      style={{ fontSize: 16 }}
+    >
+      Explore
+    </a>
+  );
 
   const renderActions = () =>
     isLoggedIn ? (
@@ -178,7 +211,10 @@ export default function Navbar() {
         {/* Desktop: center links + actions */}
         <div className="hidden lg:flex flex-1 items-center justify-between ml-8">
           <div className="flex items-center gap-7 mx-auto">{renderLinks()}</div>
-          <div className="flex items-center gap-2">{renderActions()}</div>
+          <div className="flex items-center gap-2">
+            {renderExplore()}
+            {renderActions()}
+          </div>
         </div>
       </div>
 
@@ -187,6 +223,9 @@ export default function Navbar() {
         <div className="lg:hidden w-full border-t border-[#f1f5f9] mt-2 px-3 pb-3 pt-3 flex flex-col items-stretch gap-2 overflow-x-hidden">
           <div className="flex flex-col items-stretch">{renderLinks(true)}</div>
           <div className="mt-1 flex flex-col items-stretch gap-2.5">
+            <a href={`${CI_BASE}/homedashboard`} className={dashboardBtnClass + " w-full"} style={{ fontSize: 16 }}>
+              Explore
+            </a>
             {isLoggedIn ? (
               <div className="relative">
                 {dropdownOpen && (
