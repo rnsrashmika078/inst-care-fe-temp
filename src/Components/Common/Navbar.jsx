@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { doFrontendLogout } from "../auth/Logout";
 import NationalLogo from "../../assets/images/national-logo.jpg";
 import NsfLogo from "../../assets/images/NSF-Logo.jpg";
+import { HOME_BASE } from "../../config";
 
 const loginBtnClass =
   "inline-flex items-center justify-center uppercase whitespace-nowrap " +
@@ -22,10 +24,9 @@ const dashboardBtnClass =
   "rounded-lg border-none bg-[#EE9310] text-white " +
   "hover:bg-[#d88106] transition-all duration-300";
 
-const CI_BASE = "http://localhost/instrument";
+const CI_BASE = HOME_BASE;
 
 export default function Navbar() {
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -65,13 +66,10 @@ export default function Navbar() {
   })();
 
   const handleLogout = () => {
-    ["isLoggedIn", "role", "user_id", "technician_id", "token"].forEach((key) =>
-      sessionStorage.removeItem(key),
-    );
+    doFrontendLogout();
     setIsLoggedIn(false);
     setDropdownOpen(false);
     setMenuOpen(false);
-    navigate("/");
   };
 
   const renderLinks = (mobile = false) =>
