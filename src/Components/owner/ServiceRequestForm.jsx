@@ -97,13 +97,13 @@ export default function ServiceRequestForm({
     e.preventDefault();
 
     if (!validateForm()) {
-      alert("Please fill out all required fields before submitting.");
+      toast.warn("Please fill out all required fields before submitting.");
       return;
     }
 
     const userId = sessionStorage.getItem("user_id");
     if (!userId) {
-      alert("User ID not found. Please log in again.");
+      toast.error("User ID not found. Please log in again.");
       return;
     }
 
@@ -131,7 +131,7 @@ export default function ServiceRequestForm({
 
       const data = await response.json();
       onSend(data); // ✅ callback with response
-      alert("DONE");
+      toast.success("Service request sent successfully!");
     } catch (error) {
       toast.success("Service Request sent successfully!");
     } finally {

@@ -2,6 +2,7 @@ import { fetchWithAuth } from '../utils/api';
 import { API_BASE } from "../../config";
 import React, { useState } from "react";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function AllOwnerTable({ usersData }) {
   const initialUsers = usersData || [];
@@ -56,14 +57,14 @@ export default function AllOwnerTable({ usersData }) {
         setUsers((prev) =>
           prev.map((u) => (u.id === editingUser.id ? editingUser : u))
         );
-        alert("User updated successfully");
+        toast.success("User updated successfully");
         handleCloseModal();
       } else {
-        alert("Update failed: " + (result.error || "Unknown error"));
+        toast.error("Update failed: " + (result.error || "Unknown error"));
       }
     } catch (error) {
       console.error("Error updating user:", error);
-      alert("Error updating user. Check console for details.");
+      toast.error("Error updating user. Check console for details.");
     }
   };
 
@@ -81,13 +82,13 @@ export default function AllOwnerTable({ usersData }) {
 
       if (result.success) {
         setUsers((prev) => prev.filter((u) => u.id !== userId));
-        alert("User deleted successfully");
+        toast.success("User deleted successfully");
       } else {
-        alert("Delete failed: " + (result.message || "Unknown error"));
+        toast.error("Delete failed: " + (result.message || "Unknown error"));
       }
     } catch (error) {
       console.error("Error deleting user:", error);
-      alert("Error deleting user. Check console for details.");
+      toast.error("Error deleting user. Check console for details.");
     }
   };
 

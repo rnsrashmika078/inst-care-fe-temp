@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import DefaultProfileImage from '../../assets/images/profile-image.jpeg';
+import DefaultProfileImage from "../../assets/images/profile-image.jpeg";
 import { fetchWithAuth } from "../utils/api";
 import { API_BASE } from "../../config";
 
@@ -15,17 +15,19 @@ export default function ProfileCard() {
 
   const token = sessionStorage.getItem("token");
 
-
   useEffect(() => {
     const fetchTechnician = async () => {
       try {
-        const response = await fetchWithAuth(`${API_BASE}/user/dashboard/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        });
+        const response = await fetchWithAuth(
+          `${API_BASE}/user/dashboard/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
         if (!response.ok) throw new Error("Failed to fetch technician");
         const data = await response.json();
         setTech(data);
@@ -46,14 +48,15 @@ export default function ProfileCard() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            }
-          }
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
 
         if (!response.ok) throw new Error("Failed to fetch instruments");
 
         const data = await response.json();
+        console.log("Instrument", data.instruments);
         setInstruments(data.instruments || []);
       } catch (error) {
         console.error("Error fetching instruments:", error);
@@ -74,14 +77,16 @@ export default function ProfileCard() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            }
-          }
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
 
-        if (!response.ok) throw new Error("Failed to fetch instruments categories");
+        if (!response.ok)
+          throw new Error("Failed to fetch instruments categories");
 
         const data = await response.json();
+        console.log("Instrument Category", data);
         setInstrumentsCategories(data.instrumentsCategories || []);
       } catch (error) {
         console.error("Error fetching instruments:", error);
@@ -102,14 +107,16 @@ export default function ProfileCard() {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            }
-          }
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
 
-        if (!response.ok) throw new Error("Failed to fetch laboratory categories");
+        if (!response.ok)
+          throw new Error("Failed to fetch laboratory categories");
 
         const data = await response.json();
+        console.log("Lab Category", data);
         setLaboratoryCategories(data.laboratoryCategories || []);
       } catch (error) {
         console.error("Error fetching laboratory categories:", error);
@@ -124,16 +131,14 @@ export default function ProfileCard() {
   useEffect(() => {
     const fetchTechnicianWorkExperience = async () => {
       try {
-        const res = await fetch(
-          `${API_BASE}/tech/work-experience/${id}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await fetch(`${API_BASE}/tech/work-experience/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const result = await res.json();
+
         setWorkExperiences(result.data || []);
       } catch (error) {
         console.error("Error fetching work experiences:", error);
@@ -149,15 +154,12 @@ export default function ProfileCard() {
   useEffect(() => {
     const fetchTechnicianCertificates = async () => {
       try {
-        const res = await fetch(
-          `${API_BASE}/tech/certificates/${id}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await fetch(`${API_BASE}/tech/certificates/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const result = await res.json();
         console.log("From API:", result);
         setCertificates(result.data || []);
@@ -172,19 +174,24 @@ export default function ProfileCard() {
     }
   }, [id]);
 
+  useEffect(() => {
+    const arr = [
+      ...instruments,
+      ...instrumentsCategories,
+      ...laboratoryCategories,
+    ];
+    console.log("ARR", arr);
+  }, [instruments, instrumentsCategories, laboratoryCategories]);
+
   if (!tech) {
     return <div className="p-4">Loading profile...</div>;
   }
 
-
-  const profileImageUrl = tech.picture !== null
-    ? `${API_BASE}/${tech.picture}`
-    : DefaultProfileImage;
-
+  const profileImageUrl =
+    tech.picture !== null ? `${API_BASE}/${tech.picture}` : DefaultProfileImage;
 
   return (
     <div className="bg-[#ffffff80] rounded-xl shadow-sm p-6 font-poppins flex flex-col gap-6">
-
       {/* Profile Header */}
       <div className="flex items-center gap-4 border-b pb-4">
         <img
@@ -196,9 +203,7 @@ export default function ProfileCard() {
           <h2 className="text-lg font-bold">
             {tech.title} {tech.first_name + " " + tech.last_name || "N/A"}
           </h2>
-          <p className="text-sm text-gray-500">
-            {tech.designation || "-"}
-          </p>
+          <p className="text-sm text-gray-500">{tech.designation || "-"}</p>
         </div>
       </div>
 
@@ -206,48 +211,75 @@ export default function ProfileCard() {
       <div className="bg-white rounded-lg p-4 shadow-sm">
         <h3 className="font-bold mb-3 text-gray-800">Technical Expertise</h3>
 
-        <div className="flex flex-col gap-3 text-sm">
-          {/* Instruments */}
-          <div>
-            <p className="font-semibold text-gray-600 mb-1">Instruments</p>
-            <div className="flex flex-wrap gap-2">
-              {instruments.length > 0 ? (
-                instruments.map((item) => (
-                  <span key={item.id} className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold">
-                    {item.instrument_name}
-                  </span>
-                ))
-              ) : <span className="text-gray-400 text-xs">N/A</span>}
-            </div>
-          </div>
-
-          {/* Categories */}
-          <div>
-            <p className="font-semibold text-gray-600 mb-1">Instrument Categories</p>
-            <div className="flex flex-wrap gap-2">
-              {instrumentsCategories.length > 0 ? (
-                instrumentsCategories.map((item) => (
-                  <span key={item.id} className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold">
-                    {item.name}
-                  </span>
-                ))
-              ) : <span className="text-gray-400 text-xs">N/A</span>}
-            </div>
-          </div>
-
-          {/* Lab Categories */}
-          <div>
-            <p className="font-semibold text-gray-600 mb-1">Laboratory Categories</p>
-            <div className="flex flex-wrap gap-2">
-              {laboratoryCategories.length > 0 ? (
-                laboratoryCategories.map((item) => (
-                  <span key={item.id} className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold">
-                    {item.name}
-                  </span>
-                ))
-              ) : <span className="text-gray-400 text-xs">N/A</span>}
-            </div>
-          </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-orange-50 border-b-2 border-orange-200">
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Instrument
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Instrument Category
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700">
+                  Laboratory Category
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Instruments Row */}
+              <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                <td className="px-4 py-3 align-top">
+                  <div className="flex flex-wrap gap-2">
+                    {instruments.length > 0 ? (
+                      instruments.map((item, idx) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold whitespace-nowrap"
+                        >
+                          {item.instrument_name || item.custom_category}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-400 text-xs">N/A</span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3 align-top">
+                  <div className="flex flex-wrap gap-2">
+                    {instrumentsCategories.length > 0 ? (
+                      instrumentsCategories.map((item, idx) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold whitespace-nowrap"
+                        >
+                          {item.name || item.custom_category}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-400 text-xs">N/A</span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-4 py-3 align-top">
+                  <div className="flex flex-wrap gap-2">
+                    {laboratoryCategories.length > 0 ? (
+                      laboratoryCategories.map((item, idx) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold whitespace-nowrap"
+                        >
+                          {item.name || item.custom_category}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-400 text-xs">N/A</span>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -315,7 +347,9 @@ export default function ProfileCard() {
             ))}
           </div>
         ) : (
-          <span className="text-gray-400 text-xs">No certificates available</span>
+          <span className="text-gray-400 text-xs">
+            No certificates available
+          </span>
         )}
       </div>
 
@@ -334,21 +368,17 @@ export default function ProfileCard() {
                   {exp.position_title}
                 </p>
 
-                <p className="text-sm text-gray-600">
-                  {exp.organization_name}
-                </p>
+                <p className="text-sm text-gray-600">{exp.organization_name}</p>
 
                 <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-4">
                   <span>
                     <b>Years:</b> {exp.years_of_experience}
                   </span>
                   <span>
-                    <b>From:</b>{" "}
-                    {new Date(exp.start_date).toLocaleDateString()}
+                    <b>From:</b> {new Date(exp.start_date).toLocaleDateString()}
                   </span>
                   <span>
-                    <b>To:</b>{" "}
-                    {new Date(exp.end_date).toLocaleDateString()}
+                    <b>To:</b> {new Date(exp.end_date).toLocaleDateString()}
                   </span>
                 </div>
               </div>
@@ -358,7 +388,6 @@ export default function ProfileCard() {
           <span className="text-gray-400 text-xs">No experience available</span>
         )}
       </div>
-
     </div>
   );
 }

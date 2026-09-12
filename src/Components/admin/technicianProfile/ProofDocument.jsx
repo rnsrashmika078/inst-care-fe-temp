@@ -1,5 +1,6 @@
 import { fetchWithAuth } from '../../utils/api';
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { API_BASE } from '../../../config';
 
 export default function ProofDocument({ userId }) {
@@ -68,7 +69,9 @@ export default function ProofDocument({ userId }) {
 
     const handleUpdate = async () => {
         if (!documentFile || !tech_id || !token) {
-            alert("Please select a document and make sure the technician profile is loaded.");
+            toast.warn(
+            "Please select a document and make sure the technician profile is loaded.",
+          );
             return;
         }
 
@@ -99,14 +102,14 @@ export default function ProofDocument({ userId }) {
             }
 
             if (res.ok) {
-                alert("✅ Document uploaded successfully!");
+                toast.success("✅ Document uploaded successfully!");
                 fetchDocument();
             } else {
-                alert(result.error || result.message || "Upload failed");
+                toast.error(result.error || result.message || "Upload failed");
             }
         } catch (err) {
             console.error("❌ Error uploading document:", err);
-            alert("Error uploading document");
+            toast.error("Error uploading document");
         } finally {
             setLoading(false);
         }

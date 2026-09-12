@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export const fetchWithAuth = async (url, options = {}) => {
   const token = sessionStorage.getItem("token");
 
@@ -13,7 +15,7 @@ export const fetchWithAuth = async (url, options = {}) => {
   // Catch the expired session globally
   if (response.status === 401) {
     sessionStorage.clear();
-    alert("Session expired. Please log in again.");
+    toast.error("Session expired. Please log in again.");
     window.location.href = "/auth/login";
     return null;
   }

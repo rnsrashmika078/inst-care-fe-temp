@@ -1,5 +1,6 @@
 import { fetchWithAuth } from '../../utils/api';
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { API_BASE } from "../../../config";
 
 export default function Certificates({ userId }) {
@@ -82,7 +83,7 @@ export default function Certificates({ userId }) {
 
     const handleUpdate = async () => {
         if (!tech_id || !token) {
-            alert("Technician profile is not loaded yet.");
+            toast.warn("Technician profile is not loaded yet.");
             return;
         }
 
@@ -125,15 +126,17 @@ export default function Certificates({ userId }) {
             }
 
             if (res.ok) {
-                alert("✅ Certificates updated successfully!");
+                toast.success("✅ Certificates updated successfully!");
                 fetchCertificates();
             } else {
                 console.error("❌ API Error:", result);
-                alert(result.message || result.error || "Failed to update Certificates");
+                toast.error(
+              result.message || result.error || "Failed to update Certificates",
+            );
             }
         } catch (err) {
             console.error("❌ Error updating Certificates:", err);
-            alert("Error updating Certificates");
+            toast.error("Error updating Certificates");
         } finally {
             setLoading(false);
         }
