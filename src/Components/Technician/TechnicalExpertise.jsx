@@ -7,7 +7,6 @@ const steps = [
   { label: "Laboratory Categories" },
   { label: "Instrument Categories" },
   { label: "Instruments" },
-  { label: "New Instruments" },
 ];
 
 export default function TechnicalExpertise() {
@@ -320,9 +319,7 @@ export default function TechnicalExpertise() {
         tech_id,
         laboratory_categories: selectedCategories
           .map((c, i) =>
-            isOtherOption(c)
-              ? (customLabValues[i] || "").trim()
-              : c?.value,
+            isOtherOption(c) ? (customLabValues[i] || "").trim() : c?.value,
           )
           .filter((v) => v),
         instrument_categories: selectedInstrumentCategories
@@ -341,6 +338,8 @@ export default function TechnicalExpertise() {
           .filter((v) => v),
         new_instruments: selectedNewInstruments,
       };
+
+      alert(JSON.stringify(payload));
 
       const res = await fetch(`${API_BASE}/tech/profile/expertise/${tech_id}`, {
         method: "POST",
@@ -374,9 +373,10 @@ export default function TechnicalExpertise() {
   /* STEP NAVIGATION */
   const stepValid = () => {
     if (step === 0) return selectedCategories.some((s) => s && s.value);
-    if (step === 1) return selectedInstrumentCategories.some((s) => s && s.value);
+    if (step === 1)
+      return selectedInstrumentCategories.some((s) => s && s.value);
     if (step === 2) return selectedInstruments.some((s) => s && s.value);
-    return true;
+    return false;
   };
 
   const goNext = () => {
@@ -390,9 +390,7 @@ export default function TechnicalExpertise() {
   /* STEP CONTENT */
   const renderLabCategories = () => (
     <div>
-      <h3 className="font-medium text-gray-700 mb-3">
-        Laboratory Categories
-      </h3>
+      <h3 className="font-medium text-gray-700 mb-3">Laboratory Categories</h3>
       <div className="flex flex-wrap gap-2">
         {labCategories.map((lab, i) => (
           <span
@@ -475,9 +473,7 @@ export default function TechnicalExpertise() {
 
   const renderInstrumentCategories = () => (
     <div>
-      <h3 className="font-medium text-gray-700 mb-3">
-        Instrument Categories{" "}
-      </h3>
+      <h3 className="font-medium text-gray-700 mb-3">Instrument Categories </h3>
       <div className="flex flex-wrap gap-2">
         {instrumentCategories.map((instrumentCat, i) => (
           <span
@@ -495,7 +491,9 @@ export default function TechnicalExpertise() {
             <Select
               options={instrCatOptions}
               value={selectedInstrumentCategories[i] || null}
-              onChange={(selected) => handleInstrumentCategoryChange(selected, i)}
+              onChange={(selected) =>
+                handleInstrumentCategoryChange(selected, i)
+              }
               isSearchable
             />
             {isOtherOption(selectedInstrumentCategories[i]) && (
@@ -719,9 +717,12 @@ export default function TechnicalExpertise() {
       case 1:
         return renderInstrumentCategories();
       case 2:
-        return renderInstruments();
-      case 3:
-        return renderNewInstruments();
+        return (
+          <div className="space-y-8">
+            {renderInstruments()}
+            {renderNewInstruments()}
+          </div>
+        );
       default:
         return null;
     }
@@ -793,7 +794,7 @@ export default function TechnicalExpertise() {
         <div className="flex-1">{stepContent()}</div>
 
         {/* Right Side: Recently Added Instruments Panel */}
-        
+
         {/* <div className="w-full lg:w-[350px] shrink-0">
           <div className="bg-gradient-to-br from-orange-50/50 to-white shadow-sm border border-orange-100 rounded-xl p-5 sticky top-6">
             <div className="flex items-center gap-3 mb-3">
