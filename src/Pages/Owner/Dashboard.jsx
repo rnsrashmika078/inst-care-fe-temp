@@ -12,7 +12,7 @@ export default function User_Dashboard() {
     <>
       <Navbar />
       <TechnicianHeader searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <TechnicianTable searchTerm={searchTerm} />
+      <TechnicianTable searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <TechniciansCard />
       <Footer />
     </>

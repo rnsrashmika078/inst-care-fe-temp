@@ -5,6 +5,7 @@ import Admin_Sidebar from '../../Components/admin/Sidebar'
 import AllTechnicianTable from '../../Components/admin/AdminAllTechnician';
 import Footer from '../../Components/Common/Footer'
 import BG from '../../assets/images/technician-dashboard-bg-4.jpg';
+import { API_BASE } from '../../config';
 
 export default function All_Technicians() {
   const token = sessionStorage.getItem("token");
@@ -14,7 +15,7 @@ export default function All_Technicians() {
   useEffect(() => {
     const fetchTechnicians = async () => {
       try {
-        const response = await fetchWithAuth("http://localhost/instrument-care-back-end/public/admin/technicians",
+        const response = await fetchWithAuth(`${API_BASE}/admin/technicians`,
           {
             headers: {
               "Content-Type": "application/json",

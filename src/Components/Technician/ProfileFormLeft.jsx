@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../../config";
 
 export default function ProfileFormLeft({ formData, handleChange }) {
   const [instruments, setInstruments] = useState([]);
@@ -8,7 +9,7 @@ export default function ProfileFormLeft({ formData, handleChange }) {
     const fetchInstruments = async () => {
       try {
         const response = await fetch(
-          "http://localhost/instrument-care-back-end/public/tech/instruments"
+          `${API_BASE}/tech/instruments`
         );
         const result = await response.json();
         if (result.success && result.data) {

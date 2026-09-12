@@ -1,4 +1,5 @@
 import { fetchWithAuth } from '../utils/api';
+import { API_BASE } from "../../config";
 import React, { useState } from "react";
 import { FaEye, FaTrash } from "react-icons/fa";
 
@@ -71,7 +72,7 @@ export default function AdminAllServiceRequest({ requestsData }) {
   const handleSave = async () => {
     try {
       const response = await fetchWithAuth(
-        `http://localhost/instrument-care-back-end/public/admin/service-request/${selectedRequest.id}`,
+        `${API_BASE}/admin/service-request/${selectedRequest.id}`,
         {
           method: "PUT",
           headers: {
@@ -118,7 +119,7 @@ export default function AdminAllServiceRequest({ requestsData }) {
 
     try {
       const response = await fetchWithAuth(
-        `http://localhost/instrument-care-back-end/public/admin/service-request/${id}`,
+        `${API_BASE}/admin/service-request/${id}`,
         {
           method: "DELETE",
           headers: {

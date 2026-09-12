@@ -1,5 +1,6 @@
 import { fetchWithAuth } from '../../utils/api';
 import { useState, useEffect } from "react";
+import { API_BASE } from "../../../config";
 
 export default function Certificates({ userId }) {
     const token = sessionStorage.getItem("token");
@@ -14,7 +15,7 @@ export default function Certificates({ userId }) {
     }, []);
 
     const fetchTechnicianID = async () => {
-        const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+        const res = await fetchWithAuth(`${API_BASE}/tech/profile/${userId}`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -35,7 +36,7 @@ export default function Certificates({ userId }) {
     const fetchCertificates = async () => {
         try {
             const res = await fetchWithAuth(
-                `http://localhost/instrument-care-back-end/public/tech/certificates/${tech_id}`,
+                `${API_BASE}/tech/certificates/${tech_id}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -60,68 +61,75 @@ export default function Certificates({ userId }) {
             expiry_date: "",
             certificate_file: null
         };
-        console.log("➕ Adding new row:", newCertificate);
-        setCertificates([...certificates, newCertificate]);
+        setCertificates((prev) => [...prev, newCertificate]);
     };
 
     const handleChange = (i, e) => {
-        const updated = [...certificates];
-        updated[i][e.target.name] = e.target.value;
-        setCertificates(updated);
+        setCertificates((prev) =>
+            prev.map((item, index) => index === i ? { ...item, [e.target.name]: e.target.value } : item)
+        );
     };
 
     const handleFileChange = (i, e) => {
-        const updated = [...certificates];
-        updated[i].certificate_file = e.target.files[0];
-        setCertificates(updated);
+        setCertificates((prev) =>
+            prev.map((item, index) => index === i ? { ...item, certificate_file: e.target.files[0] } : item)
+        );
     };
 
     const handleRemove = (i) => {
-        const updated = certificates.filter((_, index) => index !== i);
-        setCertificates(updated);
+        setCertificates((prev) => prev.filter((_, index) => index !== i));
     };
 
     const handleUpdate = async () => {
+        if (!tech_id || !token) {
+            alert("Technician profile is not loaded yet.");
+            return;
+        }
+
         try {
             setLoading(true);
-            console.log("📤 Sending certificates:", certificates);
 
             const formData = new FormData();
             formData.append("tech_id", tech_id);
 
             certificates.forEach((cert, i) => {
-                formData.append(`certificates[${i}][oem_company_name]`, cert.oem_company_name);
-                formData.append(`certificates[${i}][instrument_name]`, cert.instrument_name);
-                formData.append(`certificates[${i}][certificate_name]`, cert.certificate_name);
-                formData.append(`certificates[${i}][certificate_number]`, cert.certificate_number);
-                formData.append(`certificates[${i}][issue_date]`, cert.issue_date);
-                formData.append(`certificates[${i}][expiry_date]`, cert.expiry_date);
+                formData.append(`certificates[${i}][oem_company_name]`, cert.oem_company_name || "");
+                formData.append(`certificates[${i}][instrument_name]`, cert.instrument_name || "");
+                formData.append(`certificates[${i}][certificate_name]`, cert.certificate_name || "");
+                formData.append(`certificates[${i}][certificate_number]`, cert.certificate_number || "");
+                formData.append(`certificates[${i}][issue_date]`, cert.issue_date || "");
+                formData.append(`certificates[${i}][expiry_date]`, cert.expiry_date || "");
                 if (cert.certificate_file) {
                     formData.append(`certificates[${i}][certificate_file]`, cert.certificate_file);
                 }
             });
 
-            const res = await fetchWithAuth(
-                `http://localhost/instrument-care-back-end/public/tech/profile/certificates/${tech_id}`,
+            const res = await fetch(
+                `${API_BASE}/tech/profile/certificates/${tech_id}`,
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
                     body: formData
                 }
             );
 
-            const result = await res.json();
-            console.log("📥 Response:", result);
+            const text = await res.text();
+            let result = {};
+
+            try {
+                result = text ? JSON.parse(text) : {};
+            } catch {
+                result = { message: text };
+            }
 
             if (res.ok) {
                 alert("✅ Certificates updated successfully!");
                 fetchCertificates();
             } else {
                 console.error("❌ API Error:", result);
-                alert("Failed to update Certificates");
+                alert(result.message || result.error || "Failed to update Certificates");
             }
         } catch (err) {
             console.error("❌ Error updating Certificates:", err);
@@ -163,7 +171,7 @@ export default function Certificates({ userId }) {
 
                         {cert.certificate_file && (
                             <a
-                                href={`http://localhost/instrument-care-back-end/public/${cert.certificate_file}`}
+                                href={`${API_BASE}/${cert.certificate_file}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-blue-600 text-sm underline mt-1 inline-block"

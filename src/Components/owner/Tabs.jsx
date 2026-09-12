@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink, useParams, useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { API_BASE } from "../../config";
 export default function Tabs() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function Tabs() {
 
     try {
       const res = await fetch(
-        `http://localhost/instrument-care-back-end/public/tech/user_id/${id}`,
+        `${API_BASE}/tech/user_id/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -30,7 +31,7 @@ export default function Tabs() {
       };
 
       await fetch(
-        `http://localhost/instrument-care-back-end/public/user/dashboard/search`,
+        `${API_BASE}/user/dashboard/search`,
         {
           method: "PUT",
           headers: {

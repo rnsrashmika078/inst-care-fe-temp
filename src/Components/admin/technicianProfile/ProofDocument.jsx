@@ -1,5 +1,6 @@
 import { fetchWithAuth } from '../../utils/api';
 import { useState, useEffect } from "react";
+import { API_BASE } from '../../../config';
 
 export default function ProofDocument({ userId }) {
     const token = sessionStorage.getItem("token");
@@ -16,7 +17,7 @@ export default function ProofDocument({ userId }) {
 
     const fetchTechnicianID = async () => {
         const res = await fetchWithAuth(
-            `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+            `${API_BASE}/tech/profile/${userId}`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -37,7 +38,7 @@ export default function ProofDocument({ userId }) {
 
     const fetchDocument = async () => {
         try {
-            const res = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/tech/document/${tech_id}`,
+            const res = await fetchWithAuth(`${API_BASE}/tech/document/${tech_id}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -50,7 +51,7 @@ export default function ProofDocument({ userId }) {
             console.log("📄 Document data:", data);
 
             if (data.proof) {
-                setDocumentPreview(`http://localhost/instrument-care-back-end/public/${data.proof}`);
+                setDocumentPreview(`${API_BASE}/public/${data.proof}`);
             }
 
         } catch (err) {
@@ -66,32 +67,46 @@ export default function ProofDocument({ userId }) {
     };
 
     const handleUpdate = async () => {
+        if (!documentFile || !tech_id || !token) {
+            alert("Please select a document and make sure the technician profile is loaded.");
+            return;
+        }
+
         try {
             setLoading(true);
             const formData = new FormData();
             formData.append("document", documentFile);
             formData.append("tech_id", tech_id);
-            const res = await fetchWithAuth(
-                `http://localhost/instrument-care-back-end/public/tech/profile/document/${tech_id}`,
+
+            const res = await fetch(
+                `${API_BASE}/tech/profile/document/${tech_id}`,
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
                     body: formData
                 }
             );
-            const result = await res.json();
-            console.log("📥 Response:", result);
+
+            const text = await res.text();
+            let result = {};
+
+            try {
+                result = text ? JSON.parse(text) : {};
+            } catch {
+                result = { message: text };
+            }
+
             if (res.ok) {
                 alert("✅ Document uploaded successfully!");
                 fetchDocument();
             } else {
-                alert(result.error || "Upload failed");
+                alert(result.error || result.message || "Upload failed");
             }
         } catch (err) {
             console.error("❌ Error uploading document:", err);
+            alert("Error uploading document");
         } finally {
             setLoading(false);
         }

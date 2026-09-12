@@ -3,6 +3,7 @@ import NationalLogo from "../../assets/images/national-logo.jpg";
 import NsfLogo from "../../assets/images/NSF-Logo.jpg";
 import profileImage from '../../assets/images/profile-image.jpeg';
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../../config";
 import { doFrontendLogout } from "../auth/Logout";
 
 export default function Navbar() {
@@ -23,7 +24,7 @@ export default function Navbar() {
         if (!userId) return;
 
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/admin/profile/${userId}`,
+          `${API_BASE}/admin/profile/${userId}`,
           {
             headers: {
               Accept: "application/json",

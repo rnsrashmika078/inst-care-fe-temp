@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react'
 import Navbar from '../../Components/Technician/Navbar'
 import Admin_Sidebar from '../../Components/admin/Sidebar'
 import AllInstrument from '../../Components/admin/AdminAllInstrument';
-import Footer from '../../Components/Common/Footer'
+import Footer from '../../Components/Common/Footer';
+import { API_BASE } from '../../config';
 
 export default function All_Instruments() {
   const [instruments, setInstruments] = useState([]);
@@ -12,7 +13,7 @@ export default function All_Instruments() {
   useEffect(() => {
     const fetchInstruments = async () => {
       try {
-        const response = await fetchWithAuth('http://localhost/instrument-care-back-end/public/admin/instruments',
+        const response = await fetchWithAuth(`${API_BASE}/admin/instruments`,
           {
             headers: {
               "Content-Type": "application/json",

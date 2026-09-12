@@ -30,7 +30,9 @@ export default function Navbar() {
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-2 flex-wrap">
           {/* Left: Logos */}
-          <div className="flex items-center space-x-2 flex-shrink-0">
+          <div 
+            onClick={() => navigate("/user/dashboard")}
+            className="flex items-center space-x-2 flex-shrink-0">
             <img
               src={NationalLogo}
               alt="National Logo"
@@ -99,7 +101,7 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {menuOpen && (
           <div className="md:hidden flex flex-col space-y-4 pb-4 pt-2 border-t border-gray-200">
-            {navLinks.map((link) => (
+            {/* {navLinks.map((link) => (
               <Link
                 key={link}
                 to={link === "Home" ? "/" : `/${link.toLowerCase()}`}
@@ -108,17 +110,22 @@ export default function Navbar() {
               >
                 {link}
               </Link>
-            ))}
+            ))} */}
 
-            {/* Mobile logout button */}
-            <Link to="/auth/tech-registration">
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="w-full bg-orange-400 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-500 transition font-poppins"
-              >
-                Log Out
+            {/* My Request button — was missing on mobile */}
+            <Link to="/user/my-request" onClick={() => setMenuOpen(false)}>
+              <button className="w-full bg-orange-200 text-orange-600 px-4 py-2 rounded-md font-medium hover:bg-orange-300 transition font-poppins">
+                My Request
               </button>
             </Link>
+
+            {/* Mobile logout button */}
+            <button
+              onClick={() => { handleLogout(); setMenuOpen(false); }}
+              className="w-full bg-orange-400 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-500 transition font-poppins"
+            >
+              Log Out
+            </button>
           </div>
         )}
       </div>

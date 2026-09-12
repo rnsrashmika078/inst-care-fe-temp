@@ -5,6 +5,7 @@ import Admin_Sidebar from '../../Components/admin/Sidebar';
 import AdminAllServiceRequest from '../../Components/admin/AdminAllServiceRequest';
 import Footer from '../../Components/Common/Footer';
 import BG from '../../assets/images/technician-dashboard-bg-4.jpg';
+import { API_BASE } from '../../config';
 
 export default function All_Service_Requests() {
   const [requestsData, setRequestsData] = useState([]);
@@ -15,7 +16,7 @@ export default function All_Service_Requests() {
     const fetchRequests = async () => {
       try {
         const response = await fetchWithAuth(
-          'http://localhost/instrument-care-back-end/public/admin/service-requests',
+          `${API_BASE}/admin/service-requests`,
           {
             headers: {
               "Content-Type": "application/json",

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../../config";
 import { Link } from "react-router-dom";
 
 export default function ServiceRequestTable() {
@@ -20,7 +21,7 @@ export default function ServiceRequestTable() {
         }
 
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/user/service-request/${techId}`,
+          `${API_BASE}/user/service-request/${techId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -66,45 +67,48 @@ export default function ServiceRequestTable() {
 
 
   return (
-    <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 mb-6 font-poppins min-h-[288px]">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold text-gray-800 lg:text-lg sm:text-sm">Pending Service Requests</h3>
+    <div className="bg-white border border-orange-200 rounded-2xl p-4 mb-6 font-poppins min-h-[288px]">
+      <div className="flex justify-between items-center mb-4 gap-3">
+        <div>
+          <h3 className="font-bold text-gray-800 text-base lg:text-lg">Pending Service Requests</h3>
+          <p className="text-xs text-gray-500 mt-1">Review and manage new client requests</p>
+        </div>
         <Link to="/tech/all-service-request">
-          <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-1 rounded-md text-xs lg:text-sm hover:from-orange-400 hover:to-orange-500 transition">
+          <button className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs lg:text-sm font-medium border border-orange-500 hover:bg-orange-600 transition-colors duration-200">
             View all
           </button>
         </Link>
       </div>
-      <div className="mb-2">
-        <p className="text-gray-500 italic lg:text-sm text-xs">*Please click on the row if available to view more details</p>
+      <div className="mb-3">
+        <p className="text-gray-500 italic text-xs lg:text-sm">*Please click on a row to view more details</p>
       </div>
 
       {/* mobile */}
-      <div className="sm:hidden space-y-3 max-h-[288px] overflow-y-auto">
+      <div className="sm:hidden space-y-3 max-h-[288px] overflow-y-auto pr-1">
         {requests.map((request) => (
           <div
             key={request.id}
             onClick={() => handleRowClick(request)}
-            className="bg-white rounded-xl p-4 shadow cursor-pointer border hover:bg-orange-50 transition"
+            className="bg-orange-50 border border-orange-200 rounded-2xl p-4 cursor-pointer transition-colors duration-200 hover:bg-orange-100"
           >
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-bold text-orange-600 text-xs lg:text-sm">
+            <div className="flex justify-between items-center mb-2 gap-2">
+              <span className="font-bold text-orange-600 text-xs">
                 SR/{request.id}
               </span>
-              <span className="text-xs font-semibold text-orange-500 text-xs lg:text-sm">
+              <span className="text-[10px] font-semibold text-orange-700 bg-orange-200 px-2 py-1 rounded-full">
                 {request.status}
               </span>
             </div>
 
-            <div className="text-xs text-gray-700">
-              <p><strong>Client:</strong> {request.full_name}</p>
-              <p><strong>Instrument:</strong> {request.instrument_name}</p>
+            <div className="text-[11px] text-gray-700 space-y-1">
+              <p><span className="font-semibold text-gray-800">Client:</span> {request.full_name}</p>
+              <p><span className="font-semibold text-gray-800">Instrument:</span> {request.instrument_name}</p>
               <p>
-                <strong>Date:</strong>{" "}
+                <span className="font-semibold text-gray-800">Date:</span>{" "}
                 {new Date(request.created_at).toLocaleDateString()}
               </p>
               <p className="truncate">
-                <strong>Location:</strong> {request.physical_address}
+                <span className="font-semibold text-gray-800">Location:</span> {request.physical_address}
               </p>
             </div>
           </div>
@@ -122,35 +126,37 @@ export default function ServiceRequestTable() {
           No pending service requests found.
         </p>
       ) : (
-        // <div className="overflow-x-auto max-h-[288px] overflow-y-auto">
-        <div className="hidden sm:block overflow-x-auto max-h-[288px] overflow-y-auto">
+        <div className="hidden sm:block overflow-x-auto max-h-[288px] overflow-y-auto rounded-xl border border-orange-200">
           <table className="w-full text-left text-sm border-collapse">
             <thead className="bg-orange-100 sticky top-0">
               <tr>
-                <th className="p-2">Request ID</th>
-                <th className="p-2">Client Name</th>
-                <th className="p-2">Instrument Name</th>
-                <th className="p-2">Request Date</th>
-                <th className="p-2">Location</th>
-                <th className="p-2">Status</th>
+                <th className="p-3 font-semibold text-gray-700 text-left">Request ID</th>
+                <th className="p-3 font-semibold text-gray-700 text-left">Client Name</th>
+                <th className="p-3 font-semibold text-gray-700 text-left">Instrument Name</th>
+                <th className="p-3 font-semibold text-gray-700 text-left">Request Date</th>
+                <th className="p-3 font-semibold text-gray-700 text-left">Location</th>
+                <th className="p-3 font-semibold text-gray-700 text-left">Status</th>
               </tr>
             </thead>
             <tbody>
               {requests.map((request) => (
                 <tr
                   key={request.id}
-                  // className="border-b cursor-pointer hover:bg-orange-50 transition"
-                  className="border-b cursor-pointer hover:bg-orange-50 active:bg-orange-100"
+                  className="border-b border-orange-100 cursor-pointer hover:bg-orange-50 transition-colors duration-200"
                   onClick={() => handleRowClick(request)}
                 >
-                  <td className="p-2 truncate max-w-[150px]">SR/{request.id}</td>
-                  <td className="p-2 truncate max-w-[150px]">{request.full_name}</td>
-                  <td className="p-2 truncate max-w-[150px]">{request.instrument_name}</td>
-                  <td className="p-2 truncate max-w-[150px]">
+                  <td className="p-3 truncate max-w-[150px] text-gray-700">SR/{request.id}</td>
+                  <td className="p-3 truncate max-w-[150px] text-gray-700">{request.full_name}</td>
+                  <td className="p-3 truncate max-w-[150px] text-gray-700">{request.instrument_name}</td>
+                  <td className="p-3 truncate max-w-[150px] text-gray-700">
                     {new Date(request.created_at).toLocaleDateString()}
                   </td>
-                  <td className="p-2 truncate max-w-[150px]">{request.physical_address}</td>
-                  <td className="p-2 text-orange-500 font-semibold">{request.status}</td>
+                  <td className="p-3 truncate max-w-[150px] text-gray-700">{request.physical_address}</td>
+                  <td className="p-3">
+                    <span className="inline-flex rounded-full bg-orange-100 px-2.5 py-1 text-xs font-semibold text-orange-700">
+                      {request.status}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -161,91 +167,90 @@ export default function ServiceRequestTable() {
       {selectedRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
-            className="absolute inset-0 bg-[#ffffff50] bg-opacity-50 backdrop-blur-sm transition-opacity"
+            className="absolute inset-0 bg-white/70 backdrop-blur-[2px]"
             onClick={closeModal}
           />
 
-          <div className="bg-white rounded-3xl shadow-2xl w-11/12 max-w-4xl p-8 z-10 transform scale-95 opacity-0 animate-scale-fade">
+          <div className="bg-white border border-orange-200 w-11/12 max-w-4xl p-6 z-10 rounded-2xl">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-sm sm:text-sm lg:text-3xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+              <h2 className="text-xl lg:text-2xl font-bold text-gray-800">
                 Service Request Details
               </h2>
               <button
                 onClick={closeModal}
-                className="text-gray-500 hover:text-gray-800 font-bold text-3xl transition"
+                className="text-gray-500 hover:text-gray-800 font-bold text-3xl leading-none transition-colors"
               >
                 &times;
               </button>
             </div>
 
-            <div className="overflow-x-auto max-h-[70vh]">
-              <table className="w-full text-left text-sm border border-gray-200 rounded-xl overflow-hidden">
+            <div className="overflow-x-auto max-h-[70vh] rounded-xl border border-orange-100">
+              <table className="w-full text-left text-sm border-collapse">
                 <tbody>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Request ID</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Request ID</td>
                     <td className="p-3 text-gray-800 break-words text-xs lg:text-base">SR/{selectedRequest.id}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Client Name</td>
-                    <td className="p-3 text-xs lg:text-base ">{selectedRequest.full_name}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Client Name</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.full_name}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Email</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.email}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Email</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.email}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Address</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.physical_address}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Address</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.physical_address}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Contact Number</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.contact_number}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Contact Number</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.contact_number}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Institute Name</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.institute_name}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Institute Name</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.institute_name}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Institute Address</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.institute_address}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Institute Address</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.institute_address}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Instrument Name</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.instrument_name}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Instrument Name</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.instrument_name}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Instrument Brand</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.instrument_brand}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Instrument Brand</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.instrument_brand}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Instrument Model</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.instrument_model}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Instrument Model</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.instrument_model}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Instrument Manufacturer</td>
-                    <td className="p-3">{selectedRequest.instrument_manufacturer}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Instrument Manufacturer</td>
+                    <td className="p-3 text-gray-800">{selectedRequest.instrument_manufacturer}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Manufactured Year</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.manufactured_year}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Manufactured Year</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.manufactured_year}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Product Testing Type</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.product_testing_type}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Product Testing Type</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.product_testing_type}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Testing Parameter</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.testing_parameter}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Testing Parameter</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.testing_parameter}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Consumption Period</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.consumption_period}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Consumption Period</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.consumption_period}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
-                    <td className="p-3 font-semibold text-gray-600 w-1/3 bg-gray-50 text-xs lg:text-base">Problem Description</td>
-                    <td className="p-3 text-xs lg:text-base">{selectedRequest.issue_description}</td>
+                  <tr className="border-b border-orange-100 hover:bg-orange-50">
+                    <td className="p-3 font-semibold text-gray-700 w-1/3 bg-orange-50 text-xs lg:text-base">Problem Description</td>
+                    <td className="p-3 text-xs lg:text-base text-gray-800">{selectedRequest.issue_description}</td>
                   </tr>
-
                 </tbody>
               </table>
             </div>
@@ -253,7 +258,7 @@ export default function ServiceRequestTable() {
             <div className="mt-6 text-right">
               <button
                 onClick={closeModal}
-                className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-full text-sm hover:from-orange-400 hover:to-orange-500 transition"
+                className="bg-orange-500 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors"
               >
                 Close
               </button>
@@ -261,18 +266,6 @@ export default function ServiceRequestTable() {
           </div>
         </div>
       )}
-
-      <style>
-        {`
-          @keyframes scale-fade {
-            0% { transform: scale(0.95); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-          }
-          .animate-scale-fade {
-            animation: scale-fade 0.25s ease-out forwards;
-          }
-        `}
-      </style>
     </div>
   );
 }

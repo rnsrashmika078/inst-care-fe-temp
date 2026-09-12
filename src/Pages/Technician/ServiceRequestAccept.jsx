@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../config";
 import { useLocation } from "react-router-dom";
 import Navbar from "../../Components/Technician/Navbar";
 import Sidebar from "../../Components/Technician/Sidebar";
@@ -31,7 +32,7 @@ export default function Accept_Service_Request() {
         }
 
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/user/service-request/${techId}`
+          `${API_BASE}/user/service-request/${techId}`
         );
 
         if (!response.ok) throw new Error("Failed to fetch service requests");

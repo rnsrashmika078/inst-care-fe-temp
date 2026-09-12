@@ -1,6 +1,14 @@
-import { fetchWithAuth } from '../utils/api';
+import { fetchWithAuth } from "../utils/api";
+import { API_BASE } from "../../config";
 import React, { useState } from "react";
-import { FaEye, FaTrash, FaTimes, FaCheck, FaFileCsv, FaUserPlus } from "react-icons/fa";
+import {
+  FaEye,
+  FaTrash,
+  FaTimes,
+  FaCheck,
+  FaFileCsv,
+  FaUserPlus,
+} from "react-icons/fa";
 import DefaultProfileImage from "../../assets/images/profile-image.jpeg";
 import ProfileForm from "./TechnicianProfile";
 // import Register from "../auth/Technician-Registration"
@@ -26,15 +34,16 @@ export default function AllTechnicianTable({ usersData }) {
   const handleCloseModal = () => setSelectedUser(null);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this technician?")) return;
+    if (!window.confirm("Are you sure you want to delete this technician?"))
+      return;
 
     try {
-      const response = await fetch(`http://localhost/instrument-care-back-end/public/admin/technicians/${id}`, {
+      const response = await fetch(`${API_BASE}/admin/technicians/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const result = await response.json();
@@ -52,23 +61,31 @@ export default function AllTechnicianTable({ usersData }) {
   };
 
   const handleStatusUpdate = async (id, newStatus) => {
-    if (!window.confirm(`Are you sure you want to mark this technician as ${newStatus}?`)) return;
+    if (
+      !window.confirm(
+        `Are you sure you want to mark this technician as ${newStatus}?`,
+      )
+    )
+      return;
 
     try {
-      const response = await fetch(`http://localhost/instrument-care-back-end/public/admin/technicians/status/${id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      const response = await fetch(
+        `${API_BASE}/admin/technicians/status/${id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: newStatus }),
         },
-        body: JSON.stringify({ status: newStatus }),
-      });
+      );
 
       const result = await response.json();
 
       if (response.ok) {
         setUsers((prev) =>
-          prev.map((u) => (u.id === id ? { ...u, status: newStatus } : u))
+          prev.map((u) => (u.id === id ? { ...u, status: newStatus } : u)),
         );
         alert(result.message || `Technician status updated to ${newStatus}`);
       } else {
@@ -84,12 +101,14 @@ export default function AllTechnicianTable({ usersData }) {
     const matchesSearch =
       searchQuery === "" ||
       Object.values(user).some((value) =>
-        String(value).toLowerCase().includes(searchQuery.toLowerCase())
+        String(value).toLowerCase().includes(searchQuery.toLowerCase()),
       );
 
-    const matchesStatus = statusFilter === "All" || user.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "All" || user.status === statusFilter;
     const matchGender = genderFilter === "All" || user.gender === genderFilter;
-    const matchDistrict = districtFilter === "All" || user.district === districtFilter;
+    const matchDistrict =
+      districtFilter === "All" || user.district === districtFilter;
 
     let matchesDate = true;
     if (fromDate || toDate) {
@@ -113,7 +132,13 @@ export default function AllTechnicianTable({ usersData }) {
       }
     }
 
-    return matchesSearch && matchesStatus && matchGender && matchDistrict && matchesDate;
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchGender &&
+      matchDistrict &&
+      matchesDate
+    );
   });
 
   const handleExportCSV = () => {
@@ -134,7 +159,7 @@ export default function AllTechnicianTable({ usersData }) {
       "Institute",
       "District",
       "Status",
-      "Registration Date"
+      "Registration Date",
     ];
 
     const csvRows = [headers.join(",")];
@@ -151,8 +176,8 @@ export default function AllTechnicianTable({ usersData }) {
         `"${(user.designation || "").replace(/"/g, '""')}"`,
         `"${(user.institute_name || "").replace(/"/g, '""')}"`,
         `"${(user.district || "").replace(/"/g, '""')}"`,
-        `"${(user.status || "")}"`,
-        `"${(user.created_at || "")}"`
+        `"${user.status || ""}"`,
+        `"${user.created_at || ""}"`,
       ];
       csvRows.push(row.join(","));
     });
@@ -175,23 +200,23 @@ export default function AllTechnicianTable({ usersData }) {
   };
 
   return (
-    <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins min-h-[720px]">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        {/* <h3 className="font-bold text-lg">All Technicians</h3> */}
-
-        <div className="flex flex-wrap items-center gap-4 w-full justify-start xl:justify-end">
-          <input
-            type="text"
-            placeholder="Search anything..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-gray-300 px-4 py-2 rounded-md outline-none focus:border-orange-500 w-full sm:w-auto text-sm shrink-0"
-          />
+    <div className="w-full max-w-full rounded-[1.5rem] border border-orange-100 bg-white p-3 sm:p-4 font-poppins min-h-[720px]">
+      <div className="mb-5 w-full">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-6">
+          <div className="sm:col-span-2 xl:col-span-2">
+            <input
+              type="text"
+              placeholder="Search anything..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full border border-gray-300 px-4 py-2.5 rounded-md outline-none focus:border-orange-500 text-sm bg-white"
+            />
+          </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="border border-gray-300 px-4 py-2 rounded-md outline-none focus:border-orange-500 text-sm bg-white min-w-[140px] shrink-0"
+            className="border border-gray-300 px-3 py-2.5 rounded-md outline-none focus:border-orange-500 text-sm bg-white w-full"
           >
             <option value="All">All Statuses</option>
             <option value="Pending">Pending</option>
@@ -203,7 +228,7 @@ export default function AllTechnicianTable({ usersData }) {
           <select
             value={genderFilter}
             onChange={(e) => setGenderFilter(e.target.value)}
-            className="border border-gray-300 px-4 py-2 rounded-md outline-none focus:border-orange-500 text-sm bg-white min-w-[140px] shrink-0"
+            className="border border-gray-300 px-3 py-2.5 rounded-md outline-none focus:border-orange-500 text-sm bg-white w-full"
           >
             <option value="All">All Genders</option>
             <option value="Male">Male</option>
@@ -214,7 +239,7 @@ export default function AllTechnicianTable({ usersData }) {
           <select
             value={districtFilter}
             onChange={(e) => setDistrictFilter(e.target.value)}
-            className="border border-gray-300 px-4 py-2 rounded-md outline-none focus:border-orange-500 text-sm bg-white min-w-[140px] shrink-0"
+            className="border border-gray-300 px-3 py-2.5 rounded-md outline-none focus:border-orange-500 text-sm bg-white w-full"
           >
             <option value="All">All Districts</option>
             <option value="Ampara">Ampara</option>
@@ -244,113 +269,181 @@ export default function AllTechnicianTable({ usersData }) {
             <option value="Vavuniya">Vavuniya</option>
           </select>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <label className="text-sm text-gray-600 font-medium">From:</label>
-            <input
-              type="date"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              className="border border-gray-300 px-3 py-2 rounded-md outline-none focus:border-orange-500 text-sm bg-white"
-            />
+          <div className="grid grid-cols-2 gap-2 sm:col-span-2 xl:col-span-2">
+            <div className="flex flex-col gap-1">
+              <label className="text-[11px] font-medium text-gray-600">
+                From
+              </label>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="w-full border border-gray-300 px-3 py-2.5 rounded-md outline-none focus:border-orange-500 text-sm bg-white"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-[11px] font-medium text-gray-600">
+                To
+              </label>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="w-full border border-gray-300 px-3 py-2.5 rounded-md outline-none focus:border-orange-500 text-sm bg-white"
+              />
+            </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <label className="text-sm text-gray-600 font-medium">To:</label>
-            <input
-              type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              className="border border-gray-300 px-3 py-2 rounded-md outline-none focus:border-orange-500 text-sm bg-white"
-            />
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <label className="inline-flex w-fit items-center justify-center rounded-md border border-orange-200 bg-orange-50 px-3 py-2 text-sm font-semibold text-gray-700">
+            Records: {filteredUsers.length}
+          </label>
+
+          <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-medium rounded-md text-sm hover:bg-green-700 transition"
+            >
+              <FaFileCsv size={16} />
+              Export CSV
+            </button>
+
+            <button
+              onClick={handleAddTechnician}
+              className="flex items-center gap-2 px-4 py-2 bg-orange-400 text-white font-medium rounded-md text-sm hover:bg-orange-600 transition"
+            >
+              <FaUserPlus size={16} />
+              Add Technician
+            </button>
           </div>
-
-          <label className="font-semibold text-gray-700 bg-white px-3 py-2 rounded-md border text-sm shadow-sm shrink-0">Records: {filteredUsers.length}</label>
-
-          <button
-            onClick={handleExportCSV}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-medium rounded-md text-sm hover:bg-green-700 transition shrink-0 shadow-sm"
-          >
-            <FaFileCsv size={16} />
-            Export CSV
-          </button>
-
-          <button
-            onClick={handleAddTechnician}
-            className="flex items-center gap-2 px-4 py-2 bg-orange-400 text-white font-medium rounded-md text-sm hover:bg-orange-700 transition shrink-0 shadow-sm"
-          >
-            <FaUserPlus size={16} />
-            Add Technician
-          </button>
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="w-full overflow-hidden">
         {filteredUsers.length === 0 ? (
-          <p className="text-gray-500 italic p-8 text-center bg-white/50 rounded-lg">
+          <p className="rounded-lg bg-white/50 p-8 text-center text-gray-500 italic">
             No technicians found matching your criteria.
           </p>
         ) : (
-          <div className="max-h-[720px] overflow-y-auto">
-            <table className="w-full text-left text-sm border-collapse">
+          <div className="max-h-[720px] overflow-y-auto overflow-x-auto">
+            <table className="min-w-[980px] w-full table-fixed border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b bg-gray-50/50 sticky top-0">
-                  <th className="p-3 font-semibold">TechnicianID</th>
-                  <th className="p-3 font-semibold">Full Name</th>
-                  <th className="p-3 font-semibold">Title</th>
-                  <th className="p-3 font-semibold">Email</th>
-                  <th className="p-3 font-semibold">Contact</th>
-                  <th className="p-3 font-semibold">Current Designation</th>
-                  <th className="p-3 font-semibold">Institute/Organization</th>
-                  <th className="p-3 font-semibold">Status</th>
-                  <th className="p-3 font-semibold text-center">Action</th>
+                <tr className="sticky top-0 border-b border-orange-100 bg-orange-50/80">
+                  <th className="p-3 text-[11px] font-semibold uppercase tracking-wide text-gray-700 xl:text-xs">
+                    TechnicianID
+                  </th>
+                  <th className="p-3 text-[11px] font-semibold uppercase tracking-wide text-gray-700 xl:text-xs">
+                    Full Name
+                  </th>
+                  <th className="p-3 text-[11px] font-semibold uppercase tracking-wide text-gray-700 xl:text-xs">
+                    Email
+                  </th>
+                  <th className="p-3 text-[11px] font-semibold uppercase tracking-wide text-gray-700 xl:text-xs">
+                    Contact
+                  </th>
+                  <th className="p-3 text-[11px] font-semibold uppercase tracking-wide text-gray-700 xl:text-xs">
+                    Organization
+                  </th>
+                  <th className="p-3 text-[11px] font-semibold uppercase tracking-wide text-gray-700 xl:text-xs">
+                    Status
+                  </th>
+                  <th className="p-3 text-center text-[11px] font-semibold uppercase tracking-wide text-gray-700 xl:text-xs">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.map((user, i) => (
-                  <tr key={i} className="border-b hover:bg-white/80 transition cursor-pointer">
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.id}</td>
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.first_name + " " + user.last_name}</td>
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.title}</td>
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.email}</td>
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.mobile_number}</td>
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.designation}</td>
-                    <td className="p-3" onClick={() => handleOpenModal(user)}>{user.institute_name}</td>
-                    <td className="p-3">
+                  <tr
+                    key={i}
+                    className="border-b border-gray-200 transition hover:bg-orange-50/40"
+                  >
+                    <td
+                      className="p-3 align-top text-gray-700 break-words"
+                      onClick={() => handleOpenModal(user)}
+                    >
+                      {user.id}
+                    </td>
+                    <td
+                      className="p-3 align-top text-gray-700 break-words"
+                      onClick={() => handleOpenModal(user)}
+                    >
+                      {user.first_name + " " + user.last_name}
+                    </td>
+                    <td
+                      className="p-3 align-top text-gray-700 break-words"
+                      onClick={() => handleOpenModal(user)}
+                    >
+                      {user.email}
+                    </td>
+                    <td
+                      className="p-3 align-top text-gray-700 break-words"
+                      onClick={() => handleOpenModal(user)}
+                    >
+                      {user.mobile_number}
+                    </td>
+                    <td
+                      className="p-3 align-top text-gray-700 break-words"
+                      onClick={() => handleOpenModal(user)}
+                    >
+                      {user.institute_name}
+                    </td>
+                    <td className="p-3 align-top">
                       {user.status === "Submitted" ? (
-                        <div className="flex gap-2 items-center">
-                          <span className="px-2 py-1 rounded-full bg-yellow-500 text-xs font-semibold text-white mr-1">{user.status}</span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="mr-1 rounded-full bg-yellow-500 px-2 py-1 text-[10px] font-semibold text-white">
+                            {user.status}
+                          </span>
                           <button
-                            onClick={(e) => { e.stopPropagation(); handleStatusUpdate(user.id, "Approved"); }}
-                            className="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStatusUpdate(user.id, "Approved");
+                            }}
+                            className="rounded bg-green-500 px-2 py-1 text-[10px] text-white transition hover:bg-green-600"
                           >
                             <FaCheck />
                           </button>
                           <button
-                            onClick={(e) => { e.stopPropagation(); handleStatusUpdate(user.id, "Declined"); }}
-                            className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 transition"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStatusUpdate(user.id, "Declined");
+                            }}
+                            className="rounded bg-red-500 px-2 py-1 text-[10px] text-white transition hover:bg-red-600"
                           >
                             <FaTimes />
                           </button>
                         </div>
                       ) : (
-                        <span className={`px-2 py-1.5 rounded-full text-xs font-medium text-white shadow-sm block text-center ${user.status === 'Approved' ? 'bg-green-500' : user.status === 'Declined' ? 'bg-red-500' : 'bg-gray-500'}`}>
+                        <span
+                          className={`block rounded-full px-2 py-1.5 text-center text-[10px] font-medium text-white ${user.status === "Approved" ? "bg-green-500" : user.status === "Declined" ? "bg-red-500" : "bg-gray-500"}`}
+                        >
                           {user.status}
                         </span>
                       )}
                     </td>
-                    <td className="p-3 flex gap-4 justify-center items-center h-full mt-1.5">
-                      <FaEye
-                        className="text-blue-500 hover:text-blue-700 transition transform hover:scale-110"
-                        title="View / Edit Details"
-                        size={18}
-                        onClick={(e) => { e.stopPropagation(); handleOpenModal(user); }}
-                      />
-                      <FaTrash
-                        className="text-red-500 hover:text-red-700 transition transform hover:scale-110"
-                        title="Delete Technician"
-                        size={18}
-                        onClick={(e) => { e.stopPropagation(); handleDelete(user.id); }}
-                      />
+                    <td className="p-3 align-top">
+                      <div className="flex items-center justify-center gap-4">
+                        <FaEye
+                          className="cursor-pointer text-blue-500 transition hover:scale-110 hover:text-blue-700"
+                          title="View / Edit Details"
+                          size={18}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenModal(user);
+                          }}
+                        />
+                        <FaTrash
+                          className="cursor-pointer text-red-500 transition hover:scale-110 hover:text-red-700"
+                          title="Delete Technician"
+                          size={18}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(user.id);
+                          }}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -364,7 +457,6 @@ export default function AllTechnicianTable({ usersData }) {
       {selectedUser && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto px-4 py-8 flex justify-center">
           <div className="bg-[#f8f9fa] rounded-2xl w-full max-w-6xl shadow-2xl relative mb-auto flex flex-col">
-
             <button
               onClick={handleCloseModal}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-light z-10 transition-colors bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm"
@@ -382,9 +474,7 @@ export default function AllTechnicianTable({ usersData }) {
               >
                 Close
               </button>
-
             </div>
-
           </div>
         </div>
       )}
@@ -392,7 +482,6 @@ export default function AllTechnicianTable({ usersData }) {
       {showRegister && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto px-4 py-8 flex justify-center">
           <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl relative mb-auto flex flex-col">
-
             <button
               onClick={() => setShowRegister(false)}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-light z-10 transition-colors bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm"
@@ -402,14 +491,9 @@ export default function AllTechnicianTable({ usersData }) {
             </button>
 
             <Register />
-
-
-
           </div>
         </div>
       )}
-
     </div>
   );
 }
-

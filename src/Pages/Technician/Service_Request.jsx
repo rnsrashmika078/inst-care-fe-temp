@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../config";
 import Navbar from '../../Components/Technician/Navbar';
 import Sidebar from '../../Components/Technician/Sidebar';
 import ServiceRequestTable_Request from "../../Components/Technician/ServiceRequestTable-Request";
@@ -24,7 +25,7 @@ export default function Service_Request() {
         }
 
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/user/service-request/${techId}`,
+          `${API_BASE}/user/service-request/${techId}`,
           {
             headers: {
               "Content-Type": "application/json",

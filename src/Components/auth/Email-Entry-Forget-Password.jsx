@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Bg from "../../assets/images/hero-bg-5.jpg";
 import ForgotImg from "../../assets/images/fp-email-sending.webp"; // add your illustration here
+import { API_BASE } from "../../config";
 
 export default function EmailEntry_ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ export default function EmailEntry_ForgotPassword() {
   const handleForgotPassword = async () => {
     try {
       const response = await fetch(
-        "http://localhost/instrument-care-back-end/public/api/email-entry-forgot-password",
+        `${API_BASE}/api/email-entry-forgot-password`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

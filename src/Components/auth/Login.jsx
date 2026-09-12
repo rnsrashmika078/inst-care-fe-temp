@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Bg from '../../assets/images/hero-bg-5.jpg';
+import { API_BASE } from "../../config";
 
 export default function LoginPage() {
   const [loginData, setLoginData] = useState({
@@ -22,7 +23,7 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost/instrument-care-back-end/public/api/login", {
+      const response = await fetch(`${API_BASE}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),
@@ -110,6 +111,7 @@ export default function LoginPage() {
             onChange={(e) =>
               setLoginData({ ...loginData, username: e.target.value })
             }
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
           />
           <div className="relative mb-4">
             <input
@@ -120,6 +122,7 @@ export default function LoginPage() {
               onChange={(e) =>
                 setLoginData({ ...loginData, password: e.target.value })
               }
+              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
             />
             <button
               type="button"

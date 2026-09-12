@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Bg from "../../assets/images/hero-bg-5.jpg";
+import { API_BASE } from "../../config";
 
 export default function NewUserRegistration() {
   const [formData, setFormData] = useState({
@@ -37,7 +38,7 @@ export default function NewUserRegistration() {
     document.body.style.overflow = "auto";
 
     // ✅ FETCH INSTITUTES
-    fetch("http://localhost/instrument-care-back-end/public/api/institutes")
+    fetch(`${API_BASE}/institutes`)
       .then((res) => res.json())
       .then((data) => {
         setInstitutes(data);
@@ -47,7 +48,7 @@ export default function NewUserRegistration() {
       });
 
     // ✅ FETCH DESIGNATIONS
-    fetch("http://localhost/instrument-care-back-end/public/api/designations")
+    fetch(`${API_BASE}/designations`)
       .then((res) => res.json())
       .then((data) => {
         setDesignations(data);
@@ -63,7 +64,7 @@ export default function NewUserRegistration() {
 
     if (name === "institute_id" && value !== "" && value !== "other") {
       try {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/api/faculties/${value}`);
+        const res = await fetch(`${API_BASE}/faculties/${value}`);
         const data = await res.json();
         setFaculties(data);
 
@@ -79,7 +80,7 @@ export default function NewUserRegistration() {
 
     if (name === "faculty_id" && value !== "" && value !== "other") {
       try {
-        const res = await fetch(`http://localhost/instrument-care-back-end/public/api/departments/${value}`);
+        const res = await fetch(`${API_BASE}/departments/${value}`);
         const data = await res.json();
         setDepartments(data);
 
@@ -102,7 +103,7 @@ export default function NewUserRegistration() {
     console.log("Request Body:", formData);
     try {
       const response = await fetch(
-        "http://localhost/instrument-care-back-end/public/api/register-user",
+        `${API_BASE}/register-user`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

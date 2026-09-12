@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { API_BASE } from "../../config";
 
 export default function ServiceRequestAccept({
   initialFormData = {
@@ -25,8 +26,7 @@ export default function ServiceRequestAccept({
   };
 
   const handleSend = async () => {
-    const endpoint =
-      "http://localhost/instrument-care-back-end/public/api/send-owner-email";
+    const endpoint = `${API_BASE}/api/send-owner-email`;
 
     const payload = {
       owner_email: formData.ownerEmail,
@@ -45,6 +45,7 @@ export default function ServiceRequestAccept({
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${sessionStorage.getItem("token") || ""}`
         },
         body: JSON.stringify(payload),
       });
@@ -126,26 +127,26 @@ export default function ServiceRequestAccept({
         <hr className="mt-4" />
 
         {/* Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center sm:justify-end gap-3 mt-4">
-          <Link to="/tech/service-request">
+          <div className="flex flex-col sm:flex-row justify-center sm:justify-end gap-3 mt-4 w-full">
+            <Link to="/tech/service-request" className="w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={onBack}
+                className="bg-red-500 hover:bg-red-400 text-white px-6 py-2 rounded-md font-semibold w-full sm:w-auto"
+                disabled={loading}
+              >
+                Back
+              </button>
+            </Link>
             <button
               type="button"
-              onClick={onBack}
-              className="bg-red-500 hover:bg-red-400 text-white px-6 py-2 rounded-md font-semibold w-md"
+              onClick={handleSend}
+              className="bg-green-500 hover:bg-green-400 text-white px-6 py-2 rounded-md font-semibold w-full sm:w-auto disabled:opacity-50"
               disabled={loading}
             >
-              Back
+              {loading ? "Sending..." : "Send"}
             </button>
-          </Link>
-          <button
-            type="button"
-            onClick={handleSend}
-            className="bg-green-500 hover:bg-green-400 text-white px-6 py-2 rounded-md font-semibold w-md disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? "Sending..." : "Send"}
-          </button>
-        </div>
+          </div>
       </form>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import profileImage from "../../assets/images/profile-image.jpeg";
+import { API_BASE } from "../../config";
 
 export default function PersonalInfo() {
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ export default function PersonalInfo() {
     const fetchProfile = async () => {
       try {
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+          `${API_BASE}/tech/profile/${userId}`,
           {
             method: "GET",
             headers: {
@@ -58,7 +59,7 @@ export default function PersonalInfo() {
           supervisor_Designation: data.supervisor_designation || "",
           supervisor_Email: data.supervisor_email || "",
           supervisor_Contact_No: data.supervisor_contact_no || "",
-          picture: data.picture ? `http://localhost/instrument-care-back-end/public/${data.picture}` : null,
+          picture: data.picture ? `${API_BASE}/${data.picture}` : null,
           gender: data.gender || "",
           title: data.title || "",
           initials: data.name_with_initials || "",
@@ -128,7 +129,7 @@ export default function PersonalInfo() {
       }
 
       const res = await fetch(
-        `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+        `${API_BASE}/tech/profile/${userId}`,
         {
           method: "POST",
           body: form,
@@ -160,7 +161,7 @@ export default function PersonalInfo() {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-semibold">Personal Information</h2>
       </div>
-      <div className="flex items-center gap-6 mb-6">
+      {/* <div className="flex items-center gap-6 mb-6">
         <img
           src={formData.profileImagePreview || formData.picture || profileImage}
           alt="profile"
@@ -174,6 +175,25 @@ export default function PersonalInfo() {
             className="bg-orange-100 text-orange-700 px-3 py-1 rounded-md text-sm hover:bg-orange-200"
           />
           <p className="text-sm text-gray-500">Upload profile image</p>
+        </div>
+      </div> */}
+      <div className="flex items-center gap-6 mb-6">
+        <img
+          src={formData.profileImagePreview || formData.picture || profileImage}
+          alt="profile"
+          className="w-24 h-24 rounded-full object-cover border border-gray-300"
+        />
+        <div>
+          <label className="cursor-pointer bg-orange-100 text-orange-700 px-3 py-1 rounded-md text-sm hover:bg-orange-200 inline-block">
+            Choose File
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </label>
+          <p className="text-sm text-gray-500 mt-1">Upload profile image</p>
         </div>
       </div>
 
@@ -368,7 +388,7 @@ export default function PersonalInfo() {
 
         {/* Supervisor Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
           <input
             type="text"
             name="supervisor_name"
@@ -380,7 +400,7 @@ export default function PersonalInfo() {
 
         {/* Supervisor Designation */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Designation</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Designation</label>
           <input
             type="text"
             name="supervisor_Designation"
@@ -392,7 +412,7 @@ export default function PersonalInfo() {
 
         {/* Supervisor Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Email</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
           <input
             type="email"
             name="supervisor_Email"
@@ -404,7 +424,7 @@ export default function PersonalInfo() {
 
         {/* Supervisor Contact Number */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Contact Number</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
           <input
             type="text"
             name="supervisor_Contact_No"

@@ -1,4 +1,5 @@
 import { fetchWithAuth } from '../utils/api';
+import { API_BASE } from "../../config";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -28,7 +29,7 @@ export default function TechnicianRegisterPage() {
     const handleRegister = async () => {
         try {
             const response = await fetchWithAuth(
-                "http://localhost/instrument-care-back-end/public/api/register",
+                `${API_BASE}/api/register`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },

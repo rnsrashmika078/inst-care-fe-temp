@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../../config";
 
 export default function AdminDashboardTechnicianViewStats() {
     const [data, setData] = useState([]);
@@ -11,7 +12,7 @@ export default function AdminDashboardTechnicianViewStats() {
     const fetchTopTechnicians = async () => {
         try {
             const res = await fetch(
-                "http://localhost/instrument-care-back-end/public/admin/technician-view-count",
+                `${API_BASE}/admin/technician-view-count`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -31,8 +32,8 @@ export default function AdminDashboardTechnicianViewStats() {
     const maxViews = Math.max(...data.map((d) => d.views), 1);
 
     return (
-        <div className="bg-white rounded-xl shadow p-5 mt-5 font-poppins">
-            <h3 className="text-lg font-bold mb-6 text-gray-800">
+        <div className="rounded-[1.5rem] border border-orange-100 bg-white p-4 md:p-5">
+            <h3 className="mb-5 text-lg font-bold text-gray-900">
                 Top Most Viewed Technicians
             </h3>
 
@@ -41,27 +42,23 @@ export default function AdminDashboardTechnicianViewStats() {
                     const widthPercent = (tech.views / maxViews) * 100;
 
                     return (
-                        <div key={tech.id} className="flex flex-col gap-1">
-
-                            {/* Name + count */}
-                            <div className="flex justify-between text-sm text-gray-700">
-                                <span className="font-semibold">
+                        <div key={tech.id} className="flex flex-col gap-2">
+                            <div className="flex items-center justify-between gap-3 text-sm text-gray-700">
+                                <span className="font-semibold text-gray-800">
                                     {tech.technician_name}
                                 </span>
-                                <span className="text-gray-500">
+                                <span className="text-xs font-medium text-orange-600">
                                     {tech.views} views
                                 </span>
                             </div>
 
-                            {/* Bar */}
-                            <div className="w-full bg-gray-200 rounded-full h-3 relative">
+                            <div className="h-2.5 w-full overflow-hidden rounded-full bg-orange-100">
                                 <div
-                                    className="bg-orange-400 h-3 rounded-full transition-all duration-500"
+                                    className="h-full rounded-full bg-orange-500 transition-all duration-500"
                                     style={{ width: `${widthPercent}%` }}
                                     title={`ID: ${tech.id} | ${tech.views} views`}
                                 ></div>
                             </div>
-
                         </div>
                     );
                 })}

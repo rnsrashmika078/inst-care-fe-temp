@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_BASE } from "../../config";
 
 export default function AllJobSummary() {
   const [jobs, setJobs] = useState([]);
@@ -37,7 +38,7 @@ export default function AllJobSummary() {
       return;
     }
 
-    fetch(`http://localhost/instrument-care-back-end/public/user/service-request/${techId}`,
+    fetch(`${API_BASE}/user/service-request/${techId}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +81,7 @@ export default function AllJobSummary() {
     try {
       // Assuming a PUT request to update the status. Adjust endpoint if necessary.
       const response = await fetch(
-        `http://localhost/instrument-care-back-end/public/service-request/status/${jobId}`,
+        `${API_BASE}/service-request/status/${jobId}`,
         {
           method: "PUT",
           headers: {

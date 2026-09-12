@@ -8,6 +8,7 @@ import Footer from '../../Components/Common/Footer';
 import BG from '../../assets/images/technician-dashboard-bg-4.jpg';
 import AdminDashboardTechnicianViewStats from '../../Components/admin/AdminDashboardTechnicianViewStats';
 import SearchTrendsChart from '../../Components/admin/SearchTrendCharts';
+import { API_BASE } from '../../config';
 
 export default function Admin_Dashboard() {
   const [chartData, setChartData] = useState([]);
@@ -17,7 +18,7 @@ export default function Admin_Dashboard() {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await fetchWithAuth('http://localhost/instrument-care-back-end/public/admin/line-chart',
+        const response = await fetchWithAuth(`${API_BASE}/admin/line-chart`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -41,17 +42,37 @@ export default function Admin_Dashboard() {
     <>
       <Navbar />
 
-      <div className="flex flex-col md:flex-row h-full w-full p-2 md:p-4 gap-4 bg-orange-100">
-        <Admin_Sidebar />
+      <div className="min-h-screen bg-[#fffaf5] px-3 py-4 md:px-5 md:py-6">
+        <div className="mx-auto flex max-w-[1600px] flex-col gap-5 lg:flex-row">
+          <Admin_Sidebar />
 
-        {/* Main Content */}
-        <main className="flex-1 bg-[#ffffff80] rounded-lg p-4">
-          <h2 className="text-xl font-bold mb-4">Admin Dashboard</h2>
-          <AdminDashboardStats />
-          <AdminDashboardLineChart data={chartData} />
-          <AdminDashboardTechnicianViewStats />
-          <SearchTrendsChart />
-        </main>
+          <main className="flex-1 rounded-[1.75rem] border border-orange-100 bg-white p-4 md:p-6">
+            <div className="mb-6 flex flex-col gap-3 border-b border-orange-100 pb-5 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-orange-500">
+                  Control Center
+                </p>
+                <h2 className="mt-2 text-2xl font-bold text-gray-900 md:text-3xl">
+                  Admin Dashboard
+                </h2>
+              </div>
+              <div className="inline-flex items-center rounded-full border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs font-semibold text-orange-600">
+                System overview
+              </div>
+            </div>
+
+            <AdminDashboardStats />
+
+            <div className="mt-6 grid gap-5 xl:grid-cols-[1.4fr_1fr]">
+              <AdminDashboardLineChart data={chartData} />
+              <AdminDashboardTechnicianViewStats />
+            </div>
+
+            <div className="mt-6">
+              <SearchTrendsChart />
+            </div>
+          </main>
+        </div>
       </div>
 
       <Footer />

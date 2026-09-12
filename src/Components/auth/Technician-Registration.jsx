@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Bg from '../../assets/images/hero-bg-5.jpg';
+import { API_BASE } from "../../config";
 
 export default function TechnicianRegisterPage() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export default function TechnicianRegisterPage() {
   const handleRegister = async () => {
     try {
       const response = await fetch(
-        "http://localhost/instrument-care-back-end/public/api/register",
+        `${API_BASE}/api/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

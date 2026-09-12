@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchWithAuth } from "../utils/api";
+import { API_BASE } from "../../config";
 
 export default function TechnicianSearchRequests() {
     const token = sessionStorage.getItem("token");
@@ -35,7 +36,7 @@ export default function TechnicianSearchRequests() {
 
     const fetchSearchTerm = async () => {
         try {
-            const response = await fetchWithAuth('http://localhost/instrument-care-back-end/public/admin/tech-search-requests',
+            const response = await fetchWithAuth(`${API_BASE}/admin/tech-search-requests`,
                 {
                     headers: {
                         "Content-Type": "application/json",

@@ -1,6 +1,6 @@
-import { fetchWithAuth } from '../../utils/api';
 import React, { useState, useEffect } from "react";
 import profileImage from "../../../assets/images/profile-image.jpeg";
+import { API_BASE } from '../../../config';
 
 export default function PersonalInfo({ userId }) {
     const token = sessionStorage.getItem("token");
@@ -30,16 +30,24 @@ export default function PersonalInfo({ userId }) {
 
     useEffect(() => {
         const fetchProfile = async () => {
+            if (!userId || !token) return;
+
             try {
-                const res = await fetchWithAuth(
-                    `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+                const res = await fetch(
+                    `${API_BASE}/tech/profile/${userId}`,
                     {
+                        method: "GET",
                         headers: {
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${token}`
                         }
                     }
                 );
+
+                if (!res.ok) {
+                    throw new Error(`Profile fetch failed with ${res.status}`);
+                }
+
                 const data = await res.json();
                 setFormData((prev) => ({
                     ...prev,
@@ -56,7 +64,7 @@ export default function PersonalInfo({ userId }) {
                     supervisor_Designation: data.supervisor_designation || "",
                     supervisor_Email: data.supervisor_email || "",
                     supervisor_Contact_No: data.supervisor_contact_no || "",
-                    picture: data.picture ? `http://localhost/instrument-care-back-end/public/${data.picture}` : null,
+                    picture: data.picture ? `${API_BASE}/${data.picture}` : null,
                     gender: data.gender || "",
                     title: data.title || "",
                     initials: data.name_with_initials || "",
@@ -125,8 +133,8 @@ export default function PersonalInfo({ userId }) {
                 form.append("picture", formData.profileImage);
             }
 
-            const res = await fetchWithAuth(
-                `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+            const res = await fetch(
+                `${API_BASE}/tech/profile/${userId}`,
                 {
                     method: "POST",
                     headers: {
@@ -366,7 +374,7 @@ export default function PersonalInfo({ userId }) {
 
                 {/* Supervisor Name */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
                     <input
                         type="text"
                         name="supervisor_name"
@@ -378,7 +386,7 @@ export default function PersonalInfo({ userId }) {
 
                 {/* Supervisor Designation */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Designation</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Designation</label>
                     <input
                         type="text"
                         name="supervisor_Designation"
@@ -390,7 +398,7 @@ export default function PersonalInfo({ userId }) {
 
                 {/* Supervisor Email */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Email</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input
                         type="email"
                         name="supervisor_Email"
@@ -402,7 +410,7 @@ export default function PersonalInfo({ userId }) {
 
                 {/* Supervisor Contact Number */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Supervisor Contact Number</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Contact Number</label>
                     <input
                         type="text"
                         name="supervisor_Contact_No"

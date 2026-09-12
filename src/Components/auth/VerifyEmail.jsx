@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Bg from '../../assets/images/hero-bg-5.jpg';
+import { API_BASE } from "../../config";
 
 export default function EmailVerificationPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -37,7 +38,7 @@ export default function EmailVerificationPage() {
     }
 
     try {
-      const response = await fetch("http://localhost/instrument-care-back-end/public/api/verify-email", {
+      const response = await fetch(`${API_BASE}/api/verify-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: userId, otp: enteredOtp }),

@@ -3,6 +3,7 @@ import TechnicalExpertise from "./TechnicalExpertise";
 import WorkExperience from "./WorkExperience";
 import Certificates from "./Certificates";
 import ProofDocument from "./ProofDocument";
+// import TechnicalExpertiseUpdate from "./TechnicalExpertiseUpdate";
 
 export default function ProfileEditForm() {
   return (
@@ -12,13 +13,13 @@ export default function ProfileEditForm() {
       <PersonalInfo />
 
       <TechnicalExpertise />
+      {/* <TechnicalExpertiseUpdate /> */}
 
       <WorkExperience />
 
       <Certificates />
 
       <ProofDocument />
-
     </div>
   );
 }

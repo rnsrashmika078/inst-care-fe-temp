@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../../config";
 import { Link } from "react-router-dom";
 
 export default function JobSummaryTable() {
@@ -18,7 +19,7 @@ export default function JobSummaryTable() {
         }
 
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/user/service-request/${techId}`,
+          `${API_BASE}/user/service-request/${techId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -54,52 +55,54 @@ export default function JobSummaryTable() {
   }, []);
 
   return (
-    <div className="bg-[#ffffff80] rounded-lg shadow-sm p-4 font-poppins">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold">Job Summary</h3>
+    <div className="bg-white border border-orange-200 rounded-2xl p-4 font-poppins">
+      <div className="flex justify-between items-center mb-4 gap-3">
+        <div>
+          <h3 className="font-bold text-gray-800 text-base lg:text-lg">Job Summary</h3>
+          <p className="text-xs text-gray-500 mt-1">Latest technician activity</p>
+        </div>
         <Link to="/tech/all-job-summary">
-          <button className="bg-orange-600 text-white px-4 py-1 rounded-md text-xs lg:text-sm hover:bg-orange-400">
+          <button className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs lg:text-sm font-medium border border-orange-500 hover:bg-orange-600 transition-colors duration-200">
             View all
           </button>
         </Link>
       </div>
 
-      <div className="sm:hidden space-y-3 max-h-[188px] overflow-y-auto">
+      <div className="sm:hidden space-y-3 max-h-[188px] overflow-y-auto pr-1">
         {jobs.map((row, i) => (
           <div
             key={i}
-            className="bg-white rounded-xl p-4 shadow border hover:bg-orange-50 transition"
+            className="bg-orange-50 border border-orange-200 rounded-2xl p-4 transition-colors duration-200"
           >
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-bold text-orange-600 text-xs lg:text-sm">{row[0]}</span>
+            <div className="flex justify-between items-center mb-2 gap-2">
+              <span className="font-bold text-orange-600 text-xs">{row[0]}</span>
               <span
-                className={`text-xs font-semibold
-            ${row[5] === "Completed" ? "text-green-500" :
-                    row[5] === "Rejected" ? "text-red-500" :
-                      row[5] === "Pending" ? "text-yellow-500" :
-                        row[5] === "In Progress" ? "text-blue-500" : ""}
+                className={`text-[10px] font-semibold px-2 py-1 rounded-full
+            ${row[5] === "Completed" ? "bg-green-100 text-green-700" :
+                    row[5] === "Rejected" ? "bg-red-100 text-red-700" :
+                      row[5] === "Pending" ? "bg-yellow-100 text-yellow-700" :
+                        row[5] === "In Progress" ? "bg-blue-100 text-blue-700" : "bg-orange-100 text-orange-700"}
           `}
               >
                 {row[5]}
               </span>
             </div>
 
-            <div className="text-xs lg:text-sm text-gray-700">
-              <p><strong>Client:</strong> {row[1]}</p>
-              <p><strong>Instrument:</strong> {row[2]}</p>
+            <div className="text-[11px] text-gray-700 space-y-1">
+              <p><span className="font-semibold text-gray-800">Client:</span> {row[1]}</p>
+              <p><span className="font-semibold text-gray-800">Instrument:</span> {row[2]}</p>
               <p>
-                <strong>Date:</strong>{" "}
+                <span className="font-semibold text-gray-800">Date:</span>{" "}
                 {new Date(row[3]).toLocaleDateString()}
               </p>
               <p className="truncate">
-                <strong>Location:</strong> {row[4]}
+                <span className="font-semibold text-gray-800">Location:</span> {row[4]}
               </p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* <div className="overflow-x-auto"> */}
       <div className="hidden sm:block overflow-x-auto">
         {loading ? (
           <p className="text-gray-500 italic p-4 text-center">Loading...</p>
@@ -108,37 +111,37 @@ export default function JobSummaryTable() {
             No job summaries found.
           </p>
         ) : (
-          <div className="max-h-[188px] overflow-y-auto">
+          <div className="max-h-[188px] overflow-y-auto rounded-xl border border-orange-200">
             <table className="w-full text-left text-sm border-collapse">
-              {/* <thead> */}
-              <thead className="sticky top-0 bg-white">
-                <tr className="border-b">
-                  <th className="p-2 text-xs sm:text-sm">Request ID</th>
-                  <th className="p-2 text-xs sm:text-sm">Client Name</th>
-                  <th className="p-2 text-xs sm:text-sm">Instrument Name</th>
-                  <th className="p-2 text-xs sm:text-sm">Request Date</th>
-                  <th className="p-2 text-xs sm:text-sm">Location</th>
-                  <th className="p-2 text-xs sm:text-sm">Status</th>
+              <thead className="sticky top-0 bg-orange-100">
+                <tr>
+                  <th className="p-3 font-semibold text-gray-700 text-left">Request ID</th>
+                  <th className="p-3 font-semibold text-gray-700 text-left">Client Name</th>
+                  <th className="p-3 font-semibold text-gray-700 text-left">Instrument Name</th>
+                  <th className="p-3 font-semibold text-gray-700 text-left">Request Date</th>
+                  <th className="p-3 font-semibold text-gray-700 text-left">Location</th>
+                  <th className="p-3 font-semibold text-gray-700 text-left">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {jobs.map((row, i) => (
-                  <tr key={i} className="border-b">
+                  <tr key={i} className="border-b border-orange-100 hover:bg-orange-50 transition-colors duration-200">
                     {row.map((cell, j) => (
                       <td
                         key={j}
-                        className={`p-2 text-xs sm:text-sm truncate max-w-[140px] ${cell === "Pass"
-                          ? "text-green-500 font-bold"
-                          : cell === "Rejected"
-                            ? "text-red-500 font-bold"
-                            : cell === "Pending"
-                              ? "text-yellow-500 font-bold"
-                              : cell === "In Progress"
-                                ? "text-blue-500 font-bold"
-                                : cell === "Completed"
-                                  ? "text-green-500 font-bold"
-                                  : ""
-                          }`}
+                        className={`p-3 text-xs sm:text-sm truncate max-w-[140px] ${
+                          cell === "Pass"
+                            ? "text-green-600 font-bold"
+                            : cell === "Rejected"
+                              ? "text-red-600 font-bold"
+                              : cell === "Pending"
+                                ? "text-yellow-600 font-bold"
+                                : cell === "In Progress"
+                                  ? "text-blue-600 font-bold"
+                                  : cell === "Completed"
+                                    ? "text-green-600 font-bold"
+                                    : "text-gray-700"
+                        }`}
                       >
                         {cell}
                       </td>

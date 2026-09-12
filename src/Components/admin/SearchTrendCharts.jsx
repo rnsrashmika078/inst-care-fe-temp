@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { API_BASE } from "../../config";
 
 export default function SearchTrendsChart() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
         fetch(
-            "http://localhost/instrument-care-back-end/public/admin/view-search-count-hourly",
+            `${API_BASE}/admin/view-search-count-hourly`,
             {
                 headers: {
                     Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -20,36 +21,38 @@ export default function SearchTrendsChart() {
     const maxCount = Math.max(...data.map((d) => d.count), 1);
 
     return (
-        <div className="bg-white p-5 rounded-lg shadow-md mt-5 font-poppins">
-            <h3 className="text-lg font-bold mb-6">
-                Search Trends (Hourly)
-            </h3>
+        <div className="rounded-[1.5rem] border border-orange-100 bg-white p-4 md:p-5">
+            <div className="mb-5 flex items-center justify-between">
+                <h3 className="text-lg font-bold text-gray-900">
+                    Search Trends (Hourly)
+                </h3>
+                <span className="rounded-full border border-orange-200 bg-orange-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-orange-600">
+                    Live
+                </span>
+            </div>
 
-            <div className="flex items-end gap-3 h-64 overflow-x-auto">
+            <div className="flex h-64 items-end gap-3 overflow-x-auto pb-2">
                 {data.map((item, index) => {
                     const heightPercent = (item.count / maxCount) * 100;
 
                     return (
                         <div
                             key={index}
-                            className="flex flex-col items-center justify-end min-w-[40px]"
+                            className="flex min-w-[40px] flex-col items-center justify-end"
                         >
-                            {/* value on top */}
-                            <span className="text-xs text-gray-600 mb-1">
+                            <span className="mb-1 text-[10px] font-medium text-gray-600">
                                 {item.count}
                             </span>
 
-                            {/* bar */}
-                            <div className="w-6 bg-gray-200 rounded-md h-48 flex items-end">
+                            <div className="flex h-48 w-6 items-end overflow-hidden rounded-xl bg-orange-100">
                                 <div
-                                    className="w-full bg-orange-400 rounded-md transition-all duration-500"
+                                    className="w-full rounded-xl bg-orange-500 transition-all duration-500"
                                     style={{ height: `${heightPercent}%` }}
                                     title={`${item.search_term}`}
                                 ></div>
                             </div>
 
-                            {/* label */}
-                            <span className="text-[10px] text-gray-500 mt-1 rotate-[-45deg]">
+                            <span className="mt-2 text-[10px] text-gray-500">
                                 {item.hour || item.search_term?.slice(0, 6)}
                             </span>
                         </div>

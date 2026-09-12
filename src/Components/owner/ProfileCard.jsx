@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfileImage from '../../assets/images/profile-image.jpeg';
 import { fetchWithAuth } from "../utils/api";
+import { API_BASE } from "../../config";
 
 export default function ProfileCard() {
   const { id } = useParams(); // get technician id from URL
@@ -18,7 +19,7 @@ export default function ProfileCard() {
   useEffect(() => {
     const fetchTechnician = async () => {
       try {
-        const response = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/user/dashboard/${id}`, {
+        const response = await fetchWithAuth(`${API_BASE}/user/dashboard/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -40,7 +41,7 @@ export default function ProfileCard() {
     const fetchInstruments = async () => {
       try {
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/service-request/${id}/instruments`,
+          `${API_BASE}/service-request/${id}/instruments`,
           {
             method: "GET",
             headers: {
@@ -68,7 +69,7 @@ export default function ProfileCard() {
     const fetchInstrumentsCategories = async () => {
       try {
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/service-request/${id}/instrument-categories`,
+          `${API_BASE}/service-request/${id}/instrument-categories`,
           {
             method: "GET",
             headers: {
@@ -96,7 +97,7 @@ export default function ProfileCard() {
     const fetchLaboratoryCategories = async () => {
       try {
         const response = await fetch(
-          `http://localhost/instrument-care-back-end/public/service-request/${id}/laboratory-categories`,
+          `${API_BASE}/service-request/${id}/laboratory-categories`,
           {
             method: "GET",
             headers: {
@@ -124,7 +125,7 @@ export default function ProfileCard() {
     const fetchTechnicianWorkExperience = async () => {
       try {
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/work-experience/${id}`,
+          `${API_BASE}/tech/work-experience/${id}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -149,7 +150,7 @@ export default function ProfileCard() {
     const fetchTechnicianCertificates = async () => {
       try {
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/certificates/${id}`,
+          `${API_BASE}/tech/certificates/${id}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -177,7 +178,7 @@ export default function ProfileCard() {
 
 
   const profileImageUrl = tech.picture !== null
-    ? `http://localhost/instrument-care-back-end/public/${tech.picture}`
+    ? `${API_BASE}/${tech.picture}`
     : DefaultProfileImage;
 
 

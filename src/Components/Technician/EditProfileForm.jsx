@@ -3,6 +3,7 @@ import ProfileImageUpload from "./ProfileImageUpload";
 import ProfileFormLeft from "./ProfileFormLeft";
 import ProfileFormRight from "./ProfileFormRight";
 import { uploadToCloudinary } from "../utils/cloudinary";
+import { API_BASE } from "../../config";
 
 export default function EditProfileForm() {
   const [loading, setLoading] = useState(false); // ⬅ added loading state
@@ -42,7 +43,7 @@ export default function EditProfileForm() {
         if (!userId) return;
 
         const res = await fetch(
-          `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`
+          `${API_BASE}/tech/profile/${userId}`
         );
         const data = await res.json();
 
@@ -145,7 +146,7 @@ export default function EditProfileForm() {
       payload.profile_image_url = profileImageUrl;
 
       const res = await fetch(
-        `http://localhost/instrument-care-back-end/public/tech/profile/${userId}`,
+        `${API_BASE}/tech/profile/${userId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

@@ -1,4 +1,5 @@
 import { fetchWithAuth } from '../utils/api';
+import { API_BASE } from "../../config";
 import React, { useState } from "react";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 
@@ -41,7 +42,7 @@ export default function AllOwnerTable({ usersData }) {
     if (!editingUser || !editingUser.id) return;
 
     try {
-      const response = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/admin/users/${editingUser.id}`, {
+      const response = await fetchWithAuth(`${API_BASE}/admin/users/${editingUser.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +73,7 @@ export default function AllOwnerTable({ usersData }) {
     if (!confirmed) return;
 
     try {
-      const response = await fetchWithAuth(`http://localhost/instrument-care-back-end/public/admin/users/${userId}`, {
+      const response = await fetchWithAuth(`${API_BASE}/admin/users/${userId}`, {
         method: "DELETE",
       });
 
