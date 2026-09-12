@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import Bg from "../../assets/images/hero-bg-5.jpg";
+import Bg from "../../assets/images/index11.jpg";
 import { API_BASE } from "../../config";
 
 const FEATURES = [
-  "Discover national research equipment",
-  "Explore institutes & laboratories",
-  "Streamlined access for researchers",
+  "Join our network of skilled professionals",
+  "Access instrument service requests",
+  "Build your reputation with verified work",
 ];
 
 export default function LoginPage() {
@@ -41,7 +41,16 @@ export default function LoginPage() {
         sessionStorage.setItem("technician_id", String(result.technician_id));
         sessionStorage.setItem("token", result.token);
 
-        if (result.role === 8 || result.role === 9 || result.role === 7 || result.role === 6 || result.role === 5 || result.role === 4 || result.role === 3 || result.role === 2) {
+        if (
+          result.role === 8 ||
+          result.role === 9 ||
+          result.role === 7 ||
+          result.role === 6 ||
+          result.role === 5 ||
+          result.role === 4 ||
+          result.role === 3 ||
+          result.role === 2
+        ) {
           navigate("/user/dashboard");
         } else if (result.role === 10) {
           navigate("/tech/dashboard");
@@ -80,31 +89,25 @@ export default function LoginPage() {
               style={{ backgroundImage: `url(${Bg})` }}
             ></div>
             <div
-              className="absolute inset-0 z-[1]"
-              style={{
-                background:
-                  "linear-gradient(145deg, rgba(238,145,16,0) 0%, rgba(78,77,76,0.52) 100%), linear-gradient(135deg, rgba(238,147,16,0.92) 0%, rgba(216,129,6,0.9) 100%)",
-              }}
+              className="absolute inset-0 z-[1] bg-black/80"
+           
             ></div>
 
             <div className="relative z-[2]">
-              <span
-                className="inline-flex items-center px-3.5 py-1.5 mb-4 md:mb-5 rounded-full text-xs font-bold uppercase tracking-[0.5px] text-white border border-white/35"
-                style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
-              >
-                NSF Sri Lanka
-              </span>
+             
               <h2 className="text-white text-2xl md:text-[30px] font-extrabold leading-[1.25] mb-3.5 tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]">
-                National Instrument Database
+                Become a Technician
               </h2>
               <p className="text-white/90 text-sm leading-relaxed mb-6">
-                Centralized access to advanced scientific instruments,
-                analytical equipment, and national laboratory resources.
+                Register as a certified technician and provide expert instrument maintenance and repair services to research facilities nationwide.
               </p>
 
-              <div className="hidden md:flex flex-col gap-3 pt-3.5 border-t border-white/20">
+              <div className="hidden md:flex flex-col gap-3 pt-3.5 border-t border-white/20 mb-6">
                 {FEATURES.map((feature) => (
-                  <div key={feature} className="flex items-center text-white text-[13.5px] font-medium">
+                  <div
+                    key={feature}
+                    className="flex items-center text-white text-[13.5px] font-medium"
+                  >
                     <span className="w-[22px] h-[22px] rounded-full bg-white/25 inline-flex items-center justify-center mr-2.5 shrink-0">
                       <svg
                         width="12"
@@ -123,6 +126,25 @@ export default function LoginPage() {
                   </div>
                 ))}
               </div>
+
+              <Link
+                to="/auth/tech-registration"
+                className="inline-flex items-center justify-center px-6 py-3 bg-white text-[#111827] text-[14px] font-bold rounded-lg hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 no-underline"
+              >
+                Register as Technician
+                <svg
+                  className="ml-2 w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </Link>
             </div>
           </div>
 
@@ -130,7 +152,7 @@ export default function LoginPage() {
           <div className="md:w-7/12 bg-white flex flex-col justify-center px-5 sm:px-8 lg:px-11 py-8 md:min-h-[560px]">
             <div className="mb-6">
               <h1 className="text-[27px] font-bold text-[#111827] mb-1.5 tracking-tight">
-                User Login
+                Login
               </h1>
               <p className="text-[14.5px] text-[#6b7280]">
                 Welcome back! Please enter your details to continue.
@@ -164,7 +186,16 @@ export default function LoginPage() {
               </label>
               <div className="relative flex items-center">
                 <span className="absolute left-3.5 text-[#9ca3af] pointer-events-none flex items-center justify-center z-[4] transition-colors duration-200">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                     <polyline points="22,6 12,13 2,6"></polyline>
                   </svg>
@@ -189,8 +220,24 @@ export default function LoginPage() {
               </label>
               <div className="relative flex items-center">
                 <span className="absolute left-3.5 text-[#9ca3af] pointer-events-none flex items-center justify-center z-[4] transition-colors duration-200">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect
+                      x="3"
+                      y="11"
+                      width="18"
+                      height="11"
+                      rx="2"
+                      ry="2"
+                    ></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                   </svg>
                 </span>
@@ -210,7 +257,11 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent border-none text-[#9ca3af] p-2 rounded-md cursor-pointer flex items-center justify-center z-[4] transition-colors duration-200 hover:text-[#ee9310] hover:bg-[rgba(238,147,16,0.08)] focus:text-[#ee9310] focus:outline-none"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>
